@@ -1,4 +1,5 @@
 import { executePhase1 } from "@/features/topic-analysis/server/services/topic-analysis-orchestrator";
+import { updateVersionStatus } from "@/features/topic-analysis/server/repositories/topic-analysis-repository";
 import {
   triggerNextPhase,
   verifyInternalAuth,
@@ -11,13 +12,24 @@ export async function POST(request: Request) {
   try {
     verifyInternalAuth(request);
   } catch {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  const { versionId, billId } = (await request.json()) as {
-    versionId: string;
-    billId: string;
-  };
+  let versionId: string;
+  let billId: string;
+  try {
+    const body = await request.json();
+    versionId = body.versionId;
+    billId = body.billId;
+  } catch {
+    return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   try {
     await registerNodeTelemetry();
@@ -28,6 +40,11 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("[TopicAnalysis] Phase 1 failed:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Phase 1 failed";
+    await updateVersionStatus(versionId, "failed", errorMessage).catch((e) =>
+      console.error("[TopicAnalysis] Failed to update status:", e)
+    );
     return new Response(JSON.stringify({ error: "Phase 1 failed" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
