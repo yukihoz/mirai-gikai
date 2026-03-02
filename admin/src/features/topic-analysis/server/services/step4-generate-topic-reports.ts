@@ -94,7 +94,7 @@ ${opinionsText}`,
   const report = result.object;
 
   // グラウンディング検証: 無効な参照を除去し、[ref:N]を置換
-  const { cleanedMd } = validateAndReplaceReferences(
+  const { cleanedMd, validReferences } = validateAndReplaceReferences(
     report.description,
     report.references,
     validSessionIds,
@@ -106,14 +106,16 @@ ${opinionsText}`,
     validSessionIds.has(op.session_id)
   );
 
-  // ソースメッセージ内容をenrich
+  // ソースメッセージ内容と ref_id をenrich
   const enrichedRepresentatives = validRepresentatives.map((rep) => {
     const source = input.opinions.find(
       (o) => o.session_id === rep.session_id && o.title === rep.opinion_title
     );
+    const ref = validReferences.find((r) => r.session_id === rep.session_id);
     return {
       ...rep,
       source_message_content: source?.source_message_content ?? null,
+      ref_id: ref?.ref_id ?? null,
     };
   });
 

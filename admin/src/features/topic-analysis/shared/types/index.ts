@@ -20,6 +20,7 @@ export type RepresentativeOpinion = {
   opinion_title: string;
   opinion_content: string;
   source_message_content?: string | null;
+  ref_id?: number | null;
 };
 
 // intermediate_results JSONB structure

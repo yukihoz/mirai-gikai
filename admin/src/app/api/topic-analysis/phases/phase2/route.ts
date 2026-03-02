@@ -1,4 +1,3 @@
-import { after } from "next/server";
 import { executePhase2 } from "@/features/topic-analysis/server/services/topic-analysis-orchestrator";
 import {
   triggerNextPhase,
@@ -20,17 +19,18 @@ export async function POST(request: Request) {
     billId: string;
   };
 
-  after(async () => {
-    try {
-      await registerNodeTelemetry();
-      await executePhase2(versionId);
-      await triggerNextPhase(3, versionId, billId);
-    } catch (error) {
-      console.error("[TopicAnalysis] Phase 2 failed:", error);
-    }
-  });
-
-  return new Response(JSON.stringify({ success: true }), {
-    headers: { "Content-Type": "application/json" },
-  });
+  try {
+    await registerNodeTelemetry();
+    await executePhase2(versionId);
+    await triggerNextPhase(3, versionId, billId);
+    return new Response(JSON.stringify({ success: true }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("[TopicAnalysis] Phase 2 failed:", error);
+    return new Response(JSON.stringify({ error: "Phase 2 failed" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 }
