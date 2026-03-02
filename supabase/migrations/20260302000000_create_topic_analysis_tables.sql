@@ -66,6 +66,8 @@ ALTER TABLE topic_analysis_versions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE topic_analysis_topics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE topic_analysis_classifications ENABLE ROW LEVEL SECURITY;
 
+-- service_role は RLS をバイパスするため、明示的なポリシーは不要
+
 -- updated_at 自動更新トリガー
 CREATE TRIGGER set_topic_analysis_versions_updated_at
   BEFORE UPDATE ON topic_analysis_versions

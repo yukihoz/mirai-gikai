@@ -1,19 +1,30 @@
 import { after } from "next/server";
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
 import { createVersion } from "@/features/topic-analysis/server/repositories/topic-analysis-repository";
-import { triggerNextPhase } from "@/features/topic-analysis/server/utils/trigger-next-phase";
+import { executeAnalysisPipeline } from "@/features/topic-analysis/server/services/topic-analysis-orchestrator";
 
-export const maxDuration = 30;
+export const maxDuration = 300;
 
 export async function POST(request: Request) {
   try {
     await requireAdmin();
   } catch {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  const body = await request.json();
-  const { billId } = body as { billId: string };
+  let billId: string;
+  try {
+    const body = await request.json();
+    billId = body.billId;
+  } catch {
+    return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   if (!billId) {
     return new Response(JSON.stringify({ error: "billId is required" }), {
@@ -27,9 +38,9 @@ export async function POST(request: Request) {
 
     after(async () => {
       try {
-        await triggerNextPhase(1, version.id, billId);
+        await executeAnalysisPipeline(version.id, billId);
       } catch (error) {
-        console.error("Failed to trigger phase 1:", error);
+        console.error("[TopicAnalysis] Pipeline failed:", error);
       }
     });
 
