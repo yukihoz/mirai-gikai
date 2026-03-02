@@ -742,6 +742,7 @@ export type Database = {
           error_message: string | null
           id: string
           intermediate_results: Json | null
+          phase_data: Json | null
           started_at: string | null
           status: string
           summary_md: string | null
@@ -756,6 +757,7 @@ export type Database = {
           error_message?: string | null
           id?: string
           intermediate_results?: Json | null
+          phase_data?: Json | null
           started_at?: string | null
           status?: string
           summary_md?: string | null
@@ -770,6 +772,7 @@ export type Database = {
           error_message?: string | null
           id?: string
           intermediate_results?: Json | null
+          phase_data?: Json | null
           started_at?: string | null
           status?: string
           summary_md?: string | null

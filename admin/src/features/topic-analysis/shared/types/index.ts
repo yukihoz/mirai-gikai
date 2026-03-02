@@ -42,3 +42,20 @@ export type FlatOpinion = {
   title: string;
   content: string;
 };
+
+// フェーズ間データ受け渡し用
+export type PhaseData = {
+  flat_opinions?: FlatOpinion[];
+  bill_title?: string;
+  bill_summary?: string;
+  valid_session_ids?: string[];
+  raw_topics?: string[];
+  merged_topic_names?: string[];
+  sessions_count?: number;
+  opinions_count?: number;
+  classifications?: Array<{
+    interview_report_id: string;
+    opinion_index: number;
+    topic_names: string[];
+  }>;
+};

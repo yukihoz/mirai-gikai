@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createAdminClient } from "@mirai-gikai/supabase";
-import type { IntermediateResults } from "../../shared/types";
+import type { IntermediateResults, PhaseData } from "../../shared/types";
 
 /**
  * 新しいバージョンを作成する（version番号は自動インクリメント）
@@ -115,6 +115,45 @@ export async function updateVersionResult(
   if (error) {
     throw new Error(`Failed to update version result: ${error.message}`);
   }
+}
+
+/**
+ * フェーズ間データを保存する
+ */
+export async function savePhaseData(versionId: string, phaseData: PhaseData) {
+  const supabase = createAdminClient();
+
+  const { error } = await supabase
+    .from("topic_analysis_versions")
+    .update({ phase_data: phaseData as never })
+    .eq("id", versionId);
+
+  if (error) {
+    throw new Error(`Failed to save phase data: ${error.message}`);
+  }
+}
+
+/**
+ * フェーズ間データを読み込む
+ */
+export async function loadPhaseData(versionId: string): Promise<PhaseData> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("topic_analysis_versions")
+    .select("phase_data")
+    .eq("id", versionId)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to load phase data: ${error.message}`);
+  }
+
+  if (!data.phase_data) {
+    throw new Error(`Phase data not found for version ${versionId}`);
+  }
+
+  return data.phase_data as PhaseData;
 }
 
 /**

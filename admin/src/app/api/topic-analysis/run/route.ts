@@ -1,10 +1,9 @@
 import { after } from "next/server";
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
 import { createVersion } from "@/features/topic-analysis/server/repositories/topic-analysis-repository";
-import { executeAnalysisPipeline } from "@/features/topic-analysis/server/services/topic-analysis-orchestrator";
-import { registerNodeTelemetry } from "@/lib/telemetry/register";
+import { triggerNextPhase } from "@/features/topic-analysis/server/utils/trigger-next-phase";
 
-export const maxDuration = 120;
+export const maxDuration = 30;
 
 export async function POST(request: Request) {
   try {
@@ -24,14 +23,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    await registerNodeTelemetry();
     const version = await createVersion(billId);
 
     after(async () => {
       try {
-        await executeAnalysisPipeline(version.id, billId);
+        await triggerNextPhase(1, version.id, billId);
       } catch (error) {
-        console.error("Topic analysis pipeline failed:", error);
+        console.error("Failed to trigger phase 1:", error);
       }
     });
 
