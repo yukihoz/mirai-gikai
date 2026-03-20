@@ -14,9 +14,15 @@ export type InterviewSessionWithDetails = InterviewSession & {
   interview_report: InterviewReport | null;
 };
 
+export type ReactionCounts = {
+  helpful: number;
+  hmm: number;
+};
+
 export type InterviewSessionDetail = InterviewSession & {
   interview_report: InterviewReport | null;
   interview_messages: InterviewMessage[];
+  reaction_counts: ReactionCounts | null;
 };
 
 export const SORTABLE_COLUMNS = ["started_at", "message_count"] as const;
@@ -48,8 +54,8 @@ export function parseSortParams(
   return { sortBy: column, sortOrder: order };
 }
 
-export {
-  type SessionStatus,
-  getSessionStatus,
-} from "../utils/get-session-status";
 export { formatDuration } from "../utils/format-duration";
+export {
+  getSessionStatus,
+  type SessionStatus,
+} from "../utils/get-session-status";

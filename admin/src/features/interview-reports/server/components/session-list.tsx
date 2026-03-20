@@ -33,6 +33,7 @@ import {
 } from "../../shared/types";
 import { generatePageNumbers } from "../../shared/utils/pagination-utils";
 import { SESSIONS_PER_PAGE } from "../loaders/get-interview-sessions";
+import { RatingStars } from "./rating-stars";
 import { SessionStatusBadge } from "./session-status-badge";
 import { StanceBadge } from "./stance-badge";
 import { VisibilityBadge } from "./visibility-badge";
@@ -103,6 +104,8 @@ export function SessionList({
               <TableHead className="w-20 text-center">公開</TableHead>
               <TableHead className="w-28">スタンス</TableHead>
               <TableHead className="w-28">役割</TableHead>
+              <TableHead className="w-20 text-right">スコア</TableHead>
+              <TableHead className="w-24 text-center">満足度</TableHead>
               <SortableTableHead
                 column="started_at"
                 currentSortBy={sort.sortBy}
@@ -165,6 +168,18 @@ export function SessionList({
                   </TableCell>
                   <TableCell className="text-gray-600 text-sm">
                     {session.interview_report?.role || "-"}
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    {session.interview_report?.total_score != null
+                      ? session.interview_report.total_score
+                      : "-"}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {session.rating != null ? (
+                      <RatingStars rating={session.rating} />
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-gray-600">
                     <div className="flex items-center gap-1">
