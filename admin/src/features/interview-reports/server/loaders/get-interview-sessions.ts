@@ -9,6 +9,8 @@ import {
   findInterviewConfigIdByBillId,
   findInterviewMessageCounts,
   findInterviewSessionsWithReport,
+  findInterviewSessionsWithReportByIds,
+  findSessionIdsOrderedByMessageCount,
 } from "../repositories/interview-report-repository";
 
 export const SESSIONS_PER_PAGE = 30;
@@ -26,22 +28,25 @@ export async function getInterviewSessions(
 
   // ページネーション計算
   const { from, to } = calculatePaginationRange(page, SESSIONS_PER_PAGE);
+  const limit = to - from + 1;
 
-  // message_countソートの場合はDB側ではstarted_atでソートし、後でアプリ側ソートする
-  const dbOrderBy =
-    sort.sortBy === "message_count"
-      ? { column: "started_at", ascending: false }
-      : { column: sort.sortBy, ascending: sort.sortOrder === "asc" };
-
-  // セッション一覧を取得
+  // message_countソートの場合はDB関数でソート済みIDを取得してからセッションを取得
   let sessions: Awaited<ReturnType<typeof findInterviewSessionsWithReport>>;
   try {
-    sessions = await findInterviewSessionsWithReport(
-      config.id,
-      from,
-      to,
-      dbOrderBy
-    );
+    if (sort.sortBy === "message_count") {
+      const orderedIds = await findSessionIdsOrderedByMessageCount(
+        config.id,
+        sort.sortOrder === "asc",
+        from,
+        limit
+      );
+      sessions = await findInterviewSessionsWithReportByIds(orderedIds);
+    } else {
+      sessions = await findInterviewSessionsWithReport(config.id, from, to, {
+        column: sort.sortBy,
+        ascending: sort.sortOrder === "asc",
+      });
+    }
   } catch (error) {
     console.error("Failed to fetch interview sessions:", error);
     return [];
@@ -85,15 +90,6 @@ export async function getInterviewSessions(
       };
     }
   );
-
-  // message_countでのソート（アプリケーション層）
-  if (sort.sortBy === "message_count") {
-    sessionsWithDetails.sort((a, b) =>
-      sort.sortOrder === "asc"
-        ? a.message_count - b.message_count
-        : b.message_count - a.message_count
-    );
-  }
 
   return sessionsWithDetails;
 }

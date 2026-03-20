@@ -51,6 +51,56 @@ export async function findInterviewSessionsWithReport(
   return data;
 }
 
+export async function findSessionIdsOrderedByMessageCount(
+  configId: string,
+  ascending: boolean,
+  offset: number,
+  limit: number
+): Promise<string[]> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.rpc(
+    "find_sessions_ordered_by_message_count",
+    {
+      p_config_id: configId,
+      p_ascending: ascending,
+      p_offset: offset,
+      p_limit: limit,
+    }
+  );
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch sessions ordered by message count: ${error.message}`
+    );
+  }
+
+  return (data || []).map((row) => row.session_id);
+}
+
+export async function findInterviewSessionsWithReportByIds(
+  sessionIds: string[]
+) {
+  if (sessionIds.length === 0) return [];
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("interview_sessions")
+    .select(
+      `
+      *,
+      interview_report(*)
+    `
+    )
+    .in("id", sessionIds);
+
+  if (error) {
+    throw new Error(`Failed to fetch interview sessions: ${error.message}`);
+  }
+
+  // Preserve the order of sessionIds
+  const dataMap = new Map(data.map((s) => [s.id, s]));
+  return sessionIds.map((id) => dataMap.get(id)).filter(Boolean) as typeof data;
+}
+
 export async function findInterviewMessageCounts(sessionIds: string[]) {
   const supabase = createAdminClient();
   const { data, error } = await supabase.rpc("get_interview_message_counts", {
