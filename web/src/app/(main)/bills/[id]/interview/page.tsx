@@ -24,32 +24,33 @@ export async function generateMetadata({
     };
   }
 
-  const billName = bill.bill_content?.title ?? bill.name;
-  const description = `法案についてのAIインタビュー - ${billName}`;
+  const description = bill.bill_content?.summary || "議案の詳細情報";
   const defaultOgpUrl = new URL("/ogp.jpg", env.webUrl).toString();
   const shareImageUrl =
     bill.share_thumbnail_url || bill.thumbnail_url || defaultOgpUrl;
 
   return {
-    title: `AIインタビュー - ${billName}`,
+    title: bill.name,
     description: description,
     alternates: {
       canonical: `/bills/${bill.id}/interview`,
     },
     openGraph: {
-      title: `AIインタビュー - ${billName}`,
+      title: bill.name,
       description: description,
-      type: "website",
+      type: "article",
+      publishedTime: bill.published_at ?? undefined,
+      modifiedTime: bill.updated_at,
       images: [
         {
           url: shareImageUrl,
-          alt: `${billName} のAIインタビューページ`,
+          alt: `${bill.name} のOGPイメージ`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `AIインタビュー - ${billName}`,
+      title: bill.name,
       description: description,
       images: [shareImageUrl],
     },
