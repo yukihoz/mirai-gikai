@@ -19,6 +19,35 @@ export type InterviewSessionDetail = InterviewSession & {
   interview_messages: InterviewMessage[];
 };
 
+export const SORTABLE_COLUMNS = ["started_at", "message_count"] as const;
+
+export type SortColumn = (typeof SORTABLE_COLUMNS)[number];
+export type SortOrder = "asc" | "desc";
+
+export interface SortParams {
+  sortBy: SortColumn;
+  sortOrder: SortOrder;
+}
+
+export const DEFAULT_SORT: SortParams = {
+  sortBy: "started_at",
+  sortOrder: "desc",
+};
+
+export function parseSortParams(
+  sortBy: string | undefined,
+  sortOrder: string | undefined
+): SortParams {
+  const column = SORTABLE_COLUMNS.includes(sortBy as SortColumn)
+    ? (sortBy as SortColumn)
+    : DEFAULT_SORT.sortBy;
+  const order =
+    sortOrder === "asc" || sortOrder === "desc"
+      ? sortOrder
+      : DEFAULT_SORT.sortOrder;
+  return { sortBy: column, sortOrder: order };
+}
+
 export {
   type SessionStatus,
   getSessionStatus,

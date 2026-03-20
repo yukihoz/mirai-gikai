@@ -25,7 +25,11 @@ export async function findInterviewConfigIdByBillId(
 export async function findInterviewSessionsWithReport(
   configId: string,
   from: number,
-  to: number
+  to: number,
+  orderBy: {
+    column: string;
+    ascending: boolean;
+  } = { column: "started_at", ascending: false }
 ) {
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -37,7 +41,7 @@ export async function findInterviewSessionsWithReport(
     `
     )
     .eq("interview_config_id", configId)
-    .order("started_at", { ascending: false })
+    .order(orderBy.column, { ascending: orderBy.ascending })
     .range(from, to);
 
   if (error) {

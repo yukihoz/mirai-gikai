@@ -1,4 +1,8 @@
-import type { InterviewSessionWithDetails } from "../../shared/types";
+import type {
+  InterviewSessionWithDetails,
+  SortParams,
+} from "../../shared/types";
+import { DEFAULT_SORT } from "../../shared/types";
 import { calculatePaginationRange } from "../../shared/utils/pagination-utils";
 import {
   countInterviewSessionsByConfigId,
@@ -11,7 +15,8 @@ export const SESSIONS_PER_PAGE = 30;
 
 export async function getInterviewSessions(
   billId: string,
-  page = 1
+  page = 1,
+  sort: SortParams = DEFAULT_SORT
 ): Promise<InterviewSessionWithDetails[]> {
   const config = await findInterviewConfigIdByBillId(billId);
 
@@ -22,10 +27,21 @@ export async function getInterviewSessions(
   // ページネーション計算
   const { from, to } = calculatePaginationRange(page, SESSIONS_PER_PAGE);
 
+  // message_countソートの場合はDB側ではstarted_atでソートし、後でアプリ側ソートする
+  const dbOrderBy =
+    sort.sortBy === "message_count"
+      ? { column: "started_at", ascending: false }
+      : { column: sort.sortBy, ascending: sort.sortOrder === "asc" };
+
   // セッション一覧を取得
   let sessions: Awaited<ReturnType<typeof findInterviewSessionsWithReport>>;
   try {
-    sessions = await findInterviewSessionsWithReport(config.id, from, to);
+    sessions = await findInterviewSessionsWithReport(
+      config.id,
+      from,
+      to,
+      dbOrderBy
+    );
   } catch (error) {
     console.error("Failed to fetch interview sessions:", error);
     return [];
@@ -69,6 +85,15 @@ export async function getInterviewSessions(
       };
     }
   );
+
+  // message_countでのソート（アプリケーション層）
+  if (sort.sortBy === "message_count") {
+    sessionsWithDetails.sort((a, b) =>
+      sort.sortOrder === "asc"
+        ? a.message_count - b.message_count
+        : b.message_count - a.message_count
+    );
+  }
 
   return sessionsWithDetails;
 }
