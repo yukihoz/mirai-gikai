@@ -33,7 +33,7 @@ export type ChatMessageMetadata = {
   billContext?: BillWithContent;
   hasInterviewConfig?: boolean;
   pageContext?: {
-    type: "home" | "bill";
+    type: "home" | "bill" | "report";
     bills?: Array<{ id: string; name: string; summary?: string }>;
   };
   difficultyLevel: DifficultyLevelEnum;
