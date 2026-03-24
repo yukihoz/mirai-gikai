@@ -353,12 +353,12 @@ function hasExistingSuggestInterview(
 function buildSystemPromptWithInterviewInstructions(
   basePrompt: string,
   shouldSuggestInterview: boolean,
-  pageType: "home" | "bill" | undefined
+  pageType: "home" | "bill" | "report" | undefined
 ): string {
   if (pageType === "home") {
     return basePrompt + INTERVIEW_AWARENESS_PROMPT_HOME;
   }
-  if (pageType !== "bill") {
+  if (pageType !== "bill" && pageType !== "report") {
     return basePrompt;
   }
   let prompt = basePrompt + INTERVIEW_AWARENESS_PROMPT_BILL;
