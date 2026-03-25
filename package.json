@@ -16,8 +16,8 @@
     "test:integration:coverage": "dotenv -e .env -- vitest run --config tests/supabase/vitest.config.mts && pnpm -r run test:integration:coverage",
     "build": "dotenv -e .env -- pnpm -r run build",
     "typecheck": "pnpm -r run typecheck",
-    "lint": "biome format . && biome lint .",
-    "lint:fix": "biome format --write . && biome lint --write .",
+    "lint": "biome format web/src admin/src tests && biome lint web/src admin/src tests",
+    "lint:fix": "biome format --write web/src admin/src tests && biome lint --write web/src admin/src tests",
     "postinstall": "npx simple-git-hooks"
   },
   "devDependencies": {
