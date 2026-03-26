@@ -896,6 +896,7 @@ export type Database = {
           p_bill_id: string
           p_limit?: number
           p_offset?: number
+          p_sort?: string
           p_stance?: string
         }
         Returns: {

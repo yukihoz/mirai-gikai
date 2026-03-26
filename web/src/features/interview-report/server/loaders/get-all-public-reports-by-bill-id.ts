@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { SortOrder } from "../../shared/utils/sort-order";
 import type {
   StanceCounts,
   StanceFilter,
@@ -72,14 +73,17 @@ export async function getInitialPublicReportsByBillId(
 export async function getPublicReportsByBillIdPaginated(
   billId: string,
   offset: number,
-  stance: StanceFilter = "all"
+  stance: StanceFilter = "all",
+  sort: SortOrder = "recommended"
 ): Promise<{ reports: PublicInterviewReport[]; hasMore: boolean }> {
   const stanceParam = stance === "all" ? undefined : stance;
+  const sortParam = sort === "recommended" ? undefined : sort;
   const rawReports = await findPublicReportsByBillId(
     billId,
     PAGE_SIZE + 1,
     offset,
-    stanceParam
+    stanceParam,
+    sortParam
   );
 
   const hasMore = rawReports.length > PAGE_SIZE;

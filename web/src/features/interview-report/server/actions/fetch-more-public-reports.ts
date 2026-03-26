@@ -4,12 +4,14 @@ import { z } from "zod";
 import { getReportReactionsBatch } from "@/features/report-reaction/server/loaders/get-report-reactions";
 import type { PublicInterviewReport } from "../loaders/get-public-reports-by-bill-id";
 import { getPublicReportsByBillIdPaginated } from "../loaders/get-all-public-reports-by-bill-id";
+import type { SortOrder } from "../../shared/utils/sort-order";
 import type { StanceFilter } from "../../shared/utils/stance-filter";
 
 const inputSchema = z.object({
   billId: z.string().uuid(),
   offset: z.number().int().min(0),
   stance: z.enum(["all", "for", "against", "neutral"]).default("all"),
+  sort: z.enum(["recommended", "latest"]).default("recommended"),
 });
 
 export type FetchMoreReportsResult = {
@@ -27,9 +29,10 @@ export type FetchMoreReportsResult = {
 export async function fetchMorePublicReports(
   billId: string,
   offset: number,
-  stance: StanceFilter = "all"
+  stance: StanceFilter = "all",
+  sort: SortOrder = "recommended"
 ): Promise<FetchMoreReportsResult> {
-  const parsed = inputSchema.safeParse({ billId, offset, stance });
+  const parsed = inputSchema.safeParse({ billId, offset, stance, sort });
   if (!parsed.success) {
     return { reports: [], reactionsRecord: {}, hasMore: false };
   }
@@ -37,7 +40,8 @@ export async function fetchMorePublicReports(
   const { reports, hasMore } = await getPublicReportsByBillIdPaginated(
     parsed.data.billId,
     parsed.data.offset,
-    parsed.data.stance
+    parsed.data.stance,
+    parsed.data.sort
   );
 
   const reportIds = reports.map((r) => r.id);

@@ -86,7 +86,8 @@ export async function findPublicReportsByBillId(
   billId: string,
   limit: number = 3,
   offset: number = 0,
-  stance?: string
+  stance?: string,
+  sort?: string
 ) {
   const supabase = createAdminClient();
   const { data, error } = await supabase.rpc(
@@ -96,6 +97,7 @@ export async function findPublicReportsByBillId(
       p_limit: limit,
       p_offset: offset,
       p_stance: stance,
+      p_sort: sort,
     }
   );
 

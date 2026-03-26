@@ -2,6 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useAnonymousSupabaseUser } from "@/features/chat/client/hooks/use-anonymous-supabase-user";
 import { ReactionButtonsInline } from "@/features/report-reaction/client/components/reaction-buttons-inline";
 import type { ReportReactionData } from "@/features/report-reaction/shared/types";
@@ -9,6 +10,11 @@ import { cn } from "@/lib/utils";
 import { fetchMorePublicReports } from "../../server/actions/fetch-more-public-reports";
 import type { PublicInterviewReport } from "../../server/loaders/get-public-reports-by-bill-id";
 import { ReportCard } from "../../shared/components/report-card";
+import {
+  type SortOrder,
+  sortOrderLabels,
+  sortOrderOptions,
+} from "../../shared/utils/sort-order";
 import {
   type StanceCounts,
   type StanceFilter,
@@ -75,8 +81,8 @@ export function PublicOpinionsList({
   );
 
   const fetchMore = useCallback(
-    async (offset: number, filter: StanceFilter) => {
-      const result = await fetchMorePublicReports(billId, offset, filter);
+    async (offset: number, filter: StanceFilter, sort: SortOrder) => {
+      const result = await fetchMorePublicReports(billId, offset, filter, sort);
       setReactionsRecord((prev) => ({
         ...prev,
         ...result.reactionsRecord,
@@ -91,12 +97,15 @@ export function PublicOpinionsList({
     hasMore,
     isPending,
     activeFilter,
+    activeSort,
     sentinelRef,
     changeFilter,
-  } = useInfiniteScroll<PublicInterviewReport, StanceFilter>({
+    changeSort,
+  } = useInfiniteScroll<PublicInterviewReport, StanceFilter, SortOrder>({
     initialItems: initialReports,
     initialHasMore,
     initialFilter: "all",
+    initialSort: "recommended",
     fetchMore,
   });
 
@@ -122,6 +131,27 @@ export function PublicOpinionsList({
             isActive={activeFilter === filter}
             onClick={() => changeFilter(filter)}
           />
+        ))}
+      </div>
+
+      {/* 並び替え */}
+      <div className="flex items-center gap-2">
+        {sortOrderOptions.map((sort, index) => (
+          <span key={sort} className="flex items-center gap-2">
+            {index > 0 && <span className="text-mirai-text-muted">|</span>}
+            <Button
+              variant="ghost"
+              onClick={() => changeSort(sort)}
+              className={cn(
+                "h-auto px-0 py-0 text-sm font-bold transition-colors hover:bg-transparent",
+                activeSort === sort
+                  ? "text-mirai-text"
+                  : "text-mirai-text-muted"
+              )}
+            >
+              {sortOrderLabels[sort]}
+            </Button>
+          </span>
         ))}
       </div>
 
