@@ -57,11 +57,19 @@ export function ReactionButtons({
                     : "text-gray-800"
                 }`}
               />
-              <span className="text-[15px] font-bold text-gray-800">
+              <span
+                className={`text-[15px] font-bold transition-colors ${
+                  isActive ? "text-mirai-reaction-active" : "text-gray-800"
+                }`}
+              >
                 参考になる
               </span>
               {data.counts.helpful > 0 && (
-                <span className="text-[15px] font-bold text-gray-800">
+                <span
+                  className={`text-[15px] font-bold transition-colors ${
+                    isActive ? "text-mirai-reaction-active" : "text-gray-800"
+                  }`}
+                >
                   {data.counts.helpful}
                 </span>
               )}
