@@ -40,22 +40,12 @@ import {
   duplicateInterviewConfig,
 } from "../../server/actions/upsert-interview-config";
 import type { InterviewConfig } from "../../shared/types";
+import { getModeLabel } from "../../shared/utils/get-mode-label";
 
 interface InterviewConfigListProps {
   billId: string;
   configs: InterviewConfig[];
   sessionCounts: Record<string, number> | null;
-}
-
-function getModeLabel(mode: InterviewConfig["mode"]): string {
-  switch (mode) {
-    case "loop":
-      return "ループ";
-    case "bulk":
-      return "一括";
-    default:
-      return mode;
-  }
 }
 
 export function InterviewConfigList({
@@ -151,7 +141,6 @@ export function InterviewConfigList({
                 <TableRow>
                   <TableHead>設定名</TableHead>
                   <TableHead>モード</TableHead>
-                  <TableHead>テーマ</TableHead>
                   <TableHead>ステータス</TableHead>
                   <TableHead>セッション数</TableHead>
                   <TableHead>作成日</TableHead>
@@ -176,24 +165,6 @@ export function InterviewConfigList({
                       <Badge variant="outline">
                         {getModeLabel(config.mode)}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="max-w-[400px]">
-                      {config.themes && config.themes.length > 0 ? (
-                        <div className="flex flex-col gap-1">
-                          {config.themes.map((theme) => (
-                            <Badge
-                              key={theme}
-                              variant="secondary"
-                              className="text-xs max-w-full truncate"
-                              title={theme}
-                            >
-                              {theme}
-                            </Badge>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
                     </TableCell>
                     <TableCell>
                       <Badge
