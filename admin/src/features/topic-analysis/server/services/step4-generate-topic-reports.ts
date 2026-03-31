@@ -3,7 +3,7 @@ import "server-only";
 import { generateObject } from "ai";
 import {
   TOPIC_ANALYSIS_MAX_CONCURRENCY,
-  TOPIC_ANALYSIS_MODEL,
+  TOPIC_ANALYSIS_WRITING_MODEL,
 } from "../../shared/constants";
 import { topicReportSchema } from "../../shared/schemas";
 import type { FlatOpinion, RepresentativeOpinion } from "../../shared/types";
@@ -30,13 +30,20 @@ export async function generateTopicReports(
   topics: TopicReportInput[],
   billTitle: string,
   validSessionIds: Set<string>,
-  billId: string
+  billId: string,
+  sessionConfigMap: Record<string, string>
 ): Promise<TopicReportOutput[]> {
   const results = await runWithConcurrency(
     topics,
     TOPIC_ANALYSIS_MAX_CONCURRENCY,
     (topic) =>
-      generateSingleTopicReport(topic, billTitle, validSessionIds, billId)
+      generateSingleTopicReport(
+        topic,
+        billTitle,
+        validSessionIds,
+        billId,
+        sessionConfigMap
+      )
   );
 
   return results;
@@ -46,7 +53,8 @@ async function generateSingleTopicReport(
   input: TopicReportInput,
   billTitle: string,
   validSessionIds: Set<string>,
-  billId: string
+  billId: string,
+  sessionConfigMap: Record<string, string>
 ): Promise<TopicReportOutput> {
   const opinionsText = input.opinions
     .map(
@@ -58,7 +66,7 @@ async function generateSingleTopicReport(
   const sessionList = sessionIds.map((id, i) => `  ${i + 1}. ${id}`).join("\n");
 
   const result = await generateObject({
-    model: TOPIC_ANALYSIS_MODEL,
+    model: TOPIC_ANALYSIS_WRITING_MODEL,
     schema: topicReportSchema,
     prompt: `あなたは市民意見の分析レポートを作成します。
 
@@ -100,7 +108,8 @@ ${opinionsText}`,
     report.description,
     report.references,
     validSessionIds,
-    billId
+    billId,
+    sessionConfigMap
   );
 
   // LLMが返した意見番号から元データを直接参照して代表意見を構築

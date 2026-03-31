@@ -15,6 +15,7 @@ export const routes = {
   tags: () => "/tags" as const,
   dietSessions: () => "/diet-sessions" as const,
   experts: () => "/experts" as const,
+  interviews: () => "/interviews" as const,
 
   // ── 議案配下 ──────────────────────────────────────
   billEdit: (billId: string) => `/bills/${billId}/edit` as const,
@@ -28,14 +29,19 @@ export const routes = {
   billInterviewEdit: (billId: string, configId: string) =>
     `/bills/${billId}/interview/${configId}/edit` as const,
 
-  // レポート
-  billReports: (billId: string) => `/bills/${billId}/reports` as const,
-  billReportDetail: (billId: string, sessionId: string) =>
-    `/bills/${billId}/reports/${sessionId}` as const,
+  // レポート（インタビュー設定配下）
+  billReports: (billId: string, configId: string) =>
+    `/bills/${billId}/interview/${configId}/reports` as const,
+  billReportDetail: (billId: string, configId: string, sessionId: string) =>
+    `/bills/${billId}/interview/${configId}/reports/${sessionId}` as const,
 
-  // トピック解析
-  billTopicAnalysis: (billId: string) =>
-    `/bills/${billId}/topic-analysis` as const,
-  billTopicAnalysisDetail: (billId: string, versionId: string) =>
-    `/bills/${billId}/topic-analysis/${versionId}` as const,
+  // トピック解析（インタビュー設定配下）
+  billTopicAnalysis: (billId: string, configId: string) =>
+    `/bills/${billId}/interview/${configId}/topic-analysis` as const,
+  billTopicAnalysisDetail: (
+    billId: string,
+    configId: string,
+    versionId: string
+  ) =>
+    `/bills/${billId}/interview/${configId}/topic-analysis/${versionId}` as const,
 } as const;
