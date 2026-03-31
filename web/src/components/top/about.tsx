@@ -1,10 +1,11 @@
 import Image from "next/image";
 import { EXTERNAL_LINKS } from "@/config/external-links";
+import { env } from "@/lib/env";
 import { LinkButton } from "./link-button";
 
 export function About() {
   return (
-    <div className="py-10">
+    <div>
       <div className="flex flex-col gap-4">
         {/* ヘッダー */}
         <div className="flex flex-col gap-4">
@@ -18,7 +19,7 @@ export function About() {
             />
           </h2>
           <p className="text-sm font-bold text-primary-accent">
-            みらい議会とは
+            {env.siteShortName}とは
           </p>
         </div>
 
@@ -26,27 +27,17 @@ export function About() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <h3 className="text-2xl font-bold leading-[43.2px]">
-              国会での議論を
+              {env.assemblyName}での議論を
               <br />
               できる限りわかりやすく
             </h3>
-            <p className="text-[15px] leading-[28px] text-black">
-              みらい議会は、国会で今どんな法案が検討されているか、わかりやすく伝えるプラットフォームです。国民の意見を政治に届けることを目指して、継続的にアップデートしていきます。
+            <p className="text-[15px] leading-[28px] text-black whitespace-pre-wrap">
+              みらい議会は、区議会で今どんな法案が検討されているか、わかりやすく伝えるプラットフォームです。区民の皆さんの意見を政治に届けることを目指して、継続的にアップデートしていきます。{"\n"}
+              なお、本サービスはほづみゆうきが、チームみらいの「みらい議会」を元に作成したものです。チームみらい、そしてみらい議会については以下の記事をご覧ください。
             </p>
           </div>
 
-          {/* もっと詳しく知るボタン */}
-          <LinkButton
-            href={EXTERNAL_LINKS.ABOUT_NOTE}
-            icon={{
-              src: "/icons/note-icon.png",
-              alt: "note",
-              width: 25,
-              height: 25,
-            }}
-          >
-            みらい議会とは
-          </LinkButton>
+          {/* ボタンはTeamMiraiセクションに統合されました */}
         </div>
       </div>
     </div>

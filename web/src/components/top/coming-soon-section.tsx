@@ -2,6 +2,7 @@ import type { Route } from "next";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import type { ComingSoonBill } from "@/features/bills/shared/types";
+import { env } from "@/lib/env";
 import { Card, CardContent } from "../ui/card";
 
 interface ComingSoonSectionProps {
@@ -11,24 +12,8 @@ interface ComingSoonSectionProps {
 export function ComingSoonSection({ bills }: ComingSoonSectionProps) {
   return (
     <section className="flex flex-col gap-6">
-      {/* ヘッダー */}
-      <div className="flex flex-col gap-2">
-        <h2 className="text-[22px] font-bold text-black leading-[1.48]">
-          これから掲載される法案
-        </h2>
-        <p className="text-xs text-mirai-text-secondary">
-          みらい議会は、順次更新されていきます
-        </p>
-      </div>
-
-      {/* Coming soonカードリスト */}
-      {bills.length === 0 ? (
-        <Card>
-          <CardContent className="flex items-center justify-center py-20">
-            <p className="text-2xl font-bold text-gray-300">Coming soon</p>
-          </CardContent>
-        </Card>
-      ) : (
+      {/* Coming soonカードリスト (法案がある場合のみ表示) */}
+      {bills.length > 0 && (
         <div className="flex flex-col gap-3">
           {bills.map((bill) => (
             <ComingSoonBillCard key={bill.id} bill={bill} />
@@ -36,16 +21,16 @@ export function ComingSoonSection({ bills }: ComingSoonSectionProps) {
         </div>
       )}
 
-      {/* 国会議案情報へのリンク */}
+      {/* 区議会議案情報へのリンク */}
       <div className="text-right text-sm text-mirai-text-secondary">
         <Link
-          href="https://www.shugiin.go.jp/internet/itdb_gian.nsf/html/gian/menu.htm"
+          href="https://www.kugikai.city.chuo.lg.jp/"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:opacity-80 inline-flex items-center gap-1"
         >
-          国会に提出されているすべての法案は{" "}
-          <span className="underline">国会議案情報へ</span>
+          {env.assemblyName}に提出されているすべての情報は、{" "}
+          <span className="underline">中央区議会Webサイトへ</span>
           <ExternalLink className="h-3 w-3" />
         </Link>
       </div>

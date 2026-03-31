@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props) {
   const session = await getDietSessionBySlug(slug);
 
   if (!session) {
-    return { title: "国会会期が見つかりません" };
+    return { title: "区議会会期が見つかりません" };
   }
 
   return {

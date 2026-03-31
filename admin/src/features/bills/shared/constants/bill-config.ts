@@ -39,4 +39,8 @@ export const BILL_STATUS_CONFIG: Record<
     icon: XCircle,
     color: "text-red-600 bg-red-50",
   },
+  reported: {
+    icon: FileText,
+    color: "text-purple-600 bg-purple-50",
+  },
 };

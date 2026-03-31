@@ -14,7 +14,7 @@ export type BillContentUpdate =
 export type MiraiStance = Database["public"]["Tables"]["mirai_stances"]["Row"];
 
 // Enums
-export type HouseEnum = Database["public"]["Enums"]["house_enum"];
+export type MeetingBody = Database["public"]["Enums"]["meeting_body_enum"];
 export type BillStatusEnum = Database["public"]["Enums"]["bill_status_enum"];
 export type StanceTypeEnum = Database["public"]["Enums"]["stance_type_enum"];
 
@@ -26,7 +26,7 @@ export type ComingSoonBill = {
   id: string;
   name: string; // 正式名称
   title: string | null; // わかりやすいタイトル（bill_contentsから）
-  originating_house: HouseEnum;
+  meeting_body: MeetingBody;
   shugiin_url: string | null;
 };
 
@@ -67,39 +67,34 @@ export const BILL_STATUS_ORDER: Record<BillStatusEnum, number> = {
   in_originating_house: 3,
   introduced: 4,
   preparing: 5,
+  reported: 6,
 };
 
-// House display mapping
-export const HOUSE_LABELS: Record<HouseEnum, string> = {
-  HR: "衆議院",
-  HC: "参議院",
-};
-
-// ステータスを日本語ラベルに変換する関数
 export function getBillStatusLabel(
   status: BillStatusEnum,
-  originatingHouse?: HouseEnum | null
+  meetingBody?: MeetingBody | null
 ): string {
   switch (status) {
     case "preparing":
       return "準備中";
     case "introduced":
-      return "提出済み";
+      return "議案提出済み";
     case "in_originating_house":
-      if (originatingHouse) {
-        return `${HOUSE_LABELS[originatingHouse]}審議中`;
+      if (meetingBody) {
+        return `${meetingBody}付託`;
       }
-      return "審議中"; // フォールバック
+      return "付託";
     case "in_receiving_house":
-      if (originatingHouse) {
-        const receivingHouse = originatingHouse === "HR" ? "HC" : "HR";
-        return `${HOUSE_LABELS[receivingHouse]}審議中`;
+      if (meetingBody) {
+        return `${meetingBody}付託`;
       }
-      return "審議中"; // フォールバック
+      return "付託";
     case "enacted":
-      return "成立";
+      return "議案可決";
     case "rejected":
-      return "否決";
+      return "議案否決";
+    case "reported":
+      return "報告事項";
     default:
       return status; // 未知のステータスはそのまま返す
   }

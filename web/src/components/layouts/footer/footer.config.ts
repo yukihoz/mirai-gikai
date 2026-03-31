@@ -38,8 +38,7 @@ export const primaryLinks: FooterLink[] = [
 export const policyLinks: FooterPolicyLink[] = [
   {
     label: "よくあるご質問",
-    href: EXTERNAL_LINKS.FAQ,
-    external: true,
+    href: routes.faq(),
   },
   {
     label: "利用規約",

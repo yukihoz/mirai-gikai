@@ -1,5 +1,6 @@
 import type { Route } from "next";
 import Link from "next/link";
+import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 import type { BillWithContent } from "../../shared/types";
 import { BillCard } from "../../client/components/bill-list/bill-card";
@@ -21,7 +22,7 @@ export function FeaturedBillSection({ bills }: FeaturedBillSectionProps) {
           注目の法案🔥
         </h2>
         <p className="text-xs font-medium text-mirai-text-secondary leading-[1.67]">
-          国会に提出された注目法案
+          {env.assemblyName}に提出された注目法案
         </p>
       </div>
 

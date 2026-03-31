@@ -29,7 +29,7 @@ export function BillCreateForm({ dietSessions }: BillCreateFormProps) {
     defaultValues: {
       name: "",
       status: "preparing",
-      originating_house: "HR",
+      meeting_body: "定例会",
       status_note: null,
       published_at: new Date().toISOString().slice(0, 16),
       thumbnail_url: null,

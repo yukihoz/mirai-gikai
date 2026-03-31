@@ -1,4 +1,7 @@
-import { openai } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
+const openai = createOpenAI({
+  apiKey: process.env.AI_GATEWAY_API_KEY,
+});
 import type { Database } from "@mirai-gikai/supabase";
 import {
   convertToModelMessages,

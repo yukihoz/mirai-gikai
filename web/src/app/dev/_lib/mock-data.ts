@@ -10,13 +10,14 @@ export const allBillStatuses: BillStatusEnum[] = [
   "in_receiving_house",
   "enacted",
   "rejected",
+  "reported",
 ];
 
 const baseBill: BillWithContent = {
   id: "mock-bill-001",
-  name: "サンプル法案（第XXX回国会提出）",
+  name: "サンプル法案（第XXX回区議会提出）",
   status: "in_originating_house",
-  originating_house: "HR",
+  meeting_body: "定例会",
   is_featured: false,
   thumbnail_url: null,
   share_thumbnail_url: null,

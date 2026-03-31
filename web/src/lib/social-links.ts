@@ -61,3 +61,36 @@ export const getSocialLinksArray = (): Array<SocialLink & { key: string }> =>
     ...link,
     key,
   }));
+
+export const HOZUMI_SOCIAL_LINKS: Record<string, SocialLink> = {
+  youtube: {
+    name: "YouTube",
+    url: "https://www.youtube.com/@yukihoz",
+    iconPath: "/icons/sns/icon_youtube.png",
+    hasBorder: false,
+  },
+  x: {
+    name: "X",
+    url: "https://x.com/ninofku",
+    iconPath: "/icons/sns/icon_x.png",
+    hasBorder: false,
+  },
+  line: {
+    name: "LINE",
+    url: "https://line.me/R/ti/p/@335kgldx",
+    iconPath: "/icons/sns/icon_line.png",
+    hasBorder: false,
+  },
+  instagram: {
+    name: "Instagram",
+    url: "https://www.instagram.com/yukihoz555/",
+    iconPath: "/icons/sns/icon_instagram.png",
+    hasBorder: true,
+  },
+  facebook: {
+    name: "Facebook",
+    url: "https://www.facebook.com/yukihozumi",
+    iconPath: "/icons/sns/icon_facebook.png",
+    hasBorder: false,
+  },
+};

@@ -1,16 +1,22 @@
+import { env } from "@/lib/env";
 import type { BillStatusEnum } from "../types";
 
 /** カード用の簡略化されたステータスラベルを取得 */
 export function getCardStatusLabel(status: BillStatusEnum): string {
   switch (status) {
+    case "preparing":
+      return "準備中";
     case "introduced":
+      return "議案提出済み";
     case "in_originating_house":
     case "in_receiving_house":
-      return "国会審議中";
+      return "付託";
     case "enacted":
-      return "法案成立";
+      return "議案可決";
     case "rejected":
-      return "否決";
+      return "議案否決";
+    case "reported":
+      return "報告事項";
     default:
       return "法案提出前";
   }
@@ -29,6 +35,8 @@ export function getStatusVariant(
       return "default";
     case "rejected":
       return "dark";
+    case "reported":
+      return "muted";
     default:
       return "muted";
   }

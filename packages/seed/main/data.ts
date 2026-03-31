@@ -60,7 +60,7 @@ export const tags: TagInsert[] = [
 export const bills: BillInsert[] = [
   {
     name: "ガソリン税暫定税率廃止法案",
-    originating_house: "HR",
+    meeting_body: "定例会",
     status: "in_originating_house",
     status_note: "衆議院で審議中",
     published_at: "2025-08-01T09:00:00+09:00",
@@ -70,7 +70,7 @@ export const bills: BillInsert[] = [
   },
   {
     name: "こども家庭庁予算大幅増額法案",
-    originating_house: "HC",
+    meeting_body: "定例会",
     status: "enacted",
     status_note: "両院で可決、成立",
     published_at: "2025-01-20T10:00:00+09:00",
@@ -80,7 +80,7 @@ export const bills: BillInsert[] = [
   },
   {
     name: "18歳選挙権完全実施法案",
-    originating_house: "HR",
+    meeting_body: "定例会",
     status: "rejected",
     status_note: "衆議院で否決",
     published_at: "2025-02-01T09:00:00+09:00",
@@ -90,7 +90,7 @@ export const bills: BillInsert[] = [
   },
   {
     name: "学校給食無償化促進法案",
-    originating_house: "HC",
+    meeting_body: "定例会",
     status: "enacted",
     status_note: "両院で可決、4月から実施",
     published_at: "2025-01-10T09:00:00+09:00",
@@ -101,7 +101,7 @@ export const bills: BillInsert[] = [
   // 第218回国会用の追加法案（デザイン確認用）- ループで生成
   ...Array.from({ length: 4 }, (_, i) => ({
     name: `学校給食無償化促進法案（第${i + 2}号）`,
-    originating_house: (i % 2 === 0 ? "HR" : "HC") as "HR" | "HC",
+    meeting_body: "定例会" as const,
     status: (i % 2 === 0 ? "enacted" : "in_originating_house") as
       | "enacted"
       | "in_originating_house",
@@ -113,7 +113,7 @@ export const bills: BillInsert[] = [
   })),
   {
     name: "船荷証券の電子化に関する法律案",
-    originating_house: "HR",
+    meeting_body: "定例会" as const,
     status: "in_originating_house",
     status_note: "衆議院で審議中",
     published_at: "2025-09-15T09:00:00+09:00",
@@ -123,7 +123,7 @@ export const bills: BillInsert[] = [
   },
   {
     name: "中学生・高校生向けプログラミング教育必修化法案",
-    originating_house: "HR",
+    meeting_body: "定例会" as const,
     status: "rejected",
     status_note: "衆議院本会議で否決",
     published_at: "2024-11-15T10:00:00+09:00",

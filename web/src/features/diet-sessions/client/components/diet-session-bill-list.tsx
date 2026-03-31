@@ -1,6 +1,7 @@
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import type { BillWithContent } from "@/features/bills/shared/types";
+import { env } from "@/lib/env";
 import type { DietSession } from "../../shared/types";
 import { BillListWithStatusFilter } from "./bill-list-with-status-filter";
 
@@ -28,7 +29,7 @@ export function DietSessionBillList({ session, bills }: Props) {
           />
         </h1>
         <p className="text-sm font-bold text-primary-accent">
-          過去の国会に提出された法案
+          過去の{env.assemblyName}に提出された法案
         </p>
       </div>
 
@@ -62,7 +63,7 @@ export function DietSessionBillList({ session, bills }: Props) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1"
           >
-            国会議案情報へ
+            {env.assemblyName}議案情報へ
             <ExternalLink className="h-3 w-3" />
           </a>
         </div>

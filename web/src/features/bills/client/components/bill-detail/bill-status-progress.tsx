@@ -1,4 +1,4 @@
-import type { BillStatusEnum, HouseEnum } from "../../../shared/types";
+import type { BillStatusEnum, MeetingBody } from "../../../shared/types";
 import {
   calculateProgressWidth,
   getCurrentStep,
@@ -9,7 +9,7 @@ import {
 
 interface BillStatusProgressProps {
   status: BillStatusEnum;
-  originatingHouse: HouseEnum;
+  meetingBody: MeetingBody;
   statusNote?: string | null;
 }
 
@@ -27,10 +27,10 @@ interface ProgressStepProps {
 
 // 基本ステップ定義
 const BASE_STEPS = [
-  { label: "法案\n提出" },
-  { label: "衆議院\n審議" },
-  { label: "参議院\n審議" },
-  { label: "法案\n成立" },
+  { label: "議案\n提出" },
+  { label: "本会議\n審議" },
+  { label: "委員会\n審議" },
+  { label: "議案\n可決" },
 ] as const;
 
 // ステータスバッジコンポーネント
@@ -42,13 +42,12 @@ function StatusBadge({ message }: StatusBadgeProps) {
       <div className="w-full text-center bg-mirai-gradient rounded-lg px-4 py-3.5">
         <span className="text-base font-medium text-black">{message}</span>
       </div>
-      {/* 下向き三角形 */}
       <div
         className="absolute left-1/2 -translate-x-1/2 w-0 h-0"
         style={{
           borderLeft: "7.5px solid transparent",
           borderRight: "7.5px solid transparent",
-          borderTop: "7.5px solid var(--color-mirai-progress-fill)",
+          borderTop: "7.5px solid var(--primary)",
         }}
       />
     </div>
@@ -95,13 +94,13 @@ function ProgressStep({
 
 export function BillStatusProgress({
   status,
-  originatingHouse,
+  meetingBody,
   statusNote,
 }: BillStatusProgressProps) {
   const isPreparing = status === "preparing";
   const currentStep = getCurrentStep(status);
 
-  const orderedSteps = getOrderedSteps(originatingHouse, BASE_STEPS);
+  const orderedSteps = getOrderedSteps(meetingBody, BASE_STEPS);
   const progressWidth = calculateProgressWidth(currentStep);
 
   const statusMessage = getStatusMessage(status, statusNote);

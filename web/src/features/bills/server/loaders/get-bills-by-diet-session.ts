@@ -9,7 +9,7 @@ import {
 } from "../repositories/bill-repository";
 
 /**
- * 国会会期IDに紐づく議案一覧を取得
+ * 区議会会期IDに紐づく議案一覧を取得
  */
 export async function getBillsByDietSession(
   dietSessionId: string

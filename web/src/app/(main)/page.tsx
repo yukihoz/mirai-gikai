@@ -11,8 +11,6 @@ import { PreviousSessionSection } from "@/features/bills/server/components/previ
 import { loadHomeData } from "@/features/bills/server/loaders/load-home-data";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
-import { CurrentDietSession } from "@/features/diet-sessions/client/components/current-diet-session";
-import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
 import { getJapanTime } from "@/lib/utils/date";
 
 export default async function Home() {
@@ -20,8 +18,7 @@ export default async function Home() {
     await loadHomeData();
 
   // ゆくゆくタグ機能がマージされたらBFFに統合する
-  const [currentSession, currentDifficulty] = await Promise.all([
-    getCurrentDietSession(getJapanTime()),
+  const [currentDifficulty] = await Promise.all([
     getDifficultyLevel(),
   ]);
 
@@ -38,8 +35,7 @@ export default async function Home() {
     <>
       <Hero />
 
-      {/* 本日の国会セクション */}
-      <CurrentDietSession session={currentSession} />
+
 
       {/* 議案一覧セクション */}
       <Container className="">
@@ -57,7 +53,7 @@ export default async function Home() {
         </div>
       </Container>
 
-      {/* 前回の国会セクション（Archive） */}
+      {/* 最近の議案セクション（旧：前回の会期） */}
       {previousSessionData && (
         <div className="bg-mirai-surface-muted py-10">
           <Container>
@@ -65,23 +61,32 @@ export default async function Home() {
               session={previousSessionData.session}
               bills={previousSessionData.bills}
               totalBillCount={previousSessionData.totalBillCount}
+              title="最近の議案"
             />
           </Container>
         </div>
       )}
 
-      <Container>
-        {/* みらい議会とは セクション */}
-        <About />
+      <Container className="pt-12 pb-6">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr,320px] gap-12 lg:gap-20">
+          <div className="flex flex-col gap-8">
+            {/* みらい議会とは セクション */}
+            <About />
 
-        {/* チームみらいについて セクション */}
-        <TeamMirai />
+            {/* チームみらいについて セクション */}
+            <TeamMirai />
 
-        {/* 免責事項 */}
-        <BillDisclaimer />
+            {/* 免責事項 */}
+            <BillDisclaimer />
+          </div>
+
+          <div className="hidden md:block">
+            {/* デスクトップ用チャットエリア（空のプレースホルダ。HomeChatClientが絶対配置や固定配置でない場合に有効） */}
+          </div>
+        </div>
       </Container>
 
-      {/* チャット機能 */}
+      {/* チャット機能（実際には固定配置やフロートなどの可能性があるため、場所は変えずコンテキストのみ統合） */}
       <HomeChatClient
         currentDifficulty={currentDifficulty}
         bills={billsByTag

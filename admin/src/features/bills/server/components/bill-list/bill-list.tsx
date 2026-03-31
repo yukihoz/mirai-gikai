@@ -28,10 +28,10 @@ import { getBills } from "../../loaders/get-bills";
 
 function StatusBadge({
   status,
-  originatingHouse,
+  meetingBody,
 }: {
   status: BillStatus;
-  originatingHouse: BillWithDietSession["originating_house"];
+  meetingBody: BillWithDietSession["meeting_body"];
 }) {
   const config = BILL_STATUS_CONFIG[status];
   const Icon = config.icon;
@@ -39,7 +39,7 @@ function StatusBadge({
   return (
     <div className="inline-flex items-center gap-1.5 py-1 rounded-full text-sm font-bold">
       <Icon className="h-4 w-4" />
-      <span>{getBillStatusLabel(status, originatingHouse)}</span>
+      <span>{getBillStatusLabel(status, meetingBody)}</span>
     </div>
   );
 }
@@ -132,7 +132,7 @@ function BillRow({ bill }: { bill: BillWithDietSession }) {
       <TableCell>
         <StatusBadge
           status={bill.status}
-          originatingHouse={bill.originating_house}
+          meetingBody={bill.meeting_body}
         />
       </TableCell>
       <TableCell className="text-gray-600">

@@ -4,6 +4,7 @@ import { ArrowRight, Lock } from "lucide-react";
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { env } from "@/lib/env";
 import {
   Dialog,
   DialogContent,
@@ -55,7 +56,7 @@ export function MakePrivateModal({
             非公開にした場合、あなたのご意見が世の中に公開されることはありません
           </CheckListItem>
           <CheckListItem>
-            チームみらい党内での政策検討に最大限活用させていただきます。
+            {env.teamName}内での政策検討に最大限活用させていただきます。
           </CheckListItem>
         </div>
 

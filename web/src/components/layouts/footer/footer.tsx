@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
+import { env } from "@/lib/env";
 import { policyLinks, primaryLinks } from "./footer.config";
 
 export function Footer() {
@@ -30,13 +31,11 @@ export function Footer() {
 function FooterLogoSection() {
   return (
     <div className="flex flex-col items-center text-center mb-9">
-      <Link href={routes.home()} aria-label="みらい議会 トップページ">
-        <Image
-          src="/img/logo.svg"
-          alt="みらい議会"
-          width={150}
-          height={128}
-          className="h-auto"
+      <Link href={routes.home()} aria-label={`${env.siteTitle} トップページ`}>
+        <img
+          src="/img/logo.png"
+          alt={env.siteTitle}
+          className="h-16 w-auto opacity-70 transition-opacity hover:opacity-100"
         />
       </Link>
     </div>
@@ -94,7 +93,7 @@ function FooterPolicies() {
 function FooterCopyright() {
   return (
     <div className="text-center text-sm font-medium text-slate-800">
-      © 2025 Team Mirai All rights Reserved
+      © 2025 ほづみゆうき All rights Reserved
     </div>
   );
 }
