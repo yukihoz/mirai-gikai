@@ -18,22 +18,21 @@ const lexendGiga = Lexend_Giga({
 });
 
 const isDev = process.env.NODE_ENV === "development";
-const siteTitle = "みらい議会｜チームみらい";
-const siteDescription =
-  "国会で今どんな法案が検討されているか、わかりやすく伝えるプラットフォーム";
-const siteName = "みらい議会";
+const siteTitle = env.siteTitle;
+const siteDescription = `${env.assemblyName}で今どのような議論が行われているか、わかりやすく伝えるプラットフォーム`;
+const siteName = env.siteTitle;
 const ogImage = {
   url: "/ogp.jpg",
   width: 1200,
   height: 630,
-  alt: "みらい議会のOGPイメージ",
+  alt: `${env.siteShortName}のOGPイメージ`,
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.webUrl),
   title: siteTitle,
   description: siteDescription,
-  keywords: [siteName, "議案", "政治", "日本", "政策", "解説", "チームみらい"],
+  keywords: [siteName, "議案", "政治", "日本", "政策", "解説", "ほづみゆうき"],
   icons: {
     icon: isDev
       ? "/icons/pwa/icon_dev_192_v3.png"

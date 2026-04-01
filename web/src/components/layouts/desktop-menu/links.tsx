@@ -27,8 +27,8 @@ const links: FooterLinkItem[] = [
   },
   {
     label: "よくあるご質問",
-    href: EXTERNAL_LINKS.FAQ,
-    external: true,
+    href: routes.faq(),
+    external: false,
   },
 ];
 
@@ -58,7 +58,7 @@ export function DesktopMenuLinks() {
           lineHeight: "1.48em",
         }}
       >
-        © 2025 Team Mirai
+        © 2025 ほづみゆうき
       </p>
     </div>
   );

@@ -22,6 +22,7 @@ import {
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { useIsDesktop } from "@/hooks/use-is-desktop";
 import { useViewportHeight } from "@/hooks/use-viewport-height";
+import { env } from "@/lib/env";
 import { SystemMessage } from "./system-message";
 import { UserMessage } from "./user-message";
 
@@ -85,7 +86,7 @@ function ChatMessages({
         {/* 初期メッセージ */}
         <div className="flex flex-col gap-1">
           <p className="text-sm font-bold leading-[1.8] text-mirai-text">
-            国会や法案について、気になることをAIに質問してください。
+            {env.assemblyName}や法案について、気になることをAIに質問してください。
           </p>
           {billContext && (
             <p className="text-sm font-bold leading-[1.8] text-mirai-text">
@@ -99,8 +100,8 @@ function ChatMessages({
           {(billContext
             ? [`この法案のポイントは？`, "この法案は私にどんな影響がある？"]
             : [
-                "みらい議会って何？",
-                "国会って何をするところ？",
+                `${env.siteShortName}って何？`,
+                `${env.assemblyName}って何をするところ？`,
                 "注目の法案について教えて",
               ]
           ).map((question) => {
@@ -109,7 +110,7 @@ function ChatMessages({
                 key={question}
                 type="button"
                 disabled={isResponding}
-                className="px-3 py-1 text-xs leading-[2] text-primary-accent border border-primary rounded-2xl hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1 text-xs font-semibold leading-[2] text-gray-800 bg-primary/10 border border-primary rounded-2xl hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => {
                   sendMessage({
                     text: question,

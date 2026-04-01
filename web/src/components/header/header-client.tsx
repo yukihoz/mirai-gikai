@@ -8,6 +8,8 @@ import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/type
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
 import { isInterviewPage, isMainPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
+import { env } from "@/lib/env";
+import { RubyToggle } from "@/lib/rubyful";
 import { HamburgerMenu } from "./hamburger-menu";
 
 interface HeaderClientProps {
@@ -26,22 +28,17 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
           {/* Logo / Site Title */}
           <div className="flex items-center">
             <Link
-              href={routes.home()}
+              href="/"
               className="flex items-center space-x-2"
               aria-label="ホーム"
             >
-              <Image
-                src="/img/logo.svg"
-                alt="みらい議会"
-                width={42}
-                height={36}
+              <img
+                src="/img/logo.png"
+                alt={env.siteTitle}
+                className="h-12 w-auto md:h-14"
               />
-              <Image
-                src="/img/service-logo.svg"
-                alt="みらい議会"
-                width={115}
-                height={21}
-              />
+              <div className="text-xl font-bold whitespace-nowrap">{env.siteTitle}</div>
+
             </Link>
           </div>
 
@@ -54,7 +51,12 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
               <DifficultySelector currentLevel={difficultyLevel} />
             )}
             {showInterviewActions && <InterviewHeaderActions />}
-            <HamburgerMenu />
+            <div className="hidden pc:block ml-2">
+              <RubyToggle />
+            </div>
+            <div className="pc:hidden">
+              <HamburgerMenu />
+            </div>
           </nav>
         </div>
       </div>

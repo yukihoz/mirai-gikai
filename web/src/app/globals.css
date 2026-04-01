@@ -1,5 +1,7 @@
+@import url("https://unpkg.com/line-seed-jp@1.0.0/dist/line-seed-jp.css");
 @import "tailwindcss";
 @import "tw-animate-css";
+
 
 /* チャットUIのマークダウン表示用 */
 @source "../../node_modules/streamdown/dist/index.js";
@@ -18,6 +20,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-noto-sans-jp);
   --font-lexend: var(--font-lexend-giga);
+  --font-line-seed: "LINE Seed JP", system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -105,8 +108,8 @@
   --color-mirai-progress-fill: #a9e89d;
 
   /* Gradient endpoints */
-  --color-mirai-gradient-start: #64d8c6;
-  --color-mirai-gradient-end: #bcecd3;
+  --color-mirai-gradient-start: #f6db5e;
+  --color-mirai-gradient-end: #ffec93;
 }
 
 :root {
@@ -117,9 +120,9 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #2aa693;
-  --primary-accent: #0f8472;
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: #f6db5e;
+  --primary-accent: #dcae3a;
+  --primary-foreground: oklch(0.145 0 0); /* Text should be dark on yellow */
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -153,8 +156,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: #f6db5e;
+  --primary-foreground: oklch(0.145 0 0); /* Text dark on yellow */
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -240,7 +243,7 @@
   }
 
   .bg-mirai-light-gradient {
-    background-image: linear-gradient(to bottom, #e2f6f3, #eef6e2);
+    background-image: linear-gradient(to bottom, #fffde7, #fffbe0);
   }
 
   .bg-mirai-white-fade {

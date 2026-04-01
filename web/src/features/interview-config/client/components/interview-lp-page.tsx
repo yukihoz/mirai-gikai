@@ -14,6 +14,7 @@ import type { UserReportsResult } from "@/features/interview-report/server/loade
 import { InterviewStatusBadge } from "@/features/interview-session/client/components/interview-status-badge";
 import { NewInterviewButton } from "@/features/interview-session/client/components/new-interview-button";
 import type { LatestInterviewSession } from "@/features/interview-session/server/loaders/get-latest-interview-session";
+import { env } from "@/lib/env";
 import type { InterviewConfig } from "../../server/loaders/get-interview-config";
 import { InterviewActionButtons } from "./interview-action-buttons";
 
@@ -38,12 +39,12 @@ const FEATURES: {
   {
     iconSrc: "/icons/interview-messages.svg",
     iconSize: { w: 33, h: 26 },
-    text: "寄せられた回答はチームみらいの政策検討に活用します",
+    text: `寄せられた回答は${env.teamName}の政策検討に活用します`,
   },
   {
     iconSrc: "/icons/interview-landmark.svg",
     iconSize: { w: 30, h: 29 },
-    text: "ご意見はチームみらいを通じて国会に届けられる可能性があります",
+    text: `ご意見は${env.teamName}を通じて${env.assemblyName}に届けられる可能性があります`,
   },
 ];
 
@@ -149,7 +150,7 @@ function _InterviewOverviewSection({
       </h2>
       <div className="space-y-4 text-[15px] font-normal text-black leading-[1.87]">
         <p>
-          国会で検討されている
+          {env.assemblyName}で検討されている
           <Link
             href={billLink as Route}
             className="text-primary underline underline-offset-2 hover:opacity-70 transition-opacity"
@@ -159,7 +160,7 @@ function _InterviewOverviewSection({
           について、AIがあなたの考えを深堀りするチャット型インタビューです
         </p>
         <p>
-          いただいたご意見は、政策研究や国会での審議に活用し、みらい議会上に公開される可能性があります。
+          いただいたご意見は、政策研究や{env.assemblyName}での審議に活用し、{env.siteShortName}上に公開される可能性があります。
         </p>
       </div>
       <div>

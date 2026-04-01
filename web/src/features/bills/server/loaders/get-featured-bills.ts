@@ -1,7 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { getActiveDietSession } from "@/features/diet-sessions/server/loaders/get-active-diet-session";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillWithContent } from "../../shared/types";
 import {
@@ -12,15 +11,15 @@ import {
 
 /**
  * 注目の議案を取得する
- * is_featured = true でアクティブな国会会期の公開済み議案を最新順に取得
- * アクティブな国会会期がない場合は全件取得
+ * is_featured = true でアクティブな区議会会期の公開済み議案を最新順に取得
+ * アクティブな区議会会期がない場合は全件取得
  */
 export async function getFeaturedBills(): Promise<BillWithContent[]> {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  const activeSession = await getActiveDietSession();
 
-  return _getCachedFeaturedBills(difficultyLevel, activeSession?.id ?? null);
+  // 会期に関わらずすべてのFeatured議案を表示するため、dietSessionIdにnullを渡す
+  return _getCachedFeaturedBills(difficultyLevel, null);
 }
 
 const _getCachedFeaturedBills = unstable_cache(

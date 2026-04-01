@@ -9,6 +9,7 @@
 export const routes = {
   // ── 静的ルート ──────────────────────────────────────
   home: () => "/" as const,
+  faq: () => "/faq" as const,
   terms: () => "/terms" as const,
   privacy: () => "/privacy" as const,
 
@@ -37,6 +38,7 @@ export const routes = {
   reportComplete: (reportId: string) => `/report/${reportId}/complete` as const,
   reportChatLog: (reportId: string) => `/report/${reportId}/chat-log` as const,
 
-  // ── 国会セッション ────────────────────────────────
+  // ── 区議会セッション ────────────────────────────────
+  sessions: () => "/sessions" as const,
   kokkaiSessionBills: (slug: string) => `/kokkai/${slug}/bills` as const,
 } as const;

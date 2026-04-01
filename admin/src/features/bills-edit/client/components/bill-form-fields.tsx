@@ -21,8 +21,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   type BillStatus,
-  HOUSE_LABELS,
-  type OriginatingHouse,
+  type MeetingBody,
 } from "@/features/bills/shared/types";
 import type { DietSession } from "@/features/diet-sessions/shared/types";
 import type { BillCreateInput } from "../../shared/types";
@@ -30,19 +29,28 @@ import { ThumbnailUpload } from "./thumbnail-upload";
 
 const BILL_STATUS_OPTIONS: Array<{ value: BillStatus; label: string }> = [
   { value: "preparing", label: "準備中" },
-  { value: "introduced", label: "提出済み" },
-  { value: "in_originating_house", label: "審議中（提出院）" },
-  { value: "in_receiving_house", label: "審議中（送付院）" },
-  { value: "enacted", label: "成立" },
-  { value: "rejected", label: "否決" },
+  { value: "introduced", label: "議案提出済み" },
+  { value: "in_originating_house", label: "付託" },
+  { value: "in_receiving_house", label: "付託（継続審査等）" },
+  { value: "enacted", label: "議案可決" },
+  { value: "rejected", label: "議案否決" },
+  { value: "reported", label: "報告事項" },
 ];
 
-const ORIGINATING_HOUSE_OPTIONS = Object.entries(HOUSE_LABELS).map(
-  ([value, label]) => ({
-    value: value as OriginatingHouse,
-    label,
-  })
-);
+const MEETING_BODY_OPTIONS: Array<{ value: MeetingBody; label: string }> = [
+  { value: "定例会", label: "定例会" },
+  { value: "臨時会", label: "臨時会" },
+  { value: "企画総務委員会", label: "企画総務委員会" },
+  { value: "区民文教委員会", label: "区民文教委員会" },
+  { value: "福祉保健委員会", label: "福祉保健委員会" },
+  { value: "環境建設委員会", label: "環境建設委員会" },
+  { value: "築地等都市基盤対策特別委員会", label: "築地等都市基盤対策特別委員会" },
+  { value: "地域活性化対策特別委員会", label: "地域活性化対策特別委員会" },
+  { value: "子ども子育て・高齢者対策特別委員会", label: "子ども子育て・高齢者対策特別委員会" },
+  { value: "防災等安全対策特別委員会", label: "防災等安全対策特別委員会" },
+  { value: "予算特別委員会", label: "予算特別委員会" },
+  { value: "決算特別委員会", label: "決算特別委員会" },
+];
 
 interface BillFormFieldsProps {
   control: Control<BillCreateInput>;
@@ -105,18 +113,18 @@ export function BillFormFields({
 
         <FormField
           control={control}
-          name="originating_house"
+          name="meeting_body"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>提出院 *</FormLabel>
+              <FormLabel>会議体 *</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="提出院を選択" />
+                    <SelectValue placeholder="会議体を選択" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {ORIGINATING_HOUSE_OPTIONS.map((option) => (
+                  {MEETING_BODY_OPTIONS.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
@@ -124,7 +132,7 @@ export function BillFormFields({
                 </SelectContent>
               </Select>
               <FormDescription>
-                議案を提出した議院を選択してください
+                議案を提出した会議体を選択してください
               </FormDescription>
               <FormMessage />
             </FormItem>

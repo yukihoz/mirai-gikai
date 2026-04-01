@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { ManualRuby } from "@/lib/rubyful/manual-ruby";
 import { SOCIAL_LINKS } from "@/lib/social-links";
+import { EXTERNAL_LINKS } from "@/config/external-links";
+import { env } from "@/lib/env";
 import { LinkButton } from "./link-button";
 
 const TEAM_MIRAI_SNS_ORDER = [
@@ -14,44 +15,33 @@ const TEAM_MIRAI_SNS_ORDER = [
 
 export function TeamMirai() {
   return (
-    <div className="py-10">
+    <div>
       <div className="flex flex-col gap-6">
-        {/* ヘッダー */}
-        <div className="flex flex-col gap-4">
-          <h2>
-            <Image
-              src="/icons/team-mirai-typography.svg"
-              alt="Team Mirai"
-              width={263}
-              height={39}
-              priority
-            />
-          </h2>
-          <p className="text-sm font-bold text-primary-accent">
-            チームみらいについて
-          </p>
-        </div>
-
-        {/* コンテンツ */}
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-3">
-            <p className="text-[15px] leading-[28px] text-black">
-              参議院議員・AIエンジニアの
-              <ManualRuby ruby="あんの">安野</ManualRuby>
-              たかひろが立ち上げた政党です。テクノロジーで政治の課題を解決することを目指しています。
-            </p>
-          </div>
+          {/* ボタングループ - デスクトップでは3カラムのグリッドで等間隔に配置 */}
+          <div className="flex flex-col md:flex-row flex-wrap items-center gap-1.5 w-full">
+            <LinkButton
+              href={EXTERNAL_LINKS.ABOUT_NOTE}
+              icon={{
+                src: "/icons/note-icon.png",
+                alt: "note",
+                width: 20,
+                height: 20,
+              }}
+              className="w-full md:w-auto"
+            >
+              {env.siteShortName}とは
+            </LinkButton>
 
-          {/* ボタングループ */}
-          <div className="flex flex-col gap-4">
             <LinkButton
               href="https://team-mir.ai/"
               icon={{
                 src: "/icons/info-icon.svg",
                 alt: "",
-                width: 23,
-                height: 22,
+                width: 18,
+                height: 18,
               }}
+              className="w-full md:w-auto"
             >
               チームみらいについて詳しく
             </LinkButton>
@@ -62,8 +52,9 @@ export function TeamMirai() {
                 src: "/icons/heart-icon.svg",
                 alt: "",
                 width: 18,
-                height: 17,
+                height: 18,
               }}
+              className="w-full md:w-auto"
             >
               寄附で応援する
             </LinkButton>

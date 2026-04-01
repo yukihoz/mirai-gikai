@@ -13,6 +13,7 @@ interface LinkButtonProps {
   children: ReactNode;
   target?: string;
   rel?: string;
+  className?: string;
 }
 
 export function LinkButton({
@@ -21,12 +22,13 @@ export function LinkButton({
   children,
   target = "_blank",
   rel = "noopener noreferrer",
+  className,
 }: LinkButtonProps) {
   return (
     <Button
       asChild
       variant="outline"
-      className="w-fit rounded-full px-6 py-3 h-auto"
+      className={`rounded-full px-5 h-11 flex items-center justify-center gap-1.5 ${className ?? "w-fit"}`}
     >
       <a href={href} target={target} rel={rel}>
         <Image
@@ -36,12 +38,12 @@ export function LinkButton({
           height={icon.height}
           className="flex-shrink-0"
         />
-        <span className="text-[15px] font-bold">{children}</span>
+        <span className="text-xs font-bold whitespace-nowrap mt-0.5">{children}</span>
         <Image
           src="/icons/arrow-right.svg"
           alt=""
-          width={16}
-          height={15}
+          width={14}
+          height={13}
           className="flex-shrink-0"
         />
       </a>

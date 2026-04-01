@@ -22,8 +22,22 @@ const billBaseSchema = z.object({
     "in_receiving_house",
     "enacted",
     "rejected",
+    "reported",
   ]),
-  originating_house: z.enum(["HR", "HC"]),
+  meeting_body: z.enum([
+    "定例会",
+    "臨時会",
+    "企画総務委員会",
+    "区民文教委員会",
+    "福祉保健委員会",
+    "環境建設委員会",
+    "築地等都市基盤対策特別委員会",
+    "地域活性化対策特別委員会",
+    "子ども子育て・高齢者対策特別委員会",
+    "防災等安全対策特別委員会",
+    "予算特別委員会",
+    "決算特別委員会",
+  ]),
   status_note: z
     .string()
     .max(500, "ステータス備考は500文字以内で入力してください")

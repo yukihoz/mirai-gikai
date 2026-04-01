@@ -12,6 +12,8 @@ import { BillTag } from "../../../client/components/bill-list/bill-tag";
 import { getBillShareData } from "../../../client/utils/share";
 import type { BillWithContent } from "../../../shared/types";
 
+import { DynamicBillThumbnail } from "../../../client/components/bill-list/dynamic-bill-thumbnail";
+
 interface BillDetailHeaderProps {
   bill: BillWithContent;
   hasInterviewConfig?: boolean;
@@ -31,7 +33,7 @@ export async function BillDetailHeader({
   return (
     <div className="mb-8 bg-white rounded-b-4xl">
       {bill.thumbnail_url ? (
-        <div className="relative w-full h-72 md:h-80">
+        <div className="relative w-full h-32 md:h-40 overflow-hidden">
           <Image
             src={bill.thumbnail_url}
             alt={bill.name}
@@ -42,7 +44,12 @@ export async function BillDetailHeader({
           />
         </div>
       ) : (
-        <div className="w-full h-20 bg-white-100" />
+        <DynamicBillThumbnail
+          title={displayTitle || bill.name}
+          seedString={bill.name}
+          meetingBody={bill.meeting_body}
+          size="header"
+        />
       )}
 
       <div className="px-4 pt-8 mb-3">

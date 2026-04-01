@@ -13,7 +13,7 @@ const baseBill: Bill = {
   updated_at: "2025-01-02T00:00:00Z",
   diet_session_id: "session-001",
   is_featured: true,
-  originating_house: "HR",
+  meeting_body: "定例会",
   publish_status: "published",
   published_at: null,
   share_thumbnail_url: null,
@@ -47,7 +47,7 @@ describe("prepareBillForDuplication", () => {
     const result = prepareBillForDuplication(baseBill);
     expect(result.diet_session_id).toBe("session-001");
     expect(result.is_featured).toBe(true);
-    expect(result.originating_house).toBe("HR");
+    expect(result.meeting_body).toBe("定例会");
   });
 });
 

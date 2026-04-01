@@ -1,4 +1,4 @@
-import type { BillStatusEnum, HouseEnum } from "../types";
+import type { BillStatusEnum, MeetingBody } from "../types";
 
 // ステップ番号マッピング
 const STATUS_TO_STEP: Record<BillStatusEnum, number> = {
@@ -8,6 +8,7 @@ const STATUS_TO_STEP: Record<BillStatusEnum, number> = {
   in_receiving_house: 3,
   enacted: 4,
   rejected: 4,
+  reported: 4,
 } as const;
 
 // プログレス比率
@@ -40,13 +41,10 @@ export function getStepState(
  * 発議院に応じてステップ順序を調整する
  */
 export function getOrderedSteps(
-  originatingHouse: HouseEnum,
+  meetingBody: MeetingBody,
   baseSteps: readonly { readonly label: string }[]
 ): { label: string }[] {
   const steps = baseSteps.map((s) => ({ label: s.label }));
-  if (originatingHouse === "HC") {
-    [steps[1], steps[2]] = [steps[2], steps[1]];
-  }
   return steps;
 }
 

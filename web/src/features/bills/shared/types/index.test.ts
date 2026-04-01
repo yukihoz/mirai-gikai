@@ -20,45 +20,39 @@ describe("getBillStatusLabel", () => {
   });
 
   describe("in_originating_house", () => {
-    it("returns '衆議院審議中' when originatingHouse is HR", () => {
-      expect(getBillStatusLabel("in_originating_house", "HR")).toBe(
-        "衆議院審議中"
+    it("returns '定例会審議中' when meetingBody is 定例会", () => {
+      expect(getBillStatusLabel("in_originating_house", "定例会")).toBe(
+        "定例会審議中"
       );
     });
 
-    it("returns '参議院審議中' when originatingHouse is HC", () => {
-      expect(getBillStatusLabel("in_originating_house", "HC")).toBe(
-        "参議院審議中"
+    it("returns '臨時会審議中' when meetingBody is 臨時会", () => {
+      expect(getBillStatusLabel("in_originating_house", "臨時会")).toBe(
+        "臨時会審議中"
       );
     });
 
-    it("returns '審議中' when originatingHouse is undefined", () => {
+    it("returns '審議中' when meetingBody is undefined", () => {
       expect(getBillStatusLabel("in_originating_house")).toBe("審議中");
     });
 
-    it("returns '審議中' when originatingHouse is null", () => {
+    it("returns '審議中' when meetingBody is null", () => {
       expect(getBillStatusLabel("in_originating_house", null)).toBe("審議中");
     });
   });
 
   describe("in_receiving_house", () => {
-    it("returns '参議院審議中' when originatingHouse is HR", () => {
-      expect(getBillStatusLabel("in_receiving_house", "HR")).toBe(
-        "参議院審議中"
+    it("returns '審議中' regardless of meetingBody", () => {
+      expect(getBillStatusLabel("in_receiving_house", "定例会")).toBe(
+        "審議中"
       );
     });
 
-    it("returns '衆議院審議中' when originatingHouse is HC", () => {
-      expect(getBillStatusLabel("in_receiving_house", "HC")).toBe(
-        "衆議院審議中"
-      );
-    });
-
-    it("returns '審議中' when originatingHouse is undefined", () => {
+    it("returns '審議中' when meetingBody is undefined", () => {
       expect(getBillStatusLabel("in_receiving_house")).toBe("審議中");
     });
 
-    it("returns '審議中' when originatingHouse is null", () => {
+    it("returns '審議中' when meetingBody is null", () => {
       expect(getBillStatusLabel("in_receiving_house", null)).toBe("審議中");
     });
   });

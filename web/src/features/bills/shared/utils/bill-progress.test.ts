@@ -58,25 +58,25 @@ describe("getStepState", () => {
 });
 
 describe("getOrderedSteps", () => {
-  test("HR(衆議院)の場合はステップ順序がそのまま", () => {
-    const result = getOrderedSteps("HR", BASE_STEPS);
+  test("定例会の場合はステップ順序がそのまま", () => {
+    const result = getOrderedSteps("定例会", BASE_STEPS);
     expect(result[0].label).toBe("法案\n提出");
     expect(result[1].label).toBe("衆議院\n審議");
     expect(result[2].label).toBe("参議院\n審議");
     expect(result[3].label).toBe("法案\n成立");
   });
 
-  test("HC(参議院)の場合はステップ2と3が入れ替わる", () => {
-    const result = getOrderedSteps("HC", BASE_STEPS);
+  test("臨時会の場合もステップ順序がそのまま", () => {
+    const result = getOrderedSteps("臨時会", BASE_STEPS);
     expect(result[0].label).toBe("法案\n提出");
-    expect(result[1].label).toBe("参議院\n審議");
-    expect(result[2].label).toBe("衆議院\n審議");
+    expect(result[1].label).toBe("衆議院\n審議");
+    expect(result[2].label).toBe("参議院\n審議");
     expect(result[3].label).toBe("法案\n成立");
   });
 
   test("元の配列を変更しない", () => {
     const original = [...BASE_STEPS.map((s) => ({ ...s }))];
-    getOrderedSteps("HC", BASE_STEPS);
+    getOrderedSteps("臨時会", BASE_STEPS);
     expect(BASE_STEPS[1].label).toBe(original[1].label);
     expect(BASE_STEPS[2].label).toBe(original[2].label);
   });

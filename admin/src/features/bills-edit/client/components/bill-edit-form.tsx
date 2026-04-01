@@ -35,7 +35,7 @@ export function BillEditForm({ bill, dietSessions }: BillEditFormProps) {
     defaultValues: {
       name: bill.name,
       status: bill.status,
-      originating_house: bill.originating_house,
+      meeting_body: bill.meeting_body,
       status_note: bill.status_note,
       published_at: bill.published_at
         ? new Date(bill.published_at).toISOString().slice(0, 16)

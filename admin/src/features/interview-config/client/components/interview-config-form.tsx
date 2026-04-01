@@ -376,7 +376,7 @@ export function InterviewConfigForm({
                     <FormLabel>質問テーマ</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="質問テーマを改行区切りで入力"
+                        placeholder={"賛否とその理由\n日常生活への具体的な影響\n懸念点やリスクの指摘\n期待する改善案\n自身（回答者）のバックグラウンド"}
                         className="min-h-[100px] resize-y"
                         value={arrayToText(field.value)}
                         onChange={(e) => {
@@ -400,7 +400,7 @@ export function InterviewConfigForm({
                     <FormLabel>ナレッジソース</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="議案の詳細情報やチームみらいの仮説などの情報を入力"
+                        placeholder={"【現状の課題】\n中央区内では〇〇地区の再開発により、子育て世帯が急増しており、待機児童は解消されたものの、小学校の教室不足が深刻化している。\n\n【今回の議案の狙い】\n本議案では、空きビルを期間限定で分校として活用する特例措置を認めるもの。\n\n【AIへの指示（仮説）】\nチームみらいとしては、「通学路の安全性」と「運動場の確保」が不十分ではないかという仮説を持っている。"}
                         className="min-h-[200px] resize-y"
                         {...field}
                       />

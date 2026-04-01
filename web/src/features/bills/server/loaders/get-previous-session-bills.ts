@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { getPreviousDietSession } from "@/features/diet-sessions/server/loaders/get-previous-diet-session";
+import { getLatestDietSession } from "@/features/diet-sessions/server/loaders/get-latest-diet-session";
 import type { DietSession } from "@/features/diet-sessions/shared/types";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillWithContent } from "../../shared/types";
@@ -21,11 +21,11 @@ export type PreviousSessionBillsResult = {
 } | null;
 
 /**
- * 前回の国会会期とその議案を取得（プレビュー用、最大5件）
- * 前回の会期がない場合はnullを返す
+ * 最新の区議会会期とその議案を取得（プレビュー用、最大5件）
+ * 会期がない場合はnullを返す
  */
 export async function getPreviousSessionBills(): Promise<PreviousSessionBillsResult> {
-  const previousSession = await getPreviousDietSession();
+  const previousSession = await getLatestDietSession();
   if (!previousSession) {
     return null;
   }
@@ -79,7 +79,7 @@ const _getCachedPreviousSessionBills = unstable_cache(
 
     return billsWithContent;
   },
-  ["previous-session-bills"],
+  ["previous-session-bills-v2"], // v2 を付けて刷新
   {
     revalidate: 600, // 10分
     tags: [CACHE_TAGS.BILLS, CACHE_TAGS.INTERVIEW_CONFIGS],
@@ -93,7 +93,7 @@ const _getCachedPreviousSessionBillCount = unstable_cache(
   ): Promise<number> => {
     return countPublishedBillsByDietSession(dietSessionId, difficultyLevel);
   },
-  ["previous-session-bill-count"],
+  ["previous-session-bill-count-v2"], // v2 を付けて刷新
   {
     revalidate: 600,
     tags: [CACHE_TAGS.BILLS],

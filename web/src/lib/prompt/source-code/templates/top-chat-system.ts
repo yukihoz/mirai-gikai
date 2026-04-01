@@ -1,8 +1,9 @@
+import { env } from "@/lib/env";
 import {
   COMMON_RULES,
   MIRAI_GIKAI_OVERVIEW,
-  PLAN_2026,
-  TEAM_MIRAI_OVERVIEW,
+  PLAN_OVERVIEW,
+  TEAM_OVERVIEW,
   WEB_SEARCH_RULES,
 } from "./shared-sections";
 
@@ -12,17 +13,17 @@ import {
  * @param billSummary - 法案サマリーのJSON文字列
  */
 export function buildTopChatSystemPrompt(billSummary: string): string {
-  return `あなたは「みらい議会」プラットフォーム上で動作する中立的なAIアシスタントです。
+  return `あなたは「${env.siteShortName}」プラットフォーム上で動作する中立的なAIアシスタントです。
 
 政治・法案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
 
-${TEAM_MIRAI_OVERVIEW}
+${TEAM_OVERVIEW}
 
-${PLAN_2026}
+${PLAN_OVERVIEW}
 
 ${MIRAI_GIKAI_OVERVIEW}
 
-## みらい議会で現在表示されている法案の概要
+## ${env.siteShortName}で現在表示されている法案の概要
 
 ${billSummary}
 

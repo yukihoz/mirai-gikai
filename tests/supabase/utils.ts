@@ -114,14 +114,27 @@ export async function cleanupTestDietSession(sessionId: string): Promise<void> {
 export async function createTestBill(
   overrides: Partial<{
     name: string;
-    originating_house: "HR" | "HC";
+    meeting_body:
+      | "定例会"
+      | "臨時会"
+      | "企画総務委員会"
+      | "区民文教委員会"
+      | "福祉保健委員会"
+      | "環境建設委員会"
+      | "築地等都市基盤対策特別委員会"
+      | "地域活性化対策特別委員会"
+      | "子ども子育て・高齢者対策特別委員会"
+      | "防災等安全対策特別委員会"
+      | "予算特別委員会"
+      | "決算特別委員会";
     status:
       | "introduced"
       | "in_originating_house"
       | "in_receiving_house"
       | "enacted"
       | "rejected"
-      | "preparing";
+      | "preparing"
+      | "reported";
     publish_status: "draft" | "published" | "coming_soon";
     diet_session_id: string;
     is_featured: boolean;
@@ -131,7 +144,7 @@ export async function createTestBill(
 ) {
   const defaults = {
     name: `テスト議案 ${Date.now()}`,
-    originating_house: "HR" as const,
+    meeting_body: "定例会" as const,
     status: "introduced" as const,
     publish_status: "draft" as const,
     ...overrides,

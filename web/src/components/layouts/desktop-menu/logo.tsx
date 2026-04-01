@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
+import { env } from "@/lib/env";
 
 /**
  * デスクトップメニュー: ロゴ (画面左上)
@@ -12,13 +13,11 @@ export function DesktopMenuLogo() {
       className="fixed top-6 left-6 z-50 flex items-center gap-6 hover:opacity-90 transition-opacity"
     >
       {/* ロゴ */}
-      <div className="relative w-[116px] h-[98.38px]">
-        <Image
-          src="/img/logo.svg"
-          alt="みらい議会ロゴ"
-          fill
-          className="object-contain"
-          priority
+      <div className="relative w-[160px] h-auto">
+        <img
+          src="/img/logo.png"
+          alt={env.siteTitle}
+          className="w-full h-auto drop-shadow-sm"
         />
       </div>
 
@@ -32,7 +31,7 @@ export function DesktopMenuLogo() {
             letterSpacing: "0.1em",
           }}
         >
-          みらい議会
+          {env.siteShortName}
         </h1>
         <p
           className="font-bold text-black"
@@ -41,7 +40,7 @@ export function DesktopMenuLogo() {
             lineHeight: "2em",
           }}
         >
-          国会の議論をわかりやすく
+          {env.assemblyName}の議論をわかりやすく
         </p>
       </div>
     </Link>

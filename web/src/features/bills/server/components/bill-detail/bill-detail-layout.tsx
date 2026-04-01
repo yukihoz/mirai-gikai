@@ -47,14 +47,16 @@ export async function BillDetailLayout({
           opinionCount={publicReportsResult.totalCount}
         />
         <Container>
-          {/* 議案ステータス進捗 */}
-          <div className="my-8">
-            <BillStatusProgress
-              status={bill.status}
-              originatingHouse={bill.originating_house}
-              statusNote={bill.status_note}
-            />
-          </div>
+          {/* 議案ステータス進捗（報告事項の場合は非表示） */}
+          {bill.status !== "reported" && (
+            <div className="my-8">
+              <BillStatusProgress
+                status={bill.status}
+                meetingBody={bill.meeting_body}
+                statusNote={bill.status_note}
+              />
+            </div>
+          )}
 
           <BillContent bill={bill} />
         </Container>

@@ -60,6 +60,10 @@ export const env = {
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
   supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   revalidateSecret: process.env.REVALIDATE_SECRET,
+  siteTitle: process.env.NEXT_PUBLIC_SITE_TITLE || "みらい議会@中央区（仮）",
+  siteShortName: process.env.NEXT_PUBLIC_SITE_SHORT_NAME || "みらい議会@中央区（仮）",
+  assemblyName: process.env.NEXT_PUBLIC_ASSEMBLY_NAME || "区議会",
+  teamName: process.env.NEXT_PUBLIC_TEAM_NAME || "ほづみゆうき",
   analytics: {
     gaTrackingId: process.env.NEXT_PUBLIC_GA_TRACKING_ID,
   },
