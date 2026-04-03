@@ -14,10 +14,13 @@ export function DesktopMenuLogo() {
     >
       {/* ロゴ */}
       <div className="relative w-[160px] h-auto">
-        <img
+        <Image
           src="/img/logo.png"
           alt={env.siteTitle}
+          width={160}
+          height={53}
           className="w-full h-auto drop-shadow-sm"
+          priority
         />
       </div>
 

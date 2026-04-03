@@ -6,7 +6,7 @@ export function Hero() {
   return (
     <div className="relative w-full h-[80vh] min-h-[400px] md:h-[70vh]">
       <Image
-        src="/img/cover2.png"
+        src="/img/cover2.webp"
         alt={env.assemblyName}
         fill
         priority
@@ -20,7 +20,9 @@ export function Hero() {
             いま{env.assemblyName}で議論されていること <br />
             やさしい言葉で説明します
           </p>
-          <p className="mt-2 font-lexend text-xs">powered by チームみらい & AI</p>
+          <p className="mt-2 font-lexend text-xs">
+            powered by チームみらい & AI
+          </p>
         </Container>
       </div>
 

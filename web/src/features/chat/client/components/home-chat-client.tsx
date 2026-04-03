@@ -1,7 +1,12 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { ChatButton } from "./chat-button";
+
+const ChatButton = dynamic(
+  () => import("./chat-button").then((m) => m.ChatButton),
+  { ssr: false }
+);
 
 interface HomeChatClientProps {
   currentDifficulty: DifficultyLevelEnum;

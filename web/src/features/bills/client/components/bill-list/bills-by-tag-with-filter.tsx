@@ -23,7 +23,9 @@ export function BillsByTagWithFilter({ billsByTag }: Props) {
   const allBills = billsByTag.flatMap((tagGroup) => tagGroup.bills);
   const meetingBodies = Array.from(
     new Set(allBills.map((b: BillWithContent) => b.meeting_body))
-  ).filter(Boolean).sort();
+  )
+    .filter(Boolean)
+    .sort();
 
   return (
     <div className="flex flex-col gap-8">
@@ -64,7 +66,9 @@ export function BillsByTagWithFilter({ billsByTag }: Props) {
           const filteredBills =
             activeMeetingBody === "all"
               ? bills
-              : bills.filter((b: BillWithContent) => b.meeting_body === activeMeetingBody);
+              : bills.filter(
+                  (b: BillWithContent) => b.meeting_body === activeMeetingBody
+                );
 
           if (filteredBills.length === 0) return null;
 
@@ -84,9 +88,12 @@ export function BillsByTagWithFilter({ billsByTag }: Props) {
 
               {/* 議案カード一覧 */}
               <div className="flex flex-col gap-4">
-                {filteredBills.map((bill: BillWithContent) => (
-                  <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-                    <BillCard bill={bill} />
+                {filteredBills.map((bill: BillWithContent, index: number) => (
+                  <Link
+                    key={bill.id}
+                    href={routes.billDetail(bill.id) as Route}
+                  >
+                    <BillCard bill={bill} priority={index === 0} />
                   </Link>
                 ))}
               </div>

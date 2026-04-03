@@ -355,6 +355,63 @@ export async function findPublishedBillsByTag(
 }
 
 /**
+ * 複数タグに紐づく公開済み議案を一括取得（bill_contents + タグ付き）
+ * N個のタグに対してN回クエリする代わりに1回のクエリで取得
+ */
+export async function findPublishedBillsByTags(
+  tagIds: string[],
+  difficultyLevel: DifficultyLevelEnum,
+  dietSessionId: string | null
+) {
+  if (tagIds.length === 0) return [];
+
+  const supabase = createAdminClient();
+  let query = supabase
+    .from("bills_tags")
+    .select(
+      `
+      bill_id,
+      tag_id,
+      bills!inner (
+        *,
+        bill_contents!inner (
+          id,
+          bill_id,
+          title,
+          summary,
+          content,
+          difficulty_level,
+          created_at,
+          updated_at
+        ),
+        bills_tags!inner (
+          tags (
+            id,
+            label
+          )
+        )
+      )
+    `
+    )
+    .in("tag_id", tagIds)
+    .eq("bills.publish_status", "published")
+    .eq("bills.bill_contents.difficulty_level", difficultyLevel);
+
+  if (dietSessionId) {
+    query = query.eq("bills.diet_session_id", dietSessionId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Failed to fetch bills for tags:", error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
  * 注目の議案を取得（is_featured = true）
  */
 export async function findFeaturedBillsWithContents(
