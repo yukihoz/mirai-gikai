@@ -22,16 +22,15 @@ export function ComingSoonSection({ bills }: ComingSoonSectionProps) {
       )}
 
       {/* 区議会議案情報へのリンク */}
-      <div className="text-right text-sm text-mirai-text-secondary">
+      <div className="mt-8 text-sm text-mirai-text-secondary">
         <Link
           href="https://www.kugikai.city.chuo.lg.jp/"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:opacity-80 inline-flex items-center gap-1"
+          className="hover:opacity-80 block md:inline-flex items-center gap-1 underline underline-offset-4 decoration-mirai-text-secondary/30 transition-all hover:decoration-mirai-text-secondary"
         >
-          {env.assemblyName}に提出されているすべての情報は、{" "}
-          <span className="underline">中央区議会Webサイトへ</span>
-          <ExternalLink className="h-3 w-3" />
+          <span>{env.assemblyName}に提出されているすべての情報は、中央区議会Webサイトへ</span>
+          <ExternalLink className="h-3 w-3 inline-block ml-0.5" />
         </Link>
       </div>
     </section>

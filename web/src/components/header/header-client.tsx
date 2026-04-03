@@ -48,14 +48,16 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
             aria-label="補助ナビゲーション"
           >
             {showDifficultySelector && (
-              <DifficultySelector currentLevel={difficultyLevel} />
+              <div className="hidden pc:block">
+                <DifficultySelector currentLevel={difficultyLevel} />
+              </div>
             )}
             {showInterviewActions && <InterviewHeaderActions />}
             <div className="hidden pc:block ml-2">
               <RubyToggle />
             </div>
             <div className="pc:hidden">
-              <HamburgerMenu />
+              <HamburgerMenu difficultyLevel={difficultyLevel} />
             </div>
           </nav>
         </div>

@@ -25,6 +25,10 @@ cd ../mirai-gikai-<branch-name> && pnpm install --frozen-lockfile
 ### 実装完了後は即PR作成
 実装完了後は「コミットしますか？」等の確認を挟まず、コミット → push → PR作成まで一気に進めること。ユーザーへの確認は不要。
 
+> **⚠️ このリポジトリについて**
+> `yukihoz/mirai-gikai` が本番サービスのリポジトリ（`origin`）。`team-mirai/mirai-gikai` はフォーク元（`upstream`）で参照のみ。
+> `git push` および `gh pr create` は必ず `origin`（`yukihoz/mirai-gikai`）に対してのみ行うこと。`upstream` へのpushやPR作成は絶対に行わない。`gh pr create` 実行前に `git remote -v` で送信先を確認すること。
+
 ### セルフレビュー必須
 実装完了後（コミット前）に、必ず `/review` スキルを実行してセルフレビューを受けること。`/review` はCodexレビュー・`test-guidelines-checker` によるテストガイドラインチェック・`code-quality-checker` によるコード品質チェックを同時に実行する。指摘があれば修正してからコミットする。
 レビューを通過したら、ユーザーに確認せずそのままPR作成まで一気に進めること（push → `gh pr create`）。

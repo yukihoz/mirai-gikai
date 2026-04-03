@@ -20,7 +20,7 @@ export function Hero() {
             いま{env.assemblyName}で議論されていること <br />
             やさしい言葉で説明します
           </p>
-          <p className="mt-2 font-lexend text-xs">powered by ほづみゆうき & AI</p>
+          <p className="mt-2 font-lexend text-xs">powered by チームみらい & AI</p>
         </Container>
       </div>
 

@@ -13,7 +13,7 @@ export function RubyToggle({ className }: RubyToggleProps) {
   return (
     <div className={`flex items-center justify-between space-x-4 ${className}`}>
       <div className="space-y-0.5">
-        <div className="text-sm font-medium">ふりがな表示</div>
+        <div className="text-sm font-medium">ふりがなを表示</div>
       </div>
       <Switch
         checked={rubyEnabled}

@@ -72,7 +72,7 @@ export function DifficultySelector({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm font-bold" style={labelStyle}>
+      <span className="text-sm" style={labelStyle}>
         {label != null ? (
           label
         ) : (
