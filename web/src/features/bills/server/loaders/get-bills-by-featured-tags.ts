@@ -5,7 +5,7 @@ import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillsByTag } from "../../shared/types";
 import {
   findFeaturedTags,
-  findPublishedBillsByTag,
+  findPublishedBillsByTags,
   findBillIdsWithPublicInterview,
 } from "../repositories/bill-repository";
 
@@ -33,15 +33,32 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
       return [];
     }
 
-    // 各タグの議案を並列で取得
-    const results = await Promise.all(
-      featuredTags.map(async (tag) => {
-        const data = await findPublishedBillsByTag(
-          tag.id,
-          difficultyLevel,
-          dietSessionId
-        );
+    // 全タグIDを収集し、1回のクエリで一括取得
+    const tagIds = featuredTags.map((tag) => tag.id);
+    const allData = await findPublishedBillsByTags(
+      tagIds,
+      difficultyLevel,
+      dietSessionId
+    );
 
+    if (!allData) {
+      return [];
+    }
+
+    // tag_idでグループ化
+    const billsByTagId = new Map<string, typeof allData>();
+    for (const row of allData) {
+      const tagId = row.tag_id;
+      if (!billsByTagId.has(tagId)) {
+        billsByTagId.set(tagId, []);
+      }
+      billsByTagId.get(tagId)!.push(row);
+    }
+
+    // タグごとにデータを整形（featuredTagsの順序を維持）
+    const results = featuredTags
+      .map((tag) => {
+        const data = billsByTagId.get(tag.id);
         if (!data || data.length === 0) {
           return null;
         }
@@ -86,19 +103,16 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
           bills,
         };
       })
-    );
-
-    // nullを除外
-    const filteredResults = results.filter(
-      (result): result is NonNullable<typeof result> => result !== null
-    );
+      .filter(
+        (result): result is NonNullable<typeof result> => result !== null
+      );
 
     // 全議案のIDを収集してインタビュー状態を一括取得
-    const allBillIds = filteredResults.flatMap((r) => r.bills.map((b) => b.id));
+    const allBillIds = results.flatMap((r) => r.bills.map((b) => b.id));
     const interviewBillIds = await findBillIdsWithPublicInterview(allBillIds);
 
     // インタビュー状態を付与
-    return filteredResults.map((result) => ({
+    return results.map((result) => ({
       ...result,
       bills: result.bills.map((bill) => ({
         ...bill,

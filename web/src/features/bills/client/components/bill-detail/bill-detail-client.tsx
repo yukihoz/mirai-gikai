@@ -1,14 +1,20 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
 import { useRef } from "react";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { TextSelectionWrapper } from "@/features/bills/client/components/text-selection-tooltip/text-selection-wrapper";
-import {
-  ChatButton,
-  type ChatButtonRef,
-} from "@/features/chat/client/components/chat-button";
+import type { ChatButtonRef } from "@/features/chat/client/components/chat-button";
 import type { BillWithContent } from "../../../shared/types";
+
+const ChatButton = dynamic(
+  () =>
+    import("@/features/chat/client/components/chat-button").then(
+      (m) => m.ChatButton
+    ),
+  { ssr: false }
+);
 
 interface BillDetailClientProps {
   bill: BillWithContent;

@@ -10,9 +10,10 @@ import { DynamicBillThumbnail } from "./dynamic-bill-thumbnail";
 
 interface BillCardProps {
   bill: BillWithContent;
+  priority?: boolean;
 }
 
-export function BillCard({ bill }: BillCardProps) {
+export function BillCard({ bill, priority = false }: BillCardProps) {
   const displayTitle = bill.bill_content?.title;
   const summary = bill.bill_content?.summary;
 
@@ -24,7 +25,9 @@ export function BillCard({ bill }: BillCardProps) {
     <Card className="border border-black hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
       <div className="flex flex-col">
         {/* バッジエリア（注目・カテゴリー） */}
-        <div className={`${bill.thumbnail_url != null ? "absolute" : "relative"} top-3 left-0 w-full px-3 flex justify-between items-start z-10 pointer-events-none`}>
+        <div
+          className={`${bill.thumbnail_url != null ? "absolute" : "relative"} top-3 left-0 w-full px-3 flex justify-between items-start z-10 pointer-events-none`}
+        >
           <div>
             {bill.is_featured && (
               <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-medium text-mirai-text bg-mirai-highlight rounded-[20px] shadow-sm pointer-events-auto">
@@ -32,7 +35,7 @@ export function BillCard({ bill }: BillCardProps) {
               </span>
             )}
           </div>
-          
+
           <div className="pointer-events-auto">
             <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-gray-700 bg-white/95 rounded-md border border-gray-200/50 shadow-sm backdrop-blur-sm">
               <CategoryIcon className="w-3.5 h-3.5" />
@@ -49,7 +52,9 @@ export function BillCard({ bill }: BillCardProps) {
               alt={bill.name}
               fill
               className="object-cover"
-              sizes="100vw"
+              sizes="(max-width: 768px) 100vw, 634px"
+              quality={85}
+              priority={priority}
             />
           </div>
         ) : (

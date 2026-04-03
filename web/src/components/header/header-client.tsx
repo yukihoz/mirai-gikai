@@ -32,13 +32,17 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
               className="flex items-center space-x-2"
               aria-label="ホーム"
             >
-              <img
+              <Image
                 src="/img/logo.png"
                 alt={env.siteTitle}
+                width={56}
+                height={56}
                 className="h-12 w-auto md:h-14"
+                priority
               />
-              <div className="text-xl font-bold whitespace-nowrap">{env.siteTitle}</div>
-
+              <div className="text-xl font-bold whitespace-nowrap">
+                {env.siteTitle}
+              </div>
             </Link>
           </div>
 

@@ -28,9 +28,9 @@ export function FeaturedBillSection({ bills }: FeaturedBillSectionProps) {
 
       {/* 注目の議案カード */}
       <div className="flex flex-col gap-4">
-        {bills.map((bill) => (
+        {bills.map((bill, index) => (
           <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-            <BillCard bill={bill} />
+            <BillCard bill={bill} priority={index < 2} />
           </Link>
         ))}
       </div>

@@ -32,9 +32,11 @@ function FooterLogoSection() {
   return (
     <div className="flex flex-col items-center text-center mb-9">
       <Link href={routes.home()} aria-label={`${env.siteTitle} トップページ`}>
-        <img
+        <Image
           src="/img/logo.png"
           alt={env.siteTitle}
+          width={64}
+          height={64}
           className="h-16 w-auto opacity-70 transition-opacity hover:opacity-100"
         />
       </Link>

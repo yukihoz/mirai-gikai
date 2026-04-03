@@ -41,7 +41,7 @@ export default async function DietSessionBillsPage({ params }: Props) {
       {/* ヒーロー画像 */}
       <div className="relative w-full h-[285px]">
         <Image
-          src="/img/archive-hero-7f3d06.png"
+          src="/img/archive-hero-7f3d06.webp"
           alt={`${session.name}の法案一覧`}
           fill
           priority

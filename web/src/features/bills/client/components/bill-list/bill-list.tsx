@@ -19,9 +19,9 @@ export function BillList({ bills }: BillListProps) {
 
   return (
     <div className="grid gap-4">
-      {bills.map((bill) => (
+      {bills.map((bill, index) => (
         <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-          <BillCard bill={bill} />
+          <BillCard bill={bill} priority={index < 3} />
         </Link>
       ))}
     </div>
