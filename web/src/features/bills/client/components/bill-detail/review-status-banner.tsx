@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { CircleCheck, Info } from "lucide-react";
 import {
   Tooltip,
@@ -21,16 +22,39 @@ export function ReviewInProgressBanner() {
   );
 }
 
+interface ReviewCompleteBadgeProps {
+  showTooltip?: boolean;
+}
+
 /**
- * レビュー完了時にタイトル横に表示するチェックマーク（ツールチップ付き）
+ * レビュー完了時にタイトル横に表示するチェックマーク
+ * showTooltip=true の場合、ホバー＋タップでツールチップを表示（スマホ対応）
  */
-export function ReviewCompleteBadge() {
+export function ReviewCompleteBadge({
+  showTooltip = false,
+}: ReviewCompleteBadgeProps) {
+  const [open, setOpen] = useState(false);
+
+  const icon = (
+    <span className="inline-flex items-center align-[-0.0625em]">
+      <CircleCheck className="size-6 fill-primary text-white" />
+    </span>
+  );
+
+  if (!showTooltip) {
+    return icon;
+  }
+
   return (
-    <Tooltip>
+    <Tooltip open={open} onOpenChange={setOpen}>
       <TooltipTrigger asChild>
-        <span className="inline-flex items-center align-baseline">
-          <CircleCheck className="size-5 fill-primary text-white" />
-        </span>
+        <button
+          type="button"
+          className="inline-flex items-center align-[-0.0625em]"
+          onClick={() => setOpen(true)}
+        >
+          <CircleCheck className="size-6 fill-primary text-white" />
+        </button>
       </TooltipTrigger>
       <TooltipContent
         side="bottom"
