@@ -8,8 +8,8 @@
 変更作業は、**必ず git worktree を作成してから開始すること**。メインのリポジトリディレクトリでは直接変更を行わない。
 
 ```bash
-# 1. worktreeを作成
-git worktree add ../mirai-gikai-<branch-name> -b <branch-name>
+# 1. worktreeを作成（必ずdevelopから分岐すること）
+git worktree add ../mirai-gikai-<branch-name> -b <branch-name> develop
 
 # 2. settings.local.jsonをコピー（権限設定のため必須）
 mkdir -p ../mirai-gikai-<branch-name>/.claude
@@ -21,6 +21,8 @@ cp .env ../mirai-gikai-<branch-name>/
 # 4. 依存パッケージをインストール
 cd ../mirai-gikai-<branch-name> && pnpm install --frozen-lockfile
 ```
+
+- **必ず `develop` から分岐する**: `git worktree add` の末尾に `develop` を指定すること。省略すると現在のブランチ（HEADが別ブランチを指している場合）から分岐し、無関係なコミットがPRに混入する原因になる。
 
 - **目的**: developブランチを常にクリーンに保ち、作業の分離と並列作業を容易にする
 - **developに変更が残っている場合のリカバリ**: worktreeを作成する前に、developブランチの変更を必ずクリーンアップすること。作業途中の変更をdevelopに残したままworktreeを作成・作業することは禁止。
