@@ -3,6 +3,10 @@ import "server-only";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import {
+  findBillsWithDietSessions,
+  updateBillPublishStatus,
+} from "@/features/bills/server/repositories/bill-repository";
+import {
   createBillRecord,
   createBillsTags,
   deleteBillsTags,
@@ -10,18 +14,14 @@ import {
   findBillBySlug,
   findBillContentsByBillId,
   findBillsTagsByBillId,
-  updateBillRecord,
   upsertBillContent,
 } from "@/features/bills-edit/server/repositories/bill-edit-repository";
+import { updateBillWithSideEffects } from "@/features/bills-edit/server/services/update-bill-with-side-effects";
 import {
   billCreateSchema,
   billUpdateSchema,
 } from "@/features/bills-edit/shared/types";
 import { billContentsUpdateSchema } from "@/features/bills-edit/shared/types/bill-contents";
-import {
-  findBillsWithDietSessions,
-  updateBillPublishStatus,
-} from "@/features/bills/server/repositories/bill-repository";
 import { calculateSetDiff } from "@/lib/utils/calculate-set-diff";
 import { invalidateBillsCache } from "../utils/invalidate-bills-cache";
 import { jsonResult } from "../utils/json-result";
@@ -126,20 +126,8 @@ export function registerBillsTools(server: McpServer): void {
         ...billUpdateSchema.partial().shape,
       },
     },
-    async ({ billId, submitted_date, ...rest }) => {
-      const definedFields = Object.fromEntries(
-        Object.entries(rest).filter(([, value]) => value !== undefined)
-      );
-      await updateBillRecord(billId, {
-        ...definedFields,
-        ...(submitted_date !== undefined && {
-          submitted_date: submitted_date
-            ? `${submitted_date}T00:00:00+09:00`
-            : null,
-        }),
-        updated_at: new Date().toISOString(),
-      });
-      await invalidateBillsCache();
+    async ({ billId, ...rest }) => {
+      await updateBillWithSideEffects(billId, rest);
       return jsonResult({ ok: true });
     }
   );
