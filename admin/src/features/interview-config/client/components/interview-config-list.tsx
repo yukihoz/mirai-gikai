@@ -1,7 +1,15 @@
 "use client";
 
+import {
+  BarChart3,
+  Copy,
+  FolderInput,
+  Pencil,
+  Plus,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 import type { Route } from "next";
-import { BarChart3, Copy, Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,12 +30,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { routes } from "@/lib/routes";
-import {
   Table,
   TableBody,
   TableCell,
@@ -36,22 +38,34 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { routes } from "@/lib/routes";
+import {
   deleteInterviewConfig,
   duplicateInterviewConfig,
 } from "../../server/actions/upsert-interview-config";
 import type { InterviewConfig } from "../../shared/types";
 import { getModeLabel } from "../../shared/utils/get-mode-label";
+import {
+  type BillOption,
+  CopyConfigToBillDialog,
+} from "./copy-config-to-bill-dialog";
 
 interface InterviewConfigListProps {
   billId: string;
   configs: InterviewConfig[];
   sessionCounts: Record<string, number> | null;
+  bills: BillOption[];
 }
 
 export function InterviewConfigList({
   billId,
   configs,
   sessionCounts,
+  bills,
 }: InterviewConfigListProps) {
   const router = useRouter();
   const [deleteTarget, setDeleteTarget] = useState<InterviewConfig | null>(
@@ -60,6 +74,8 @@ export function InterviewConfigList({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDuplicating, setIsDuplicating] = useState<string | null>(null);
   const [deleteConfirmed, setDeleteConfirmed] = useState(false);
+  const [copyToBillTarget, setCopyToBillTarget] =
+    useState<InterviewConfig | null>(null);
 
   const handleOpenDeleteDialog = (config: InterviewConfig) => {
     setDeleteConfirmed(false);
@@ -247,6 +263,19 @@ export function InterviewConfigList({
                             <Button
                               variant="ghost"
                               size="icon"
+                              aria-label="他法案へ複製"
+                              onClick={() => setCopyToBillTarget(config)}
+                            >
+                              <FolderInput className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>他法案へ複製</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
                               aria-label="削除"
                               onClick={() => handleOpenDeleteDialog(config)}
                             >
@@ -324,6 +353,17 @@ export function InterviewConfigList({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {copyToBillTarget && (
+        <CopyConfigToBillDialog
+          open={copyToBillTarget !== null}
+          onOpenChange={(open) => !open && setCopyToBillTarget(null)}
+          configId={copyToBillTarget.id}
+          configName={copyToBillTarget.name}
+          currentBillId={billId}
+          bills={bills}
+        />
+      )}
     </>
   );
 }

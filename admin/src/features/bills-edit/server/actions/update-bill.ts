@@ -1,33 +1,15 @@
 "use server";
 
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
-import {
-  invalidateWebCache,
-  WEB_CACHE_TAGS,
-} from "@/lib/utils/cache-invalidation";
 import { getErrorMessage } from "@/lib/utils/get-error-message";
 import { type BillUpdateInput, billUpdateSchema } from "../../shared/types";
-import { updateBillRecord } from "../repositories/bill-edit-repository";
+import { updateBillWithSideEffects } from "../services/update-bill-with-side-effects";
 
 export async function updateBill(id: string, input: BillUpdateInput) {
   try {
-    // 管理者権限チェック
     await requireAdmin();
-
-    // バリデーション
     const validatedData = billUpdateSchema.parse(input);
-
-    // Supabaseで更新
-    await updateBillRecord(id, {
-      ...validatedData,
-      published_at: validatedData.published_at
-        ? new Date(validatedData.published_at).toISOString()
-        : null,
-      updated_at: new Date().toISOString(),
-    });
-
-    // web側のキャッシュを無効化
-    await invalidateWebCache([WEB_CACHE_TAGS.BILLS]);
+    await updateBillWithSideEffects(id, validatedData);
   } catch (error) {
     console.error("Update bill error:", error);
     throw new Error(

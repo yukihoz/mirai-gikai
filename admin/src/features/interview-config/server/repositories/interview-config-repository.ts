@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { InterviewMode } from "@mirai-gikai/shared/interview-prompts/types";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { InterviewConfig, InterviewQuestion } from "../../shared/types";
 
@@ -109,16 +110,18 @@ export async function closeOtherPublicConfigs(
     query.neq("id", excludeConfigId);
   }
 
-  await query;
+  const { error } = await query;
+  if (error) {
+    throw new Error(`Failed to close interview configs: ${error.message}`);
+  }
 }
 
 export async function createInterviewConfigRecord(params: {
   bill_id: string;
   name: string;
   status: "public" | "closed";
-  mode: "loop" | "bulk";
+  mode: InterviewMode;
   themes: string[] | null;
-  knowledge_source: string | null;
   chat_model: string | null;
   estimated_duration: number | null;
 }): Promise<{ id: string }> {
@@ -141,9 +144,8 @@ export async function updateInterviewConfigRecord(
   params: {
     name: string;
     status: "public" | "closed";
-    mode: "loop" | "bulk";
+    mode: InterviewMode;
     themes: string[] | null;
-    knowledge_source: string | null;
     chat_model: string | null;
     estimated_duration: number | null;
     updated_at: string;
@@ -184,26 +186,6 @@ export async function countSessionsByConfigIds(
   }
   for (const row of data) {
     result[row.interview_config_id] = Number(row.session_count);
-  }
-  return result;
-}
-
-export async function countAllSessionsByConfigId(): Promise<
-  Record<string, number>
-> {
-  const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("interview_sessions")
-    .select("interview_config_id");
-
-  if (error) {
-    throw new Error(`Failed to count sessions: ${error.message}`);
-  }
-
-  const result: Record<string, number> = {};
-  for (const row of data) {
-    result[row.interview_config_id] =
-      (result[row.interview_config_id] ?? 0) + 1;
   }
   return result;
 }

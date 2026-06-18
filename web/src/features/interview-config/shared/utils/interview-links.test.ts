@@ -5,6 +5,7 @@ import {
   getInterviewChatLink,
   getInterviewChatLogLink,
   getInterviewLPLink,
+  getInterviewMessageLink,
   getInterviewReportCompleteLink,
   getPublicReportLink,
 } from "./interview-links";
@@ -68,15 +69,62 @@ describe("getPublicReportLink", () => {
 });
 
 describe("getInterviewChatLogLink", () => {
-  it("returns chat log path", () => {
+  it("returns public report chat-log section because chat log is integrated there", () => {
     expect(getInterviewChatLogLink("report-456")).toBe(
-      "/report/report-456/chat-log"
+      "/report/report-456#chat-log"
     );
   });
 
-  it("returns chat log path with from=complete when from is specified", () => {
+  it("returns public report chat-log section with from=opinions when from is specified", () => {
+    expect(getInterviewChatLogLink("report-456", "opinions")).toBe(
+      "/report/report-456?from=opinions#chat-log"
+    );
+  });
+
+  it("returns report complete chat-log section when from=complete is specified", () => {
     expect(getInterviewChatLogLink("report-456", "complete")).toBe(
-      "/report/report-456/chat-log?from=complete"
+      "/report/report-456/complete#chat-log"
+    );
+  });
+});
+
+describe("getInterviewMessageLink", () => {
+  it("returns public report message anchor", () => {
+    expect(getInterviewMessageLink("report-456", "abc-123")).toBe(
+      "/report/report-456#message-abc-123"
+    );
+  });
+
+  it("returns public report message anchor with from=opinions when from is specified", () => {
+    expect(getInterviewMessageLink("report-456", "abc-123", "opinions")).toBe(
+      "/report/report-456?from=opinions#message-abc-123"
+    );
+  });
+
+  it("returns report complete message anchor when from=complete is specified", () => {
+    expect(getInterviewMessageLink("report-456", "abc-123", "complete")).toBe(
+      "/report/report-456/complete#message-abc-123"
+    );
+  });
+
+  it("appends encoded quote as query before the hash", () => {
+    expect(
+      getInterviewMessageLink(
+        "report-456",
+        "abc-123",
+        undefined,
+        "戻ったら違う部署"
+      )
+    ).toBe(
+      `/report/report-456?quote=${encodeURIComponent("戻ったら違う部署")}#message-abc-123`
+    );
+  });
+
+  it("uses & separator when from query already present", () => {
+    expect(
+      getInterviewMessageLink("report-456", "abc-123", "opinions", "引用")
+    ).toBe(
+      `/report/report-456?from=opinions&quote=${encodeURIComponent("引用")}#message-abc-123`
     );
   });
 });

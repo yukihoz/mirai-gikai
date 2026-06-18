@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createAdminClient } from "@mirai-gikai/supabase";
+import { isReportAutoPublishEligible } from "@mirai-gikai/shared/report-publication/auto-publish";
 import type { SessionFilterConfig } from "../../shared/types";
 import { DEFAULT_SESSION_FILTER } from "../../shared/types";
 
@@ -21,26 +22,6 @@ function hasReportLevelFilters(filters: SessionFilterConfig): boolean {
     filters.role !== "all" ||
     filters.moderation !== "all"
   );
-}
-
-export async function findInterviewConfigIdByBillId(
-  billId: string
-): Promise<{ id: string } | null> {
-  const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("interview_configs")
-    .select("id")
-    .eq("bill_id", billId)
-    .single();
-
-  if (error) {
-    if (error.code === "PGRST116") {
-      return null;
-    }
-    throw new Error(`Failed to fetch interview config: ${error.message}`);
-  }
-
-  return data;
 }
 
 export async function findInterviewSessionsWithReport(
@@ -651,6 +632,8 @@ export async function updateModerationScore(
   if (error) {
     throw new Error(`Failed to update moderation score: ${error.message}`);
   }
+
+  await publishReportIfAutoPublishEligible(reportId);
 }
 
 export async function updateContentRichness(
@@ -675,4 +658,47 @@ export async function updateContentRichness(
   if (error) {
     throw new Error(`Failed to update content richness: ${error.message}`);
   }
+
+  await publishReportIfAutoPublishEligible(reportId);
+}
+
+export async function publishReportIfAutoPublishEligible(
+  reportId: string
+): Promise<boolean> {
+  const supabase = createAdminClient();
+  const { data: report, error: fetchError } = await supabase
+    .from("interview_report")
+    .select(
+      "is_public_by_user, is_public_by_admin, moderation_score, total_content_richness"
+    )
+    .eq("id", reportId)
+    .single();
+
+  if (fetchError) {
+    throw new Error(
+      `Failed to fetch report for auto publish: ${fetchError.message}`
+    );
+  }
+
+  if (
+    report.is_public_by_admin ||
+    !isReportAutoPublishEligible({
+      isPublicByUser: report.is_public_by_user,
+      moderationScore: report.moderation_score,
+      totalContentRichness: report.total_content_richness,
+    })
+  ) {
+    return false;
+  }
+
+  const { error } = await supabase
+    .from("interview_report")
+    .update({ is_public_by_admin: true })
+    .eq("id", reportId);
+
+  if (error) {
+    throw new Error(`Failed to auto publish report: ${error.message}`);
+  }
+
+  return true;
 }

@@ -16,6 +16,11 @@ export const routes = {
   // ── 議案 ──────────────────────────────────────────
   billDetail: (billId: string) => `/bills/${billId}` as const,
   billOpinions: (billId: string) => `/bills/${billId}/opinions` as const,
+  billTopics: (billId: string) => `/bills/${billId}/topics` as const,
+  billTopicDetail: (billId: string, topicId: string, filter?: string) =>
+    filter && filter !== "all"
+      ? (`/bills/${billId}/topics/${topicId}?filter=${encodeURIComponent(filter)}` as const)
+      : (`/bills/${billId}/topics/${topicId}` as const),
 
   // ── インタビュー ──────────────────────────────────
   interviewLP: (billId: string) => `/bills/${billId}/interview` as const,
@@ -36,7 +41,8 @@ export const routes = {
   // ── レポート ──────────────────────────────────────
   publicReport: (reportId: string) => `/report/${reportId}` as const,
   reportComplete: (reportId: string) => `/report/${reportId}/complete` as const,
-  reportChatLog: (reportId: string) => `/report/${reportId}/chat-log` as const,
+  legacyReportChatLog: (reportId: string) =>
+    `/report/${reportId}/chat-log` as const,
 
   // ── 区議会セッション ────────────────────────────────
   sessions: () => "/sessions" as const,

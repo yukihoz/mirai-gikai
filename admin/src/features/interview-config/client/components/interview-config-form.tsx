@@ -1,15 +1,13 @@
 "use client";
 
-import type { Route } from "next";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye } from "lucide-react";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import type { MutableRefObject } from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import { routes } from "@/lib/routes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -32,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { routes } from "@/lib/routes";
 import { generateInterviewPreviewUrl } from "../../server/actions/generate-interview-preview-url";
 import {
   createInterviewConfig,
@@ -59,7 +58,6 @@ interface InterviewConfigFormProps {
   getFormValuesRef?: MutableRefObject<
     | (() => {
         name: string;
-        knowledge_source: string;
         mode: string;
         themes: string[];
         chat_model: string | null;
@@ -67,6 +65,8 @@ interface InterviewConfigFormProps {
       })
     | null
   >;
+  /** 新規作成時の設定名初期値（ログインユーザー名） */
+  initialName?: string | null;
 }
 
 export function InterviewConfigForm({
@@ -76,6 +76,7 @@ export function InterviewConfigForm({
   onAiThemesApplied,
   onConfigCreated,
   getFormValuesRef,
+  initialName,
 }: InterviewConfigFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -84,11 +85,10 @@ export function InterviewConfigForm({
   const form = useForm<InterviewConfigInput>({
     resolver: zodResolver(interviewConfigSchema),
     defaultValues: {
-      name: config?.name || generateDefaultConfigName(),
+      name: config?.name || initialName || generateDefaultConfigName(),
       status: config?.status || "closed",
       mode: config?.mode || "loop",
       themes: config?.themes || [],
-      knowledge_source: config?.knowledge_source || "",
       chat_model: config?.chat_model || null,
       estimated_duration: isNew ? 10 : (config?.estimated_duration ?? null),
     },
@@ -101,7 +101,6 @@ export function InterviewConfigForm({
         const values = form.getValues();
         return {
           name: values.name,
-          knowledge_source: values.knowledge_source || "",
           mode: values.mode,
           themes: values.themes || [],
           chat_model: values.chat_model || null,
@@ -279,11 +278,15 @@ export function InterviewConfigForm({
                       <SelectContent>
                         <SelectItem value="loop">逐次深掘り（loop）</SelectItem>
                         <SelectItem value="bulk">一括深掘り（bulk）</SelectItem>
+                        <SelectItem value="targeted">
+                          対象者指定（targeted）
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormDescription>
                       loop: 質問ごとに深掘り / bulk:
-                      事前定義質問を先にすべて消化してから深掘り
+                      事前定義質問を先にすべて消化してから深掘り / targeted:
+                      質問ごとに対象者条件を設定し、該当しないインタビュイーにはスキップ
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -412,7 +415,6 @@ export function InterviewConfigForm({
                   </FormItem>
                 )}
               />
-
               <div className="flex gap-2">
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "保存中..." : "保存"}

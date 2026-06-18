@@ -27,6 +27,10 @@ import {
   createShippingBillSessions,
   createShippingBillMessages,
   createShippingBillReports,
+  createRealisticShippingBillSession,
+  createRealisticShippingBillMessages,
+  createRealisticShippingBillReport,
+  getRealisticShippingBillSourceMessageLinks,
 } from "./shipping-bill-data";
 import { createAdminClient, clearAllData } from "../shared/helper";
 
@@ -112,6 +116,35 @@ async function seedDatabase() {
           .eq("id", bill.id);
       }
       console.log(`🔗 Linked ${bills218.length} bills to 218 diet session`);
+    }
+
+    const knowledgeSourceByBillName: Record<
+      string,
+      { knowledge_source: string; use_knowledge_source_in_chat: boolean }
+    > = {
+      "ガソリン税暫定税率廃止法案": {
+        knowledge_source:
+          "この法案についてあなたの意見を聞かせてください。",
+        use_knowledge_source_in_chat: true,
+      },
+      "船荷証券の電子化に関する法律案": {
+        knowledge_source:
+          "船荷証券（B/L）の電子化に関する法律案について、あなたの意見を聞かせてください。",
+        use_knowledge_source_in_chat: true,
+      },
+    };
+    for (const bill of insertedBills) {
+      const ks = knowledgeSourceByBillName[bill.name];
+      if (!ks) continue;
+      const { error: ksError } = await supabase
+        .from("bills")
+        .update(ks)
+        .eq("id", bill.id);
+      if (ksError) {
+        throw new Error(
+          `Failed to update knowledge_source for bill ${bill.name} (${bill.id}): ${ksError.message}`
+        );
+      }
     }
 
     // Insert bill_contents
@@ -320,7 +353,7 @@ async function seedDatabase() {
           }
 
           console.log(`✅ Inserted demo data`);
-          console.log(`   Demo report URL: /report/${DEMO_REPORT_ID}/chat-log`);
+          console.log(`   Demo report URL: /report/${DEMO_REPORT_ID}#chat-log`);
 
           // Insert additional demo sessions, messages, and reports (for 4 role types)
           console.log("🎭 Inserting additional demo data for all role types...");
@@ -359,10 +392,16 @@ async function seedDatabase() {
           }
 
           console.log(`✅ Inserted additional demo data for all 4 role types`);
-          console.log(`   subject_expert: /report/${DEMO_REPORT_ID}/chat-log`);
-          console.log(`   work_related: /report/${DEMO_REPORT_ID_WORK}/chat-log`);
-          console.log(`   daily_life_affected: /report/${DEMO_REPORT_ID_DAILY}/chat-log`);
-          console.log(`   general_citizen: /report/${DEMO_REPORT_ID_CITIZEN}/chat-log`);
+          console.log(`   subject_expert: /report/${DEMO_REPORT_ID}#chat-log`);
+          console.log(
+            `   work_related: /report/${DEMO_REPORT_ID_WORK}#chat-log`
+          );
+          console.log(
+            `   daily_life_affected: /report/${DEMO_REPORT_ID_DAILY}#chat-log`
+          );
+          console.log(
+            `   general_citizen: /report/${DEMO_REPORT_ID_CITIZEN}#chat-log`
+          );
         }
       }
     } else {
@@ -506,6 +545,97 @@ async function seedDatabase() {
           }
         }
 
+        // --- リアル系インタビュー（back-and-forth が自然な 1 セッション） ---
+        console.log("🎤 Inserting realistic shipping bill interview...");
+        const realisticSession = createRealisticShippingBillSession(
+          insertedShippingConfig.id
+        );
+        const { data: insertedRealisticSession, error: realisticSessionError } =
+          await supabase
+            .from("interview_sessions")
+            .insert(realisticSession)
+            .select("id")
+            .single();
+        if (realisticSessionError || !insertedRealisticSession) {
+          throw new Error(
+            `Failed to insert realistic session: ${realisticSessionError?.message}`
+          );
+        }
+
+        const realisticMessages = createRealisticShippingBillMessages(
+          insertedRealisticSession.id
+        );
+        // 1 回の bulk insert だと全行が同一 created_at になり、return 順も UUID 依存で不定
+        // → id + content を返してもらい、後で content で対象を特定する
+        const { data: insertedRealisticMessages, error: realisticMessagesError } =
+          await supabase
+            .from("interview_messages")
+            .insert(realisticMessages)
+            .select("id, content");
+        if (realisticMessagesError || !insertedRealisticMessages) {
+          throw new Error(
+            `Failed to insert realistic messages: ${realisticMessagesError?.message}`
+          );
+        }
+
+        // opinions の source_message_id を後付け。
+        // content は会話ログ内で一意な前提（リアル seed データ用なので成り立つ）。
+        // conversationIndex → 対象 content → inserted row.id という経路で特定する。
+        // 未解決は seed データ不整合なので fail fast させる（silent に進むと
+        // interview_report.opinions.source_message_id が欠落した状態で投入される）。
+        const realisticReport = createRealisticShippingBillReport(
+          insertedRealisticSession.id
+        );
+        const links = getRealisticShippingBillSourceMessageLinks();
+        if (!Array.isArray(realisticReport.opinions)) {
+          throw new Error(
+            "Realistic report opinions must be an array to wire source_message_id"
+          );
+        }
+        const opinions = realisticReport.opinions as Array<{
+          title: string;
+          content: string;
+          source_message_id?: string;
+          source_message_content?: string;
+        }>;
+        const contentToId = new Map(
+          insertedRealisticMessages.map((m) => [m.content, m.id])
+        );
+        for (const { conversationIndex, opinionIndex } of links) {
+          const msgContent = realisticMessages[conversationIndex]?.content;
+          if (!msgContent) {
+            throw new Error(
+              `Realistic seed: conversationIndex ${conversationIndex} out of range`
+            );
+          }
+          const msgId = contentToId.get(msgContent);
+          if (!msgId) {
+            throw new Error(
+              `Realistic seed: failed to resolve inserted message for conversationIndex=${conversationIndex}`
+            );
+          }
+          const opinion = opinions[opinionIndex];
+          if (!opinion) {
+            throw new Error(
+              `Realistic seed: opinionIndex ${opinionIndex} out of range`
+            );
+          }
+          opinion.source_message_id = msgId;
+          opinion.source_message_content = msgContent;
+        }
+        const { error: realisticReportError } = await supabase
+          .from("interview_report")
+          .insert(realisticReport);
+        if (realisticReportError) {
+          throw new Error(
+            `Failed to insert realistic report: ${realisticReportError.message}`
+          );
+        }
+
+        console.log(
+          `✅ Shipping bill: ${shippingSessionsCount} sessions (+1 realistic), ${shippingReportsCount} reports (each with 3 opinions) + 1 realistic report`
+        );
+      } else {
         console.log(
           `✅ Shipping bill: ${shippingSessionsCount} sessions, ${shippingReportsCount} reports (each with 3 opinions)`
         );

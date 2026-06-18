@@ -31,12 +31,18 @@ export function BillCreateForm({ dietSessions }: BillCreateFormProps) {
       status: "preparing",
       meeting_body: "定例会",
       status_note: null,
-      published_at: new Date().toISOString().slice(0, 16),
+      submitted_date: new Date().toLocaleDateString("sv-SE", {
+        timeZone: "Asia/Tokyo",
+      }),
       thumbnail_url: null,
       share_thumbnail_url: null,
       shugiin_url: null,
+      slug: null,
       is_featured: false,
+      is_review_completed: false,
       diet_session_id: defaultDietSessionId,
+      knowledge_source: "",
+      use_knowledge_source_in_chat: false,
     },
   });
 

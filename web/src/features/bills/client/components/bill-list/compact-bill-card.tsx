@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
+import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
 import { BillStatusBadge } from "./bill-status-badge";
 import { DynamicBillThumbnail } from "./dynamic-bill-thumbnail";
 
@@ -40,15 +41,21 @@ export function CompactBillCard({ bill, className }: CompactBillCardProps) {
         <div className="flex-1 p-4 flex flex-col gap-2">
           <h3 className="font-bold text-[15px] leading-[1.6] line-clamp-2 pr-20">
             {displayTitle}
+            {bill.is_review_completed && (
+              <>
+                {" "}
+                <ReviewCompleteBadge size={14} top="1px" />
+              </>
+            )}
           </h3>
           <div className="flex items-center gap-3">
             <BillStatusBadge status={bill.status} className="w-fit" />
             <span className="inline-flex items-center border border-gray-200 px-1.5 py-0.5 rounded-[4px] bg-gray-50 text-[10px] text-gray-600">
               {bill.meeting_body}
             </span>
-            {bill.published_at && (
+            {bill.submitted_date && (
               <span className="text-xs text-muted-foreground">
-                {formatDateWithDots(bill.published_at)} {statusLabel}
+                {formatDateWithDots(bill.submitted_date)} {statusLabel}
               </span>
             )}
           </div>

@@ -76,6 +76,7 @@
   --color-mirai-surface-muted: #e5e5ea;
   --color-mirai-surface-tag: #e8e8e8;
   --color-mirai-surface-warm: #eae6dd;
+  --color-mirai-surface-gray: #f6f6f6;
 
   /* Border */
   --color-mirai-border: #d2d2d2;
@@ -110,6 +111,19 @@
   /* Gradient endpoints */
   --color-mirai-gradient-start: #f6db5e;
   --color-mirai-gradient-end: #ffec93;
+
+  /* Topic analysis */
+  --color-topic-info-bg: #e5f3f0;
+  --color-topic-chip-bg: #f1f1f1;
+  --color-topic-count: #6b7775;
+  --color-topic-label: #909090;
+  --color-topic-affected: #c8642a;
+  --color-topic-industry: #2563a8;
+  --color-topic-expert: #0f8472;
+  --color-topic-citizen: #909090;
+
+  /* 引用文の明朝体（Noto Serif JP） */
+  --font-mirai-serif: var(--font-noto-serif-jp);
 }
 
 :root {
@@ -328,4 +342,14 @@
 
 button {
   cursor: pointer;
+}
+
+/* スクロールは保持しつつスクロールバーを非表示にするユーティリティ。 */
+@utility scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
 }

@@ -13,16 +13,21 @@ const baseBill: Bill = {
   updated_at: "2025-01-02T00:00:00Z",
   diet_session_id: "session-001",
   is_featured: true,
+  is_review_completed: true,
   meeting_body: "定例会",
   publish_status: "published",
   published_at: null,
+  submitted_date: null,
   share_thumbnail_url: null,
   shugiin_url: null,
+  slug: null,
   status: "introduced",
   status_note: null,
   status_order: BILL_STATUS_ORDER.introduced,
   publish_status_order: 2,
   thumbnail_url: null,
+  knowledge_source: null,
+  use_knowledge_source_in_chat: false,
 };
 
 describe("prepareBillForDuplication", () => {
@@ -41,6 +46,17 @@ describe("prepareBillForDuplication", () => {
   it("publish_statusをdraftに設定する", () => {
     const result = prepareBillForDuplication(baseBill);
     expect(result.publish_status).toBe("draft");
+  });
+
+  it("is_review_completedをfalseにリセットする", () => {
+    const result = prepareBillForDuplication(baseBill);
+    expect(result.is_review_completed).toBe(false);
+  });
+
+  it("slugをnullにリセットする", () => {
+    const billWithSlug = { ...baseBill, slug: "test-slug" };
+    const result = prepareBillForDuplication(billWithSlug);
+    expect(result.slug).toBeNull();
   });
 
   it("その他のフィールドを保持する", () => {

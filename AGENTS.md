@@ -1,13 +1,15 @@
 # Repository Guidelines
 
+> **Note**: `CLAUDE.md` は `AGENTS.md` へのシンボリックリンクです。ルールの追加・編集は必ず `AGENTS.md` を直接編集してください。
+
 ## 必須ルール
 
 ### Worktree必須
 変更作業は、**必ず git worktree を作成してから開始すること**。メインのリポジトリディレクトリでは直接変更を行わない。
 
 ```bash
-# 1. worktreeを作成
-git worktree add ../mirai-gikai-<branch-name> -b <branch-name>
+# 1. worktreeを作成（必ずdevelopから分岐すること）
+git worktree add ../mirai-gikai-<branch-name> -b <branch-name> develop
 
 # 2. settings.local.jsonをコピー（権限設定のため必須）
 mkdir -p ../mirai-gikai-<branch-name>/.claude
@@ -20,7 +22,18 @@ cp .env ../mirai-gikai-<branch-name>/
 cd ../mirai-gikai-<branch-name> && pnpm install --frozen-lockfile
 ```
 
+- **必ず `develop` から分岐する**: `git worktree add` の末尾に `develop` を指定すること。省略すると現在のブランチ（HEADが別ブランチを指している場合）から分岐し、無関係なコミットがPRに混入する原因になる。
+
 - **目的**: developブランチを常にクリーンに保ち、作業の分離と並列作業を容易にする
+- **developに変更が残っている場合のリカバリ**: worktreeを作成する前に、developブランチの変更を必ずクリーンアップすること。作業途中の変更をdevelopに残したままworktreeを作成・作業することは禁止。
+  ```bash
+  # 変更を退避してからworktreeを作成
+  git stash --include-untracked
+  git worktree add ../mirai-gikai-<branch-name> -b <branch-name>
+  # worktreeに移動して退避した変更を適用
+  cd ../mirai-gikai-<branch-name>
+  git stash pop
+  ```
 
 ### 実装完了後は即PR作成
 実装完了後は「コミットしますか？」等の確認を挟まず、コミット → push → PR作成まで一気に進めること。ユーザーへの確認は不要。
@@ -30,8 +43,15 @@ cd ../mirai-gikai-<branch-name> && pnpm install --frozen-lockfile
 > `git push` および `gh pr create` は必ず `origin`（`yukihoz/mirai-gikai`）に対してのみ行うこと。`upstream` へのpushやPR作成は絶対に行わない。`gh pr create` 実行前に `git remote -v` で送信先を確認すること。
 
 ### セルフレビュー必須
-実装完了後（コミット前）に、必ず `/review` スキルを実行してセルフレビューを受けること。`/review` はCodexレビュー・`test-guidelines-checker` によるテストガイドラインチェック・`code-quality-checker` によるコード品質チェックを同時に実行する。指摘があれば修正してからコミットする。
-レビューを通過したら、ユーザーに確認せずそのままPR作成まで一気に進めること（push → `gh pr create`）。
+実装完了後（コミット前）に、以下の順で必ずセルフレビューを実施すること：
+
+1. **`/simplify` を実行**: 変更コードの重複・可読性・効率の観点から自己修正を行う。明らかな問題を先に潰しておくことで、後段の `/review` の指摘ノイズを減らす。
+2. **`/review` を実行**: Codexレビュー・`test-guidelines-checker` によるテストガイドラインチェック・`code-quality-checker` によるコード品質チェックを同時に実行する。指摘があれば修正する。
+
+両方を通過したら、ユーザーに確認せずそのままコミット → push → PR作成まで一気に進めること（`gh pr create`）。
+
+### UI変更時のスクリーンショット必須
+PR作成後、変更差分にUI関連ファイル（`web/src/`, `admin/src/` 配下の `.tsx`, `.css` 等）が含まれる場合は、必ず `/pr-screenshot` スキルを実行すること。スキルが自動でdevサーバー起動→スクリーンショット撮影→R2アップロード→PR本文更新まで行う。
 
 ### 並列PR作成
 複数の独立したPRを作成する場合は `/parallel-pr` スキルを使用すること。
@@ -102,6 +122,7 @@ Repository レイヤーの詳細は [docs/repository-layer.md](docs/repository-l
 - **アイコン**: インラインSVGは禁止です。必ず `lucide-react` からアイコンコンポーネントをインポートして使用してください。
 - **ボタン**: `<button>` タグの使用は禁止です。必ず `@/components/ui/button` の `Button` コンポーネントを使用してください。
 - **色**: インラインカラーコード（`text-[#xxx]`, `bg-[#xxx]`, `border-[#xxx]` 等の arbitrary value や style 属性での直接指定）は**禁止**です。必ず `globals.css` の `@theme inline` で定義済みのカラートークン（`text-mirai-text`, `bg-primary`, `border-primary-accent` 等）を使用してください。新しい色が必要な場合は、まず `globals.css` にトークンを追加してから使用すること。既存トークン一覧は `web/src/app/globals.css` の `@theme inline` ブロックを参照。
+- **Figma実装**: FigmaのURLからUIを実装する際、スクリーンショットだけで色やサイズを推測しないこと。必ず `get_variable_defs` や `get_design_context` でカラーコード・フォントサイズ・スペーシング等の正確な値を取得し、既存のデザイントークンとの対応を確認してから実装する。
 
 ### admin 内部ルート定義
 - admin アプリの内部リンク（Link href, router.push, redirect）には `@/lib/routes` の関数を使用すること。文字列リテラルでのルート直書きは禁止。
@@ -140,11 +161,15 @@ Repository レイヤーの詳細は [docs/repository-layer.md](docs/repository-l
   1. **Conflict確認**: `gh pr view <番号> --json mergeable,mergeStateStatus` でマージ可能か確認。conflictがあれば解消してpushする。
   2. **CI確認**: `gh pr checks <番号>` でCIの状態を確認。失敗があれば原因を調査し修正してpushする。CIが実行中の場合は完了まで待つ。
   3. **CodeRabbitレビュー確認**: CodeRabbitのレビューが届くまで待ってからコメントを確認する。レビューは通常2〜3分で届く。`gh api repos/{owner}/{repo}/pulls/{number}/comments` でコメントを取得し、空なら少し待って再取得する。**Minor以上（Minor/Major/Critical）の指摘はすべて対応が必須。** 対応とは「修正してpush」または「スキップ理由を該当コメントに返信」のいずれか。Nitpickのみスキップ可。
-  4. **対応済みコメントのresolve（必須）**: 修正をpushした後、対応済みのレビューコメントをGraphQL APIでresolveする。まず `gh api graphql` でスレッド一覧を取得し、`resolveReviewThread` mutationで対応済みスレッドをresolveする。
+  4. **対応済みコメントへの返信とresolve（必須）**: 対応済みコメント（修正pushした場合・スキップした場合の両方）に対して、該当コメントへ返信した上でGraphQL APIでresolveする。返信なしで黙ってresolveするのは禁止。
      ```bash
-     # スレッド一覧取得（isResolved=falseのものが未resolve）
+     # 1. 該当コメントに返信（対応内容の概要を記載、修正の場合はコミットSHAを含める）
+     gh api repos/{owner}/{repo}/pulls/{number}/comments -X POST \
+       -F in_reply_to=<コメントID> \
+       -f body='修正しました (<コミットSHA>)。<対応内容の要約>'
+     # 2. スレッド一覧取得（isResolved=falseのものが未resolve）
      gh api graphql -f query='{ repository(owner: "{owner}", name: "{repo}") { pullRequest(number: <番号>) { reviewThreads(first: 50) { nodes { id isResolved comments(first: 1) { nodes { body path } } } } } } }'
-     # 対応済みスレッドをresolve
+     # 3. 対応済みスレッドをresolve
      gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "<スレッドID>"}) { thread { isResolved } } }'
      ```
 
@@ -152,7 +177,7 @@ Repository レイヤーの詳細は [docs/repository-layer.md](docs/repository-l
 - ローカル開発前に `npx supabase start` を実行し、`.env.example` を `.env` にコピーして値を整えます。
 - スキーマ変更時は `supabase/migrations` のマイグレーションと `packages/supabase/types/supabase.types.ts` の再生成ファイルをセットでコミットします。
 - `pnpm seed` は `admin@example.com / admin123456` を含む検証データを投入するため、開発用途に限定してください。
-- **RLSとアクセスパターン**: マイグレーションでは必ず `alter table <テーブル名> enable row level security;` を記述してRLSを有効化すること。ただし **ポリシーは定義しない**（デフォルト全拒否）。データアクセスはすべて `createAdminClient()`（Service Role Key）経由で行い、認可ロジックはアプリケーション層（Server Actions / Loaders）で実装する。
+- **RLSとアクセスパターン**: マイグレーションでは必ず `alter table <テーブル名> enable row level security;` を記述してRLSを有効化すること。ただし **ポリシーは定義しない**（デフォルト全拒否）。データアクセスはすべて `createAdminClient()`（Supabase Secret Key）経由で行い、認可ロジックはアプリケーション層（Server Actions / Loaders）で実装する。
 
 ## ドキュメント作成ルール
 - 要件定義や実装計画をまとめる際は論点を先に洗い出し、不明点を確認してから Markdown で整理します。
