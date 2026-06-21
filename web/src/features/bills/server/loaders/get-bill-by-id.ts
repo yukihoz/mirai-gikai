@@ -26,6 +26,10 @@ export async function getBillById(id: string): Promise<BillWithContent | null> {
     return null;
   }
 
+  console.log("DEBUG: getBillById fetched bill ID:", bill.id);
+  console.log("DEBUG: getBillById fetched bill name:", bill.name);
+  console.log("DEBUG: getBillById fetched shugiin_url:", bill.shugiin_url);
+
   const tags =
     billTags
       ?.map((bt) => bt.tags)
