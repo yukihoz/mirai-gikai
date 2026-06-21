@@ -395,26 +395,6 @@ export function InterviewConfigForm({
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="knowledge_source"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>ナレッジソース</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder={"【現状の課題】\n中央区内では〇〇地区の再開発により、子育て世帯が急増しており、待機児童は解消されたものの、小学校の教室不足が深刻化している。\n\n【今回の議案の狙い】\n本議案では、空きビルを期間限定で分校として活用する特例措置を認めるもの。\n\n【AIへの指示（仮説）】\nチームみらいとしては、「通学路の安全性」と「運動場の確保」が不十分ではないかという仮説を持っている。"}
-                        className="min-h-[200px] resize-y"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      AIが質問を生成する際に参照する情報を入力してください。法案コンテンツは自動で読み込まれます。
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <div className="flex gap-2">
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "保存中..." : "保存"}

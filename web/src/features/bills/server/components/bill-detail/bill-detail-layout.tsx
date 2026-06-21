@@ -63,6 +63,22 @@ export async function BillDetailLayout({
           )}
 
           <BillContent bill={bill} />
+
+          {bill.shugiin_url && (
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <h2 className="text-[22px] font-bold text-gray-900 mb-4">関連資料</h2>
+              <p className="text-base leading-relaxed text-gray-700 font-medium">
+                <a
+                  href={bill.shugiin_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline underline-offset-[3px] hover:opacity-70 transition-opacity"
+                >
+                  委員会に提出された資料のPDFはこちらから確認することができます。
+                </a>
+              </p>
+            </div>
+          )}
         </Container>
       </BillDetailClient>
 

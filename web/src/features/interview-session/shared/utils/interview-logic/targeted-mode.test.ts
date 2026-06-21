@@ -16,7 +16,7 @@ const makeBill = (
   name: "テスト法案",
   is_featured: false,
   is_review_completed: true,
-  originating_house: "HR",
+  meeting_body: "定例会",
   shugiin_url: null,
   slug: null,
   diet_session_id: null,

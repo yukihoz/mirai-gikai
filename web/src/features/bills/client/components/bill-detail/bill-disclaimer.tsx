@@ -3,6 +3,8 @@ import { LinkButton } from "@/components/top/link-button";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 import { HOZUMI_SOCIAL_LINKS } from "@/lib/social-links";
+import { ManualRuby } from "@/lib/rubyful/manual-ruby";
+
 
 export function BillDisclaimer() {
   return (
