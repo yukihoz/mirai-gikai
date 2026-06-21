@@ -11,35 +11,47 @@ import {
 import { getBillContentWithDifficulty } from "./helpers/get-bill-content";
 
 export async function getBillById(id: string): Promise<BillWithContent | null> {
+  // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  
-  // キャッシュをバイパスしてデータベースから直接取得
-  const [bill, miraiStance, billContent, billTags] = await Promise.all([
-    findPublishedBillById(id),
-    findMiraiStanceByBillId(id),
-    getBillContentWithDifficulty(id, difficultyLevel),
-    findTagsByBillId(id),
-  ]);
-
-  if (!bill) {
-    console.error("Failed to fetch bill directly from DB");
-    return null;
-  }
-
-  console.log("DEBUG: getBillById fetched bill ID:", bill.id);
-  console.log("DEBUG: getBillById fetched bill name:", bill.name);
-  console.log("DEBUG: getBillById fetched shugiin_url:", bill.shugiin_url);
-
-  const tags =
-    billTags
-      ?.map((bt) => bt.tags)
-      .filter((tag): tag is { id: string; label: string } => tag !== null) ||
-    [];
-
-  return {
-    ...bill,
-    mirai_stance: miraiStance || undefined,
-    bill_content: billContent || undefined,
-    tags,
-  };
+  return _getCachedBillById(id, difficultyLevel);
 }
+
+const _getCachedBillById = unstable_cache(
+  async (
+    id: string,
+    difficultyLevel: DifficultyLevelEnum
+  ): Promise<BillWithContent | null> => {
+    // 基本的なbill情報、見解、コンテンツ、タグを並列取得
+    // 公開ステータスの議案のみを取得
+    const [bill, miraiStance, billContent, billTags] = await Promise.all([
+      findPublishedBillById(id),
+      findMiraiStanceByBillId(id),
+      getBillContentWithDifficulty(id, difficultyLevel),
+      findTagsByBillId(id),
+    ]);
+
+    if (!bill) {
+      console.error("Failed to fetch bill");
+      return null;
+    }
+
+    // タグデータを整形
+    const tags =
+      billTags
+        ?.map((bt) => bt.tags)
+        .filter((tag): tag is { id: string; label: string } => tag !== null) ||
+      [];
+
+    return {
+      ...bill,
+      mirai_stance: miraiStance || undefined,
+      bill_content: billContent || undefined,
+      tags,
+    };
+  },
+  ["bill-by-id"],
+  {
+    revalidate: 600, // 10分（600秒）
+    tags: [CACHE_TAGS.BILLS],
+  }
+);
