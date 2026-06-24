@@ -28,13 +28,20 @@ jobs:
       # マイグレーション適用（idempotent）
       - name: Supabase db push
         run: |
-          supabase db push --include-all
-          supabase config push
+          supabase db push --include-all --yes
+          supabase config push --yes
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
+          SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET }}
+          ADMIN_AUTH_CALLBACK_URL: ${{ secrets.ADMIN_AUTH_CALLBACK_URL }}
 
       # 成功したら Vercel デプロイを開始
       - name: Trigger Vercel Deploy Hook
         run: |
-          curl -X POST "${{ secrets.WEB_VERCEL_DEPLOY_HOOK_URL }}"
-          curl -X POST "${{ secrets.ADMIN_VERCEL_DEPLOY_HOOK_URL }}"
+          if [ -n "${{ secrets.WEB_VERCEL_DEPLOY_HOOK_URL }}" ]; then
+            curl -X POST "${{ secrets.WEB_VERCEL_DEPLOY_HOOK_URL }}"
+          fi
+          if [ -n "${{ secrets.ADMIN_VERCEL_DEPLOY_HOOK_URL }}" ]; then
+            curl -X POST "${{ secrets.ADMIN_VERCEL_DEPLOY_HOOK_URL }}"
+          fi
