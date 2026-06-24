@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 import type { BillWithContent } from "@/features/bills/shared/types";
+import { useAnonymousSupabaseUser } from "@/features/chat/client/hooks/use-anonymous-supabase-user";
 import { ChatWindow } from "./chat-window";
 
 // アニメーション定数
@@ -41,6 +42,11 @@ export interface ChatButtonRef {
 
 export const ChatButton = forwardRef<ChatButtonRef, ChatButtonProps>(
   ({ billContext, hasInterviewConfig, difficultyLevel, pageContext }, ref) => {
+    const {
+      userId,
+      isLoading: isSessionLoading,
+      isError: isSessionError,
+    } = useAnonymousSupabaseUser();
     const [isOpen, setIsOpen] = useState(false);
     const [isCompact, setIsCompact] = useState(false);
     const [showText, setShowText] = useState(true);
@@ -57,11 +63,17 @@ export const ChatButton = forwardRef<ChatButtonRef, ChatButtonProps>(
 
     useImperativeHandle(ref, () => ({
       openWithText: (selectedText: string) => {
-        // AIからの返答待ち中は新しいメッセージを送信しない
+        // AIからの返答待ち中、またはセッション準備中は新しいメッセージを送信しない
         if (
           chatState.status === "streaming" ||
-          chatState.status === "submitted"
+          chatState.status === "submitted" ||
+          isSessionLoading ||
+          !userId
         ) {
+          // セッション準備中の場合はとりあえずウィンドウだけ開く（送信はしない）
+          if (isSessionLoading || !userId) {
+            setIsOpen(true);
+          }
           return;
         }
 
@@ -120,8 +132,9 @@ export const ChatButton = forwardRef<ChatButtonRef, ChatButtonProps>(
           >
             <button
               type="button"
+              disabled={isSessionLoading}
               onClick={() => setIsOpen(true)}
-              className={`relative bg-white rounded-[50px] hover:opacity-90 flex items-center w-full py-2 transition-all ease-in-out ${
+              className={`relative bg-white rounded-[50px] hover:opacity-90 flex items-center w-full py-2 transition-all ease-in-out disabled:opacity-50 ${
                 isCompact
                   ? "h-[35px] px-4 justify-center gap-2.5"
                   : "h-14 justify-end pr-4 pl-6 gap-2.5"
@@ -147,7 +160,11 @@ export const ChatButton = forwardRef<ChatButtonRef, ChatButtonProps>(
                     : undefined
                 }
               >
-                {isCompact ? "AIに質問" : "わからないことをAIに質問する"}
+                {isSessionLoading
+                  ? "準備中..."
+                  : isCompact
+                    ? "AIに質問"
+                    : "わからないことをAIに質問する"}
               </span>
               {!isCompact && (
                 <div className="relative w-10 h-10 rounded-[20px] bg-mirai-gradient flex items-center justify-center flex-shrink-0">
@@ -177,6 +194,8 @@ export const ChatButton = forwardRef<ChatButtonRef, ChatButtonProps>(
           pageContext={pageContext}
           disableAutoFocus={openedWithText}
           sessionId={sessionId}
+          isSessionLoading={isSessionLoading}
+          isSessionError={isSessionError}
         />
       </>
     );

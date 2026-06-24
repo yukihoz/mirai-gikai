@@ -44,6 +44,8 @@ interface ChatWindowProps {
   };
   disableAutoFocus?: boolean;
   sessionId: string;
+  isSessionLoading: boolean;
+  isSessionError: boolean;
 }
 
 /**
@@ -59,6 +61,7 @@ function ChatMessages({
   status,
   pageContext,
   sessionId,
+  isSessionLoading,
 }: {
   billContext?: BillWithContent;
   hasInterviewConfig?: boolean;
@@ -68,10 +71,12 @@ function ChatMessages({
   status: ChatWindowProps["chatState"]["status"];
   pageContext?: ChatWindowProps["pageContext"];
   sessionId: string;
+  isSessionLoading: boolean;
 }) {
   const { scrollToBottom } = useStickToBottomContext();
   const userMessageLength = messages.filter((x) => x.role === "user").length;
   const isResponding = status === "streaming" || status === "submitted";
+  const isDisabled = isResponding || isSessionLoading;
 
   // メッセージが追加されたら自動的にスクロール
   useEffect(() => {
@@ -86,9 +91,11 @@ function ChatMessages({
         {/* 初期メッセージ */}
         <div className="flex flex-col gap-1">
           <p className="text-sm font-bold leading-[1.8] text-mirai-text">
-            {env.assemblyName}や法案について、気になることをAIに質問してください。
+            {isSessionLoading
+              ? "AIチャットを準備しています..."
+              : `${env.assemblyName}や法案について、気になることをAIに質問してください。`}
           </p>
-          {billContext && (
+          {billContext && !isSessionLoading && (
             <p className="text-sm font-bold leading-[1.8] text-mirai-text">
               本文中のテキストを選択すると簡単にAIに質問できます
             </p>
@@ -109,7 +116,7 @@ function ChatMessages({
               <button
                 key={question}
                 type="button"
-                disabled={isResponding}
+                disabled={isDisabled}
                 className="px-3 py-1 text-xs font-semibold leading-[2] text-gray-800 bg-primary/10 border border-primary rounded-2xl hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => {
                   sendMessage({
@@ -163,6 +170,8 @@ export function ChatWindow({
   pageContext,
   disableAutoFocus = false,
   sessionId,
+  isSessionLoading,
+  isSessionError,
 }: ChatWindowProps) {
   const [input, setInput] = useState("");
   const [isMounted, setIsMounted] = useState(false);
@@ -172,6 +181,7 @@ export function ChatWindow({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const isResponding = status === "streaming" || status === "submitted";
+  const isDisabled = isResponding || isSessionLoading;
 
   useEffect(() => {
     setIsMounted(true);
@@ -197,7 +207,7 @@ export function ChatWindow({
   const handleSubmit = async (message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
 
-    if (!hasText || isResponding) {
+    if (!hasText || isDisabled) {
       return;
     }
 
@@ -266,6 +276,7 @@ export function ChatWindow({
               status={status}
               pageContext={pageContext}
               sessionId={sessionId}
+              isSessionLoading={isSessionLoading}
             />
           </ConversationContent>
           <ConversationScrollButton />
@@ -273,36 +284,47 @@ export function ChatWindow({
 
         {/* 入力エリア（固定下部） */}
         <div className="px-6 pb-4 pt-2">
-          <PromptInput
-            onSubmit={handleSubmit}
-            className="flex items-end gap-2.5 py-2 pl-6 pr-4 bg-white rounded-[50px] border-mirai-gradient divide-y-0"
-          >
-            <PromptInputBody className="flex-1">
-              <PromptInputTextarea
-                ref={textareaRef}
-                onChange={handleInputChange}
-                value={input}
-                placeholder="わからないことをAIに質問する"
-                rows={1}
-                submitOnEnter={isDesktop}
-                // min-w-0, wrap-anywhere が無いと長文で親幅を押し広げてしまう
-                className={`!min-h-0 min-w-0 wrap-anywhere text-sm font-medium leading-[1.5em] tracking-[0.01em] placeholder:text-mirai-text-placeholder placeholder:font-medium placeholder:leading-[1.5em] placeholder:tracking-[0.01em] placeholder:no-underline border-none focus:ring-0 bg-transparent shadow-none !py-2 !px-0`}
-              />
-            </PromptInputBody>
-            <button
-              type="submit"
-              disabled={!input || isResponding}
-              className="flex-shrink-0 w-10 h-10 disabled:opacity-50"
+          {isSessionError ? (
+            <div className="p-3 mb-2 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100">
+              セッションの作成に失敗しました。ページを再読み込みしてください。
+            </div>
+          ) : (
+            <PromptInput
+              onSubmit={handleSubmit}
+              className="flex items-end gap-2.5 py-2 pl-6 pr-4 bg-white rounded-[50px] border-mirai-gradient divide-y-0"
             >
-              <Image
-                src="/icons/send-button-icon.svg"
-                alt="送信"
-                width={40}
-                height={40}
-                className="w-full h-full"
-              />
-            </button>
-          </PromptInput>
+              <PromptInputBody className="flex-1">
+                <PromptInputTextarea
+                  ref={textareaRef}
+                  onChange={handleInputChange}
+                  value={input}
+                  placeholder={
+                    isSessionLoading
+                      ? "準備中..."
+                      : "わからないことをAIに質問する"
+                  }
+                  rows={1}
+                  submitOnEnter={isDesktop}
+                  disabled={isDisabled}
+                  // min-w-0, wrap-anywhere が無いと長文で親幅を押し広げてしまう
+                  className={`!min-h-0 min-w-0 wrap-anywhere text-sm font-medium leading-[1.5em] tracking-[0.01em] placeholder:text-mirai-text-placeholder placeholder:font-medium placeholder:leading-[1.5em] placeholder:tracking-[0.01em] placeholder:no-underline border-none focus:ring-0 bg-transparent shadow-none !py-2 !px-0`}
+                />
+              </PromptInputBody>
+              <button
+                type="submit"
+                disabled={!input || isDisabled}
+                className="flex-shrink-0 w-10 h-10 disabled:opacity-50"
+              >
+                <Image
+                  src="/icons/send-button-icon.svg"
+                  alt="送信"
+                  width={40}
+                  height={40}
+                  className="w-full h-full"
+                />
+              </button>
+            </PromptInput>
+          )}
           <PromptInputError status={status} error={error} />
           {messages.length > 0 && <PromptInputHint />}
         </div>
