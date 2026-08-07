@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { Database } from "@mirai-gikai/supabase";
 import { createAdminClient, clearAllData } from "../shared/helper";
+import { seedLocalAdminUser } from "../shared/admin-user";
 
 type TableName = keyof Database["public"]["Tables"];
 
@@ -77,7 +78,17 @@ async function importFromCsv() {
       console.log(`Importing ${config.table}...`);
 
       const csvPath = path.join(dataDir, config.file);
-      const records = readCsv<Record<string, unknown>>(csvPath);
+      let records = readCsv<Record<string, unknown>>(csvPath);
+
+      if (config.table === "bills") {
+        records = records.map((record) => {
+          const { originating_house, ...rest } = record;
+          return {
+            ...rest,
+            meeting_body: record.meeting_body || "定例会",
+          };
+        });
+      }
 
       const { data, error } = await supabase
         .from(config.table)
@@ -92,6 +103,8 @@ async function importFromCsv() {
       summary[config.table] = count;
       console.log(`✅ Imported ${count} ${config.table}`);
     }
+
+    await seedLocalAdminUser(supabase);
 
     console.log("\n🎉 CSV import completed successfully!");
     console.log("\n📊 Summary:");
