@@ -1,3 +1,7 @@
+import {
+  normalizeReasoningTypes,
+  type ReasoningType,
+} from "@mirai-gikai/shared/interview-report/opinion-tags";
 import type { InterviewReportViewData } from "../../shared/schemas";
 import { isValidReport, parseMessageContent } from "../../shared/message-utils";
 
@@ -39,6 +43,13 @@ export function convertPartialReport(
               title?: string;
               content?: string;
               source_message_id?: string | null;
+              contextual_quote?: string | null;
+              bill_sentiment?: "期待" | "懸念" | null;
+              richness?: number | null;
+              concern?: string | null;
+              proposal?: string | null;
+              // ストリーミング中の部分オブジェクトは要素が未確定になりうる
+              reasoning_types?: Array<ReasoningType | undefined> | null;
             }
           | undefined
         > | null;
@@ -55,6 +66,13 @@ export function convertPartialReport(
           title: op.title ?? "",
           content: op.content ?? "",
           source_message_id: op.source_message_id ?? null,
+          contextual_quote: op.contextual_quote ?? null,
+          bill_sentiment: op.bill_sentiment ?? null,
+          richness: op.richness ?? null,
+          concern: op.concern ?? null,
+          proposal: op.proposal ?? null,
+          // ストリーミング中の部分オブジェクトは素の string[] なので既知の値だけに絞る
+          reasoning_types: normalizeReasoningTypes(op.reasoning_types),
         }))
         .filter((op) => op.title || op.content)
     : [];

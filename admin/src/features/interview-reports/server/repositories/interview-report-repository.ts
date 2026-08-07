@@ -1,8 +1,14 @@
 import "server-only";
 
+import { isReportAutoPublishEligible } from "@mirai-gikai/shared/report-publication/auto-publish";
 import { createAdminClient } from "@mirai-gikai/supabase";
-import type { SessionFilterConfig } from "../../shared/types";
+import type {
+  MessageSearchFilterConfig,
+  SessionFilterConfig,
+} from "../../shared/types";
 import { DEFAULT_SESSION_FILTER } from "../../shared/types";
+import { escapeIlikePattern } from "../../shared/utils/escape-ilike-pattern";
+import { hasReportLevelSearchFilters } from "../../shared/utils/parse-message-search-filter-params";
 
 function toRpcFilterParams(filters: SessionFilterConfig) {
   return {
@@ -21,26 +27,6 @@ function hasReportLevelFilters(filters: SessionFilterConfig): boolean {
     filters.role !== "all" ||
     filters.moderation !== "all"
   );
-}
-
-export async function findInterviewConfigIdByBillId(
-  billId: string
-): Promise<{ id: string } | null> {
-  const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("interview_configs")
-    .select("id")
-    .eq("bill_id", billId)
-    .single();
-
-  if (error) {
-    if (error.code === "PGRST116") {
-      return null;
-    }
-    throw new Error(`Failed to fetch interview config: ${error.message}`);
-  }
-
-  return data;
 }
 
 export async function findInterviewSessionsWithReport(
@@ -459,6 +445,63 @@ export async function findInterviewMessagesBySessionId(sessionId: string) {
   return data;
 }
 
+export async function searchUserMessagesByConfigId(
+  configId: string,
+  query: string,
+  limit: number,
+  filters: MessageSearchFilterConfig
+) {
+  const supabase = createAdminClient();
+  // レポートレベルのフィルタ指定時のみ interview_report まで inner join し、
+  // レポート未生成のセッションを除外する。
+  // embed のカラムはフィルタにのみ使うため取得しない（空の embed でも
+  // inner join とネストしたフィルタは機能する）
+  const selectQuery = hasReportLevelSearchFilters(filters)
+    ? "id, interview_session_id, content, created_at, interview_sessions!inner(interview_report!inner())"
+    : "id, interview_session_id, content, created_at, interview_sessions!inner()";
+
+  let queryBuilder = supabase
+    .from("interview_messages")
+    .select(selectQuery)
+    .eq("role", "user")
+    .eq("interview_sessions.interview_config_id", configId)
+    .ilike("content", `%${escapeIlikePattern(query)}%`);
+
+  if (filters.stance !== "all") {
+    queryBuilder = queryBuilder.eq(
+      "interview_sessions.interview_report.stance",
+      filters.stance
+    );
+  }
+  if (filters.role !== "all") {
+    queryBuilder = queryBuilder.eq(
+      "interview_sessions.interview_report.role",
+      filters.role
+    );
+  }
+  if (filters.roleTitle !== "") {
+    queryBuilder = queryBuilder.ilike(
+      "interview_sessions.interview_report.role_title",
+      `%${escapeIlikePattern(filters.roleTitle)}%`
+    );
+  }
+
+  const { data, error } = await queryBuilder
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    throw new Error(`Failed to search user messages: ${error.message}`);
+  }
+
+  return (data || []).map((row) => ({
+    id: row.id,
+    interview_session_id: row.interview_session_id,
+    content: row.content,
+    created_at: row.created_at,
+  }));
+}
+
 export async function findReactionCountsByReportId(
   reportId: string
 ): Promise<{ helpful: number }> {
@@ -496,6 +539,36 @@ export async function findFeedbackTagsBySessionId(
   return (data || []).map((row) => row.tag);
 }
 
+export type InterviewMetricsByBillRow = {
+  bill_id: string;
+  bill_name: string;
+  conducted_count: number;
+  completed_count: number;
+  completion_rate: number;
+  total_duration_seconds: number;
+};
+
+/**
+ * 議案ごとのAIインタビュー実施数・完了数・完了率・総回答時間を取得する。
+ * billId を指定すると単一議案に絞り込み、省略すると設定を持つ全議案を返す。
+ */
+export async function findInterviewMetricsByBill(
+  billId?: string
+): Promise<InterviewMetricsByBillRow[]> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.rpc("get_interview_metrics_by_bill", {
+    p_bill_id: billId,
+  });
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch interview metrics by bill: ${error.message}`
+    );
+  }
+
+  return data ?? [];
+}
+
 export async function findInterviewStatistics(configId: string) {
   const supabase = createAdminClient();
   const { data, error } = await supabase.rpc("get_interview_statistics", {
@@ -509,14 +582,32 @@ export async function findInterviewStatistics(configId: string) {
   return data?.[0] ?? null;
 }
 
+export async function findQuestionAnswerCounts(configId: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.rpc("get_question_answer_counts", {
+    p_config_id: configId,
+  });
+
+  if (error) {
+    throw new Error(`Failed to fetch question answer counts: ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
 export async function updateReportVisibility(
   reportId: string,
   isPublic: boolean
 ): Promise<void> {
   const supabase = createAdminClient();
+  // 非公開にした管理者判断を admin_unpublished_at に記録し、ユーザー操作による
+  // 自動公開で公開停止が覆されないようにする。公開に戻した場合は記録を消す。
   const { error } = await supabase
     .from("interview_report")
-    .update({ is_public_by_admin: isPublic })
+    .update({
+      is_public_by_admin: isPublic,
+      admin_unpublished_at: isPublic ? null : new Date().toISOString(),
+    })
     .eq("id", reportId);
 
   if (error) {
@@ -651,6 +742,8 @@ export async function updateModerationScore(
   if (error) {
     throw new Error(`Failed to update moderation score: ${error.message}`);
   }
+
+  await publishReportIfAutoPublishEligible(reportId);
 }
 
 export async function updateContentRichness(
@@ -675,4 +768,47 @@ export async function updateContentRichness(
   if (error) {
     throw new Error(`Failed to update content richness: ${error.message}`);
   }
+
+  await publishReportIfAutoPublishEligible(reportId);
+}
+
+export async function publishReportIfAutoPublishEligible(
+  reportId: string
+): Promise<boolean> {
+  const supabase = createAdminClient();
+  const { data: report, error: fetchError } = await supabase
+    .from("interview_report")
+    .select(
+      "is_public_by_user, is_public_by_admin, moderation_score, total_content_richness"
+    )
+    .eq("id", reportId)
+    .single();
+
+  if (fetchError) {
+    throw new Error(
+      `Failed to fetch report for auto publish: ${fetchError.message}`
+    );
+  }
+
+  if (
+    report.is_public_by_admin ||
+    !isReportAutoPublishEligible({
+      isPublicByUser: report.is_public_by_user,
+      moderationScore: report.moderation_score,
+      totalContentRichness: report.total_content_richness,
+    })
+  ) {
+    return false;
+  }
+
+  const { error } = await supabase
+    .from("interview_report")
+    .update({ is_public_by_admin: true })
+    .eq("id", reportId);
+
+  if (error) {
+    throw new Error(`Failed to auto publish report: ${error.message}`);
+  }
+
+  return true;
 }

@@ -20,11 +20,14 @@ import { useQuickReplies } from "./use-quick-replies";
 interface UseInterviewChatProps {
   billId: string;
   initialMessages: InitialMessage[];
+  /** プレビュー画面から表示している場合のみ渡す（API側で検証される） */
+  previewToken?: string;
 }
 
 export function useInterviewChat({
   billId,
   initialMessages,
+  previewToken,
 }: UseInterviewChatProps) {
   // 初期メッセージのパース
   const { parsedInitialMessages, initialStage } =
@@ -52,6 +55,7 @@ export function useInterviewChat({
     messages: { role: string; content: string }[];
     billId: string;
     currentStage: InterviewStage;
+    previewToken?: string;
   } | null>(null);
 
   // useObjectフックを使用（streamObjectの結果を受け取る）
@@ -121,6 +125,7 @@ export function useInterviewChat({
             messages: allMessages,
             billId,
             currentStage: "summary" as InterviewStage,
+            previewToken,
           });
         }
       }
@@ -175,6 +180,7 @@ export function useInterviewChat({
       billId,
       currentStage,
       nextQuestionId,
+      previewToken,
     };
     retry.saveRequestParams(requestParams); // 失敗時の自動リトライ用に保存
     submit(requestParams);
@@ -210,6 +216,29 @@ export function useInterviewChat({
     handleSubmit({ text: reply });
   };
 
+  // レポート未生成時（hasReport=false）の「インタビューを続ける」用の再開処理。
+  // handleSubmit は stage==="summary_complete" のとき送信をブロックするため、
+  // そのまま流用すると summary_complete に到達したケースでボタンが無反応になる。
+  // ここでは stage を chat に戻し、chatフェーズで再開メッセージを送ることで、
+  // レポートが作れなかった状態から確実にインタビューを継続できるようにする
+  // （LLM の next_stage 判定に依存しない）。
+  const handleResumeInterview = () => {
+    if (isChatLoading) return;
+
+    const resumeText = "もう少しインタビューを続けたいです。";
+    setConversationMessages((prev) => [
+      ...prev,
+      {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: resumeText,
+      },
+    ]);
+    setInput("");
+    setStage("chat");
+    submitChatMessage(resumeText, "chat");
+  };
+
   // 手動リトライ関数
   const handleRetry = () => {
     if (!retry.canRetry) return;
@@ -236,5 +265,6 @@ export function useInterviewChat({
     handleSubmit,
     handleQuickReply,
     handleRetry,
+    handleResumeInterview,
   };
 }

@@ -42,7 +42,13 @@ const billBaseSchema = z.object({
     .string()
     .max(500, "ステータス備考は500文字以内で入力してください")
     .nullable(),
-  published_at: z.string().optional(),
+  submitted_date: z
+    .string()
+    .refine(
+      (val) => val === "" || /^\d{4}-\d{2}-\d{2}$/.test(val),
+      "法案提出日は YYYY-MM-DD 形式で入力してください"
+    )
+    .optional(),
   thumbnail_url: z.string().nullable().optional(),
   share_thumbnail_url: z.string().nullable().optional(),
   shugiin_url: z
@@ -54,7 +60,19 @@ const billBaseSchema = z.object({
     })
     .optional(),
   is_featured: z.boolean(),
+  is_review_completed: z.boolean(),
   diet_session_id: z.string().uuid().nullable().optional(),
+  slug: z
+    .string()
+    .max(200, "slugは200文字以内で入力してください")
+    .transform((val) => (val === "" ? null : val))
+    .nullable()
+    .optional(),
+  knowledge_source: z
+    .string()
+    .max(40_000, "ナレッジソースは40,000文字以内で入力してください")
+    .optional(),
+  use_knowledge_source_in_chat: z.boolean().optional(),
 });
 
 // 更新用スキーマ（既存）

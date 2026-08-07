@@ -1,5 +1,6 @@
 "use server";
 
+import type { InterviewMode } from "@mirai-gikai/shared/interview-prompts/types";
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
 import {
   invalidateWebCache,
@@ -19,11 +20,17 @@ import {
   findInterviewConfigBillId,
   findInterviewConfigById,
   findInterviewQuestionsByConfigId,
+  softDeleteInterviewConfigRecord,
+  unpublishReportsByConfigId,
   updateInterviewConfigRecord,
 } from "../repositories/interview-config-repository";
 
 export type InterviewConfigResult =
   | { success: true; data: { id: string } }
+  | { success: false; error: string };
+
+export type DuplicateInterviewConfigResult =
+  | { success: true; data: { id: string; billId: string } }
   | { success: false; error: string };
 
 /**
@@ -51,7 +58,6 @@ export async function createInterviewConfig(
       status: validatedData.status,
       mode: validatedData.mode,
       themes: validatedData.themes || null,
-      knowledge_source: validatedData.knowledge_source || null,
       chat_model: validatedData.chat_model || null,
       estimated_duration: validatedData.estimated_duration ?? null,
     });
@@ -98,7 +104,6 @@ export async function updateInterviewConfig(
       status: validatedData.status,
       mode: validatedData.mode,
       themes: validatedData.themes || null,
-      knowledge_source: validatedData.knowledge_source || null,
       chat_model: validatedData.chat_model || null,
       estimated_duration: validatedData.estimated_duration ?? null,
       updated_at: new Date().toISOString(),
@@ -122,10 +127,15 @@ export async function updateInterviewConfig(
 
 /**
  * インタビュー設定を複製する（質問も含めてコピー）
+ *
+ * `options.targetBillId` を渡すと別の法案にコピーする。
+ * 省略時は同じ法案内で複製する（従来動作）。
+ * いずれの場合も新しい設定は status="closed" で作成する。
  */
 export async function duplicateInterviewConfig(
-  configId: string
-): Promise<InterviewConfigResult> {
+  configId: string,
+  options?: { targetBillId?: string }
+): Promise<DuplicateInterviewConfigResult> {
   try {
     await requireAdmin();
 
@@ -142,16 +152,17 @@ export async function duplicateInterviewConfig(
     // 元の質問を取得
     const originalQuestions = await findInterviewQuestionsByConfigId(configId);
 
+    const targetBillId = options?.targetBillId ?? originalConfig.bill_id;
+
     // 新しい設定を作成（ステータスは非公開で複製）
     let newConfig: { id: string };
     try {
       newConfig = await createInterviewConfigRecord({
-        bill_id: originalConfig.bill_id,
+        bill_id: targetBillId,
         name: `${originalConfig.name}（コピー）`,
         status: "closed" as const,
-        mode: originalConfig.mode as "loop" | "bulk",
+        mode: originalConfig.mode as InterviewMode,
         themes: originalConfig.themes,
-        knowledge_source: originalConfig.knowledge_source,
         chat_model: originalConfig.chat_model,
         estimated_duration: originalConfig.estimated_duration,
       });
@@ -184,7 +195,7 @@ export async function duplicateInterviewConfig(
     // web側のキャッシュを無効化
     await invalidateWebCache([WEB_CACHE_TAGS.INTERVIEW_CONFIGS]);
 
-    return { success: true, data: { id: newConfig.id } };
+    return { success: true, data: { id: newConfig.id, billId: targetBillId } };
   } catch (error) {
     console.error("Duplicate interview config error:", error);
     return {
@@ -206,10 +217,19 @@ export async function deleteInterviewConfig(
   try {
     await requireAdmin();
 
-    await deleteInterviewConfigRecord(configId);
+    // 先に配下レポートを公開停止してから設定を論理削除する。
+    // この順序なら、途中で失敗しても「設定は一覧に残る／レポートも公開のまま」
+    // の整合した状態になり、再実行で安全にやり直せる（いずれも冪等）。
+    await unpublishReportsByConfigId(configId);
+    await softDeleteInterviewConfigRecord(configId);
 
     // web側のキャッシュを無効化
-    await invalidateWebCache([WEB_CACHE_TAGS.INTERVIEW_CONFIGS]);
+    // - INTERVIEW_CONFIGS: 公開設定の取得
+    // - BILLS: 法案一覧の「AIインタビュー受付中」バッジ・法案ページの公開レポート件数
+    await invalidateWebCache([
+      WEB_CACHE_TAGS.BILLS,
+      WEB_CACHE_TAGS.INTERVIEW_CONFIGS,
+    ]);
 
     return { success: true, data: { id: configId } };
   } catch (error) {

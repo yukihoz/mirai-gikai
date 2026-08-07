@@ -2,6 +2,7 @@ import "server-only";
 import { Bot, Clock, Lightbulb, MessageCircle, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CopyMessageLinkButton } from "../../client/components/copy-message-link-button";
 import { RegenerateContentRichnessButton } from "../../client/components/regenerate-content-richness-button";
 import { RegenerateModerationButton } from "../../client/components/regenerate-moderation-button";
 import { ReportVisibilityToggle } from "../../client/components/report-visibility-toggle";
@@ -10,7 +11,9 @@ import { FEEDBACK_TAG_LABELS } from "../../shared/constants/feedback-tags";
 import type { InterviewSessionDetail } from "../../shared/types";
 import { formatDuration, getSessionStatus } from "../../shared/types";
 import { getMessageDisplayText } from "../../shared/utils/get-message-display-text";
+import { getMessageAnchorId } from "../../shared/utils/message-anchor";
 import { parseOpinions } from "../../shared/utils/parse-opinions";
+import { HighlightedText } from "./highlighted-text";
 import { ModerationBadge } from "./moderation-badge";
 import { RatingStars } from "./rating-stars";
 import { SessionStatusBadge } from "./session-status-badge";
@@ -19,6 +22,7 @@ import { StanceBadge } from "./stance-badge";
 interface SessionDetailProps {
   session: InterviewSessionDetail;
   billId: string;
+  highlightQuery?: string;
 }
 
 const contentRichnessLabels: Record<string, string> = {
@@ -50,7 +54,11 @@ function ContentRichnessBar({
   );
 }
 
-export function SessionDetail({ session, billId }: SessionDetailProps) {
+export function SessionDetail({
+  session,
+  billId,
+  highlightQuery = "",
+}: SessionDetailProps) {
   const status = getSessionStatus(session);
   const duration = formatDuration(session.started_at, session.completed_at);
   const report = session.interview_report;
@@ -356,10 +364,12 @@ export function SessionDetail({ session, billId }: SessionDetailProps) {
             <div className="space-y-4">
               {messages.map((message) => {
                 const isAssistant = message.role === "assistant";
+                const reverseClass = isAssistant ? "" : "flex-row-reverse";
                 return (
                   <div
                     key={message.id}
-                    className={`flex gap-3 ${isAssistant ? "" : "flex-row-reverse"}`}
+                    id={getMessageAnchorId(message.id)}
+                    className={`group flex gap-3 scroll-mt-24 rounded-xl target:bg-amber-50 target:ring-2 target:ring-amber-200 target:p-2 target:-m-2 ${reverseClass}`}
                   >
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
@@ -384,12 +394,22 @@ export function SessionDetail({ session, billId }: SessionDetailProps) {
                             : "bg-gray-100 text-gray-800 rounded-tr-sm"
                         }`}
                       >
-                        {getMessageDisplayText(message.content)}
+                        {highlightQuery ? (
+                          <HighlightedText
+                            text={getMessageDisplayText(message.content)}
+                            query={highlightQuery}
+                          />
+                        ) : (
+                          getMessageDisplayText(message.content)
+                        )}
                       </div>
-                      <div className="text-xs text-gray-400 mt-1 px-1">
+                      <div
+                        className={`flex items-center gap-1 text-xs text-gray-400 mt-1 px-1 ${reverseClass}`}
+                      >
                         {new Date(message.created_at).toLocaleString("ja-JP", {
                           timeZone: "Asia/Tokyo",
                         })}
+                        <CopyMessageLinkButton messageId={message.id} />
                       </div>
                     </div>
                   </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
 import type { Control } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -18,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
   type BillStatus,
@@ -25,6 +27,7 @@ import {
 } from "@/features/bills/shared/types";
 import type { DietSession } from "@/features/diet-sessions/shared/types";
 import type { BillCreateInput } from "../../shared/types";
+import { shouldAutoCloseInterviewOnBillStatus } from "../../shared/utils/should-auto-close-interview";
 import { ThumbnailUpload } from "./thumbnail-upload";
 
 const BILL_STATUS_OPTIONS: Array<{ value: BillStatus; label: string }> = [
@@ -106,6 +109,14 @@ export function BillFormFields({
               <FormDescription>
                 現在の審議状況を選択してください
               </FormDescription>
+              {shouldAutoCloseInterviewOnBillStatus(field.value) && (
+                <p className="text-sm text-amber-700 bg-amber-50 p-3 rounded flex items-start gap-2">
+                  <AlertTriangle className="size-4 mt-0.5 shrink-0" />
+                  <span>
+                    保存すると、この議案に紐づく公開中のインタビューは自動でクローズされます。
+                  </span>
+                </p>
+              )}
               <FormMessage />
             </FormItem>
           )}
@@ -163,16 +174,14 @@ export function BillFormFields({
 
       <FormField
         control={control}
-        name="published_at"
+        name="submitted_date"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>公開日時 *</FormLabel>
+            <FormLabel>法案提出日 *</FormLabel>
             <FormControl>
-              <Input type="datetime-local" {...field} />
+              <Input type="date" {...field} />
             </FormControl>
-            <FormDescription>
-              議案が公開される日時を設定してください
-            </FormDescription>
+            <FormDescription>法案の提出日を設定してください</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -244,6 +253,27 @@ export function BillFormFields({
 
       <FormField
         control={control}
+        name="slug"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Slug</FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                value={field.value || ""}
+                placeholder="221-kaku-1-mof-法案名"
+              />
+            </FormControl>
+            <FormDescription>
+              コンテンツ同期用の識別子です（最大200文字）
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
         name="diet_session_id"
         render={({ field }) => (
           <FormItem>
@@ -288,6 +318,67 @@ export function BillFormFields({
               <FormLabel>注目の議案</FormLabel>
               <FormDescription>
                 トップページなどで優先的に表示されます
+              </FormDescription>
+            </div>
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="is_review_completed"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+            <FormControl>
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+            <div className="space-y-1 leading-none">
+              <FormLabel>記事レビュー完了</FormLabel>
+              <FormDescription>
+                未完了の場合、記事にレビュー中バナーが表示されます
+              </FormDescription>
+            </div>
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="knowledge_source"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>ナレッジソース</FormLabel>
+            <FormControl>
+              <Textarea
+                {...field}
+                value={field.value ?? ""}
+                placeholder="議案の補足情報やチームみらいの仮説などを入力"
+                className="min-h-[200px] resize-y"
+              />
+            </FormControl>
+            <FormDescription>
+              AIインタビュー（常時参照）と、AIチャット（下のトグルで参照可否を切替）で使われる補足情報です。最大40,000文字。
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="use_knowledge_source_in_chat"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-md border p-4">
+            <FormControl>
+              <Switch checked={field.value} onCheckedChange={field.onChange} />
+            </FormControl>
+            <div className="space-y-1 leading-none">
+              <FormLabel>AIチャットでもナレッジソースを使用する</FormLabel>
+              <FormDescription>
+                ONにすると、議案ページのAIチャットのシステムプロンプトに上のナレッジソースが追加されます。AIインタビューでは常に使用されます。
               </FormDescription>
             </div>
           </FormItem>

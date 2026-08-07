@@ -1,11 +1,13 @@
 "use client";
 
+import type { InterviewMode } from "@mirai-gikai/shared/interview-prompts/types";
 import { useCallback, useMemo, useState } from "react";
 import {
   Conversation,
   ConversationContent,
 } from "@/components/ai-elements/conversation";
 import { getBillDetailLink } from "@/features/interview-config/shared/utils/interview-links";
+import { isLoopFamilyMode } from "../../shared/utils/is-loop-family-mode";
 import { useInterviewChat } from "../hooks/use-interview-chat";
 import { useInterviewRating } from "../hooks/use-interview-rating";
 import { useInterviewTimer } from "../hooks/use-interview-timer";
@@ -31,7 +33,7 @@ interface InterviewChatClientProps {
     content: string;
     created_at: string;
   }>;
-  mode?: "loop" | "bulk";
+  mode?: InterviewMode;
   totalQuestions?: number;
   estimatedDuration?: number | null;
   sessionStartedAt?: string;
@@ -66,9 +68,11 @@ export function InterviewChatClient({
     handleSubmit,
     handleQuickReply,
     handleRetry,
+    handleResumeInterview,
   } = useInterviewChat({
     billId,
     initialMessages,
+    previewToken,
   });
 
   const { remainingMinutes, isTimeUp } = useInterviewTimer({
@@ -91,7 +95,7 @@ export function InterviewChatClient({
 
   const billDetailLink = getBillDetailLink(billId, previewToken);
 
-  const showProgressBar = mode === "loop" && progress !== null;
+  const showProgressBar = isLoopFamilyMode(mode) && progress !== null;
   const timerMinutes =
     remainingMinutes !== null && stage === "chat" && !timeUpDismissed
       ? remainingMinutes
@@ -295,6 +299,7 @@ export function InterviewChatClient({
               input={input}
               onInputChange={setInput}
               onSubmit={handleSubmit}
+              onResume={handleResumeInterview}
               isLoading={isLoading}
               error={error}
             />

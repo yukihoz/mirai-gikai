@@ -30,6 +30,11 @@ const links: FooterLinkItem[] = [
     href: routes.faq(),
     external: false,
   },
+  {
+    label: "自主制作ガイドライン",
+    href: EXTERNAL_LINKS.FORK_GUIDELINES_NOTE,
+    external: true,
+  },
 ];
 
 /**

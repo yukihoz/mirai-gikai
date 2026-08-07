@@ -48,4 +48,8 @@ export const policyLinks: FooterPolicyLink[] = [
     label: "プライバシーポリシー",
     href: routes.privacy(),
   },
+  {
+    label: "開発者向け",
+    href: routes.developers(),
+  },
 ];

@@ -1,18 +1,22 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
 import { BatchModerationButton } from "@/features/interview-reports/client/components/batch-moderation-button";
 import { BatchPublishButton } from "@/features/interview-reports/client/components/batch-publish-button";
+import { CopyTsvButton } from "@/features/interview-reports/client/components/copy-tsv-button";
 import { InterviewStatistics } from "@/features/interview-reports/server/components/interview-statistics";
+import { QuestionAnswerCounts } from "@/features/interview-reports/server/components/question-answer-counts";
 import { SessionList } from "@/features/interview-reports/server/components/session-list";
 import {
   getInterviewSessions,
   getInterviewSessionsCount,
 } from "@/features/interview-reports/server/loaders/get-interview-sessions";
 import { getInterviewStatistics } from "@/features/interview-reports/server/loaders/get-interview-statistics";
+import { getQuestionAnswerCounts } from "@/features/interview-reports/server/loaders/get-question-answer-counts";
 import { parseSessionFilterParams } from "@/features/interview-reports/shared/utils/parse-session-filter-params";
 import { parseSessionSortParams } from "@/features/interview-reports/shared/utils/parse-session-sort-params";
 import { routes } from "@/lib/routes";
@@ -51,12 +55,14 @@ export default async function ReportsPage({
     moderation
   );
 
-  const [bill, sessions, totalCount, statistics] = await Promise.all([
-    getBillById(id),
-    getInterviewSessions(configId, currentPage, sortConfig, filterConfig),
-    getInterviewSessionsCount(configId, filterConfig),
-    getInterviewStatistics(configId),
-  ]);
+  const [bill, sessions, totalCount, statistics, questionAnswerCounts] =
+    await Promise.all([
+      getBillById(id),
+      getInterviewSessions(configId, currentPage, sortConfig, filterConfig),
+      getInterviewSessionsCount(configId, filterConfig),
+      getInterviewStatistics(configId),
+      getQuestionAnswerCounts(configId),
+    ]);
 
   if (!bill) {
     notFound();
@@ -82,7 +88,14 @@ export default async function ReportsPage({
           <p className="text-gray-600 mt-1">議案「{bill.name}」のレポート</p>
         </div>
         <div className="flex items-center gap-2">
-          <BatchPublishButton billId={id} />
+          <Button asChild variant="outline">
+            <Link href={routes.billReportsSearch(id, configId) as Route}>
+              <Search className="h-4 w-4" />
+              発言検索
+            </Link>
+          </Button>
+          <CopyTsvButton billId={id} configId={configId} />
+          <BatchPublishButton billId={id} configId={configId} />
           <BatchModerationButton />
         </div>
       </div>
@@ -90,6 +103,12 @@ export default async function ReportsPage({
       {statistics && (
         <div className="mb-6">
           <InterviewStatistics statistics={statistics} />
+        </div>
+      )}
+
+      {questionAnswerCounts.length > 0 && (
+        <div className="mb-6">
+          <QuestionAnswerCounts counts={questionAnswerCounts} />
         </div>
       )}
 

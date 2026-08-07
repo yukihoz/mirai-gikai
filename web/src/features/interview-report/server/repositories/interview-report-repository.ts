@@ -1,5 +1,6 @@
 import "server-only";
 
+import { shouldAutoPublishOnUserSettingChange } from "@mirai-gikai/shared/report-publication/auto-publish";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { SortOrder } from "../../shared/utils/sort-order";
 
@@ -132,26 +133,9 @@ export async function countPublicReportsByStance(billId: string) {
 /**
  * 議案IDの公開インタビューレポート件数を取得
  */
-export async function countPublicReportsByBillId(billId: string) {
-  const supabase = createAdminClient();
-  const { count, error } = await supabase
-    .from("interview_report")
-    .select("id, interview_sessions!inner(interview_configs!inner(bill_id))", {
-      count: "exact",
-      head: true,
-    })
-    .eq("is_public_by_admin", true)
-    .eq("is_public_by_user", true)
-    .eq("interview_sessions.interview_configs.bill_id", billId);
-
-  if (error) {
-    throw new Error(
-      `Failed to count public interview reports: ${error.message}`
-    );
-  }
-
-  return count ?? 0;
-}
+// 公開レポート件数のカウントは web・admin MCP で共有するため
+// @mirai-gikai/shared に集約。既存の呼び出し元はこの re-export 経由で参照する。
+export { countPublicReportsByBillId } from "@mirai-gikai/shared/report-publication/count-public-reports";
 
 /**
  * 公開レポートをIDから取得（認証不要）
@@ -170,6 +154,11 @@ export async function findPublicReportWithSessionById(reportId: string) {
     .single();
 
   if (error) {
+    // 公開条件を満たすレポートが存在しない場合（非公開・削除済み設定配下など）は
+    // null を返す。呼び出し側で notFound（404）として扱う。
+    if (error.code === "PGRST116") {
+      return null;
+    }
     throw new Error(
       `Failed to fetch public interview report: ${error.message}`
     );
@@ -207,12 +196,56 @@ export async function findUserReportsByInterviewConfigId(
  */
 export async function updateReportPublicSetting(
   reportId: string,
-  isPublic: boolean
+  isPublic: boolean,
+  isDataReuseConsented?: boolean
 ) {
   const supabase = createAdminClient();
+
+  const { data: report, error: fetchError } = await supabase
+    .from("interview_report")
+    .select(
+      "is_public_by_admin, admin_unpublished_at, moderation_score, total_content_richness"
+    )
+    .eq("id", reportId)
+    .single();
+
+  if (fetchError) {
+    throw new Error(
+      `Failed to fetch report for public setting: ${fetchError.message}`
+    );
+  }
+
+  // 二次利用（オープンデータ提供）同意は、新規約の告知を表示したUIが
+  // 明示的に渡した場合のみ更新する（告知を表示していない旧クライアント
+  // からの呼び出しで同意ありと記録してしまうことを防ぐ）
+  const updateValues: {
+    is_public_by_user: boolean;
+    is_data_reuse_consented?: boolean;
+    is_public_by_admin?: boolean;
+  } = {
+    is_public_by_user: isPublic,
+    ...(typeof isDataReuseConsented === "boolean"
+      ? { is_data_reuse_consented: isDataReuseConsented }
+      : {}),
+  };
+
+  // 管理者が非公開にしたレポート（個別の公開停止・設定の論理削除に伴う一括停止）は
+  // admin_unpublished_at が記録されるため、ユーザー操作では再公開しない。
+  if (
+    shouldAutoPublishOnUserSettingChange({
+      isPublicByAdmin: report.is_public_by_admin,
+      adminUnpublishedAt: report.admin_unpublished_at,
+      isPublicByUser: isPublic,
+      moderationScore: report.moderation_score,
+      totalContentRichness: report.total_content_richness,
+    })
+  ) {
+    updateValues.is_public_by_admin = true;
+  }
+
   const { error } = await supabase
     .from("interview_report")
-    .update({ is_public_by_user: isPublic })
+    .update(updateValues)
     .eq("id", reportId);
 
   if (error) {

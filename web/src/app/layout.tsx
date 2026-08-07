@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { Lexend_Giga, Noto_Sans_JP } from "next/font/google";
+import { Lexend_Giga, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import type { ReactNode } from "react";
 import { env } from "@/lib/env";
@@ -17,7 +17,15 @@ const lexendGiga = Lexend_Giga({
   weight: ["400", "500", "700", "800", "900"],
 });
 
+// トピックの代表意見など、引用文を明朝体で表示するために使用
+const notoSerifJP = Noto_Serif_JP({
+  variable: "--font-noto-serif-jp",
+  subsets: ["latin"],
+  weight: ["500", "600"],
+});
+
 const isDev = process.env.NODE_ENV === "development";
+const isStaging = process.env.VERCEL_TARGET_ENV === "staging";
 const siteTitle = env.siteTitle;
 const siteDescription = `${env.assemblyName}で今どのような議論が行われているか、わかりやすく伝えるプラットフォーム`;
 const siteName = env.siteTitle;
@@ -36,8 +44,12 @@ export const metadata: Metadata = {
   icons: {
     icon: isDev
       ? "/icons/pwa/icon_dev_192_v3.png"
-      : "/icons/pwa/icon_android_192.png",
-    apple: "/icons/pwa/icon_ios.png",
+      : isStaging
+        ? "/icons/pwa/icon_staging_192.png"
+        : "/icons/pwa/icon_android_192.png",
+    apple: isStaging
+      ? "/icons/pwa/icon_staging_ios.png"
+      : "/icons/pwa/icon_ios.png",
   },
   manifest: "/manifest.json",
   openGraph: {
@@ -80,7 +92,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${notoSansJP.variable} ${lexendGiga.variable} font-sans antialiased bg-mirai-surface-light`}
+        className={`${notoSansJP.variable} ${lexendGiga.variable} ${notoSerifJP.variable} font-sans antialiased bg-mirai-surface-light`}
       >
         <NextTopLoader showSpinner={false} color="#2aa693" />
         {children}

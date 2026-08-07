@@ -34,7 +34,7 @@ const FEATURES: {
   {
     iconSrc: "/icons/interview-ear.svg",
     iconSize: { w: 21, h: 29 },
-    text: "あなたの経験や考えをAIがチャットで深堀りします",
+    text: "あなたの経験や考えをAIがチャットで深掘りします",
   },
   {
     iconSrc: "/icons/interview-messages.svg",
@@ -157,7 +157,7 @@ function _InterviewOverviewSection({
           >
             {billName}
           </Link>
-          について、AIがあなたの考えを深堀りするチャット型インタビューです
+          について、AIがあなたの考えを深掘りするチャット型インタビューです
         </p>
         <p>
           いただいたご意見は、政策研究や{env.assemblyName}での審議に活用し、{env.siteShortName}上に公開される可能性があります。

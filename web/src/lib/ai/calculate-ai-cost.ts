@@ -70,6 +70,18 @@ export const modelPricing: Record<string, ModelPricing> = {
     inputTokensPerMillionUsd: 1.75,
     outputTokensPerMillionUsd: 14,
   },
+  [AI_MODELS.gpt5_6_sol]: {
+    inputTokensPerMillionUsd: 5,
+    outputTokensPerMillionUsd: 30,
+  },
+  [AI_MODELS.gpt5_6_terra]: {
+    inputTokensPerMillionUsd: 2.5,
+    outputTokensPerMillionUsd: 15,
+  },
+  [AI_MODELS.gpt5_6_luna]: {
+    inputTokensPerMillionUsd: 1,
+    outputTokensPerMillionUsd: 6,
+  },
   // --- Google ---
   [AI_MODELS.gemini3_flash]: {
     inputTokensPerMillionUsd: 0.5,
@@ -83,12 +95,20 @@ export const modelPricing: Record<string, ModelPricing> = {
     inputTokensPerMillionUsd: 2,
     outputTokensPerMillionUsd: 12,
   },
+  [AI_MODELS.gemma4_26b_a4b]: {
+    inputTokensPerMillionUsd: 0.06,
+    outputTokensPerMillionUsd: 0.33,
+  },
   // --- Anthropic ---
   [AI_MODELS.claude_haiku_4_5]: {
     inputTokensPerMillionUsd: 1,
     outputTokensPerMillionUsd: 5,
   },
   [AI_MODELS.claude_sonnet_4_6]: {
+    inputTokensPerMillionUsd: 3,
+    outputTokensPerMillionUsd: 15,
+  },
+  [AI_MODELS.claude_sonnet_5]: {
     inputTokensPerMillionUsd: 3,
     outputTokensPerMillionUsd: 15,
   },

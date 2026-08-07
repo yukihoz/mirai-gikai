@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const nextConfig: NextConfig = {
   experimental: {
     serverSourceMaps: true,
@@ -25,10 +27,14 @@ const nextConfig: NextConfig = {
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/bill-thumbnails/**",
       },
-      {
-        protocol: "https",
-        hostname: "placehold.co",
-      },
+      ...(isDev
+        ? [
+            {
+              protocol: "https" as const,
+              hostname: "placehold.co",
+            },
+          ]
+        : []),
     ],
   },
 };

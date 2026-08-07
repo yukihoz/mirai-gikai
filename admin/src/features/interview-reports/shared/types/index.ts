@@ -1,5 +1,9 @@
 import type { Database } from "@mirai-gikai/supabase";
 import type { SortConfig } from "@/lib/sort";
+import {
+  type InterviewReportStance,
+  interviewReportStances,
+} from "../constants";
 
 export type InterviewSession =
   Database["public"]["Tables"]["interview_sessions"]["Row"];
@@ -18,6 +22,23 @@ export type InterviewSessionWithDetails = InterviewSession & {
 
 export type ReactionCounts = {
   helpful: number;
+};
+
+export interface MatchedUserMessage {
+  id: string;
+  interview_session_id: string;
+  content: string;
+  created_at: string;
+}
+
+export interface SessionMatchGroup {
+  sessionId: string;
+  messages: MatchedUserMessage[];
+}
+
+export type MessageSearchSession = InterviewSession & {
+  interview_report: InterviewReport | null;
+  matched_messages: MatchedUserMessage[];
 };
 
 export type InterviewSessionDetail = InterviewSession & {
@@ -95,6 +116,26 @@ export const DEFAULT_SESSION_FILTER: SessionFilterConfig = {
   moderation: "all",
 };
 
+// 発言検索のスタンスフィルタ。バッジ表示と同じ全スタンスを対象にする
+// （セッション一覧の StanceFilter は賛成/反対/中立のみ）
+export type MessageSearchStanceFilter = "all" | InterviewReportStance;
+
+export const MESSAGE_SEARCH_STANCE_FILTER_VALUES: readonly MessageSearchStanceFilter[] =
+  ["all", ...interviewReportStances] as const;
+
+// 発言検索のフィルタ。roleTitle は部分一致（空文字 = フィルタなし）
+export interface MessageSearchFilterConfig {
+  stance: MessageSearchStanceFilter;
+  role: RoleFilter;
+  roleTitle: string;
+}
+
+export const DEFAULT_MESSAGE_SEARCH_FILTER: MessageSearchFilterConfig = {
+  stance: "all",
+  role: "all",
+  roleTitle: "",
+};
+
 export type InterviewStatistics = {
   totalSessions: number;
   completedSessions: number;
@@ -110,6 +151,7 @@ export type InterviewStatistics = {
   roleGeneralCitizen: number;
   avgMessageCount: number | null;
   medianDurationSeconds: number | null;
+  totalDurationSeconds: number;
   publicByUserCount: number;
   publicRate: number;
   feedbackIrrelevantQuestions: number;
@@ -119,6 +161,14 @@ export type InterviewStatistics = {
   feedbackOther: number;
   totalCostUsd: number;
   avgCostUsd: number;
+};
+
+export type QuestionAnswerCount = {
+  questionId: string;
+  question: string;
+  questionOrder: number;
+  askedSessionCount: number;
+  answeredSessionCount: number;
 };
 
 // ソート関連の型定義

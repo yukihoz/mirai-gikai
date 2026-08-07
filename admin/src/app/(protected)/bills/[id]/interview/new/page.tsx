@@ -1,11 +1,13 @@
-import type { Route } from "next";
 import { ArrowLeft } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
-import { routes } from "@/lib/routes";
+import { getCurrentAdmin } from "@/features/auth/server/lib/auth-server";
 import { InterviewConfigEditClient } from "@/features/interview-config/client/components/interview-config-edit-client";
+import { generateDefaultConfigName } from "@/features/interview-config/shared/utils/default-config-name";
+import { routes } from "@/lib/routes";
 
 interface InterviewNewPageProps {
   params: Promise<{
@@ -17,11 +19,16 @@ export default async function InterviewNewPage({
   params,
 }: InterviewNewPageProps) {
   const { id } = await params;
-  const bill = await getBillById(id);
+  const [bill, admin] = await Promise.all([getBillById(id), getCurrentAdmin()]);
 
   if (!bill) {
     notFound();
   }
+
+  const username = admin?.email?.split("@")[0] || null;
+  const initialName = username
+    ? `${generateDefaultConfigName()} (${username})`
+    : null;
 
   return (
     <div>
@@ -48,6 +55,8 @@ export default async function InterviewNewPage({
         billId={bill.id}
         config={null}
         questions={[]}
+        completedReports={[]}
+        initialName={initialName}
       />
     </div>
   );

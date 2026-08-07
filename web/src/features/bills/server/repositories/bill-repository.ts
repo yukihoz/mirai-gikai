@@ -32,7 +32,7 @@ export async function findPublishedBillsWithContents(
     )
     .eq("publish_status", "published")
     .eq("bill_contents.difficulty_level", difficultyLevel)
-    .order("published_at", { ascending: false });
+    .order("submitted_date", { ascending: false, nullsFirst: false });
 
   if (error) {
     throw new Error(`Failed to fetch bills: ${error.message}`);
@@ -202,7 +202,7 @@ export async function findPublishedBillsByDietSession(
     .eq("publish_status", "published")
     .eq("bill_contents.difficulty_level", difficultyLevel)
     .order("status_order", { ascending: true })
-    .order("published_at", { ascending: false });
+    .order("submitted_date", { ascending: false, nullsFirst: false });
 
   if (error) {
     throw new Error(`Failed to fetch bills by diet session: ${error.message}`);
@@ -241,7 +241,7 @@ export async function findPreviousSessionBills(
     .eq("publish_status", "published")
     .eq("bill_contents.difficulty_level", difficultyLevel)
     .order("status_order", { ascending: true })
-    .order("published_at", { ascending: false })
+    .order("submitted_date", { ascending: false, nullsFirst: false })
     .limit(limit);
 
   if (error) {
@@ -387,7 +387,7 @@ export async function findFeaturedBillsWithContents(
     )
     .eq("is_featured", true)
     .eq("bill_contents.difficulty_level", difficultyLevel)
-    .order("published_at", { ascending: false });
+    .order("submitted_date", { ascending: false, nullsFirst: false });
 
   if (dietSessionId) {
     query = query.eq("diet_session_id", dietSessionId);
@@ -472,6 +472,10 @@ export async function findPreviewToken(billId: string, token: string) {
 
 /**
  * 複数のbill_idに対して、公開中のインタビュー設定があるかを一括判定
+ *
+ * status="public" のみで判定する。論理削除（deleted_at）された設定は
+ * 削除時に status="closed" へ変更されるため、ここで自然に除外される
+ * （softDeleteInterviewConfigRecord 参照）。
  */
 export async function findBillIdsWithPublicInterview(
   billIds: string[]
