@@ -1,4 +1,3 @@
-import { FileText, Info } from "lucide-react";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
@@ -20,26 +19,14 @@ export function CompactBillCard({ bill, className }: CompactBillCardProps) {
   const displayTitle = bill.bill_content?.title || bill.name;
   const statusLabel = bill.status === "enacted" ? "成立" : "提出";
 
-  const isReported = bill.status === "reported";
-  const CategoryIcon = isReported ? Info : FileText;
-  const categoryText = isReported ? "報告事項" : "議案";
-
   return (
     <Card
       className={`border-[0.5px] border-mirai-text-placeholder rounded-2xl shadow-none hover:bg-muted/50 transition-colors overflow-hidden relative ${className ?? ""}`}
     >
-      {/* カテゴリバッジ */}
-      <div className="absolute top-2 right-2 flex items-start z-10 pointer-events-none">
-        <span className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold text-gray-700 bg-white/95 rounded border border-gray-200/50 shadow-sm backdrop-blur-sm pointer-events-auto">
-          <CategoryIcon className="w-3 h-3" />
-          {categoryText}
-        </span>
-      </div>
-
       <div className="flex">
         {/* コンテンツエリア */}
         <div className="flex-1 p-4 flex flex-col gap-2">
-          <h3 className="font-bold text-[15px] leading-[1.6] line-clamp-2 pr-20">
+          <h3 className="font-bold text-[15px] leading-[1.6] line-clamp-2">
             {displayTitle}
             {bill.is_review_completed && (
               <>

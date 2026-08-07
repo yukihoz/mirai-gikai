@@ -364,10 +364,7 @@ export function DynamicBillThumbnail({
     size === "large" ? (
       <div className="z-10 bg-white/85 backdrop-blur-md px-8 py-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-white/60 max-w-[92%] flex flex-col gap-3 relative"
            style={{ fontFamily: 'var(--font-line-seed), "LINE Seed JP", sans-serif' }}>
-        <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[15px] px-3 py-1 rounded-full font-bold whitespace-nowrap shadow-md">
-          {meetingBody || "議案"}
-        </span>
-        <h3 className="text-[21px] font-bold text-gray-800 line-clamp-3 leading-snug pt-1 text-center">
+        <h3 className="text-[21px] font-bold text-gray-800 line-clamp-3 leading-snug text-center">
           {title}
         </h3>
       </div>

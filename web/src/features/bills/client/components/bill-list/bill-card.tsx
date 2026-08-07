@@ -1,4 +1,3 @@
-import { FileText, Info } from "lucide-react";
 import Image from "next/image";
 import { RubySafeLineClamp } from "@/components/ruby-safe-line-clamp";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,30 +16,17 @@ export function BillCard({ bill }: BillCardProps) {
   const displayTitle = bill.bill_content?.title;
   const summary = bill.bill_content?.summary;
 
-  const isReported = bill.status === "reported";
-  const CategoryIcon = isReported ? Info : FileText;
-  const categoryText = isReported ? "報告事項" : "議案";
-
   return (
     <Card className="border border-black hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
       <div className="flex flex-col">
-        {/* バッジエリア（注目・カテゴリー） */}
-        <div className={`${bill.thumbnail_url != null ? "absolute" : "relative"} top-3 left-0 w-full px-3 flex justify-between items-start z-10 pointer-events-none`}>
-          <div>
-            {bill.is_featured && (
-              <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-medium text-mirai-text bg-mirai-highlight rounded-[20px] shadow-sm pointer-events-auto">
-                注目🔥
-              </span>
-            )}
-          </div>
-          
-          <div className="pointer-events-auto">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-gray-700 bg-white/95 rounded-md border border-gray-200/50 shadow-sm backdrop-blur-sm">
-              <CategoryIcon className="w-3.5 h-3.5" />
-              {categoryText}
+        {/* バッジエリア（注目） */}
+        {bill.is_featured && (
+          <div className={`${bill.thumbnail_url != null ? "absolute" : "relative"} top-3 left-3 z-10 pointer-events-none`}>
+            <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-medium text-mirai-text bg-mirai-highlight rounded-[20px] shadow-sm pointer-events-auto">
+              注目🔥
             </span>
           </div>
-        </div>
+        )}
 
         {/* サムネイル画像 */}
         {bill.thumbnail_url ? (
