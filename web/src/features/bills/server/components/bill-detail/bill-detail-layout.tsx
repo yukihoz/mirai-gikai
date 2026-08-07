@@ -51,16 +51,18 @@ export async function BillDetailLayout({
           topicCount={topicAnalysis?.topics.length ?? 0}
         />
         <Container>
-          {/* 議案ステータス進捗（報告事項の場合は非表示） */}
-          {bill.status !== "reported" && (
-            <div className="my-8">
-              <BillStatusProgress
-                status={bill.status}
-                meetingBody={bill.meeting_body}
-                statusNote={bill.status_note}
-              />
-            </div>
-          )}
+          {/* 議案ステータス進捗（報告事項・意見募集・AIインタビューの場合は非表示） */}
+          {bill.status !== "reported" &&
+            bill.status !== "opinion_gathering" &&
+            bill.meeting_body !== "AIインタビュー" && (
+              <div className="my-8">
+                <BillStatusProgress
+                  status={bill.status}
+                  meetingBody={bill.meeting_body}
+                  statusNote={bill.status_note}
+                />
+              </div>
+            )}
 
           <BillContent bill={bill} />
         </Container>
