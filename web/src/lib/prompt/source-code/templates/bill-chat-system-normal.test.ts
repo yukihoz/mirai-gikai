@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { env } from "@/lib/env";
 import { buildBillChatSystemNormalPrompt } from "./bill-chat-system-normal";
 
 describe("buildBillChatSystemNormalPrompt", () => {
@@ -25,8 +26,8 @@ describe("buildBillChatSystemNormalPrompt", () => {
   it("みらい議会の説明が含まれる", () => {
     const result = buildBillChatSystemNormalPrompt("a", "b", "c", "d");
 
-    expect(result).toContain("みらい議会");
-    expect(result).toContain("チームみらい");
+    expect(result).toContain(env.siteShortName);
+    expect(result).toContain(env.teamName);
   });
 
   it("knowledgeSource を渡すと <knowledge_source> セクションが含まれる", () => {
