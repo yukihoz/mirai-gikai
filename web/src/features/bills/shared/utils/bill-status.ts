@@ -6,6 +6,8 @@ export function getCardStatusLabel(status: BillStatusEnum): string {
   switch (status) {
     case "preparing":
       return "準備中";
+    case "opinion_gathering":
+      return "意見募集";
     case "introduced":
       return "議案提出済み";
     case "in_originating_house":
@@ -27,6 +29,7 @@ export function getStatusVariant(
   status: BillStatusEnum
 ): "light" | "default" | "dark" | "muted" {
   switch (status) {
+    case "opinion_gathering":
     case "introduced":
     case "in_originating_house":
     case "in_receiving_house":

@@ -1373,6 +1373,7 @@ export type Database = {
         | "rejected"
         | "preparing"
         | "reported"
+        | "opinion_gathering"
       chat_role_enum: "user" | "system" | "assistant"
       difficulty_level_enum: "normal" | "hard"
       interview_config_status_enum: "public" | "closed"
@@ -1402,6 +1403,7 @@ export type Database = {
         | "防災等安全対策特別委員会"
         | "予算特別委員会"
         | "決算特別委員会"
+        | "AIインタビュー"
       moderation_status_enum: "ok" | "warning" | "ng"
       stance_type_enum:
         | "for"
@@ -1552,6 +1554,7 @@ export const Constants = {
         "rejected",
         "preparing",
         "reported",
+        "opinion_gathering",
       ],
       chat_role_enum: ["user", "system", "assistant"],
       difficulty_level_enum: ["normal", "hard"],
@@ -1584,6 +1587,7 @@ export const Constants = {
         "防災等安全対策特別委員会",
         "予算特別委員会",
         "決算特別委員会",
+        "AIインタビュー",
       ],
       moderation_status_enum: ["ok", "warning", "ng"],
       stance_type_enum: [

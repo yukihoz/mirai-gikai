@@ -66,9 +66,10 @@ export const BILL_STATUS_ORDER: Record<BillStatusEnum, number> = {
   rejected: 1,
   in_receiving_house: 2,
   in_originating_house: 3,
-  introduced: 4,
-  preparing: 5,
-  reported: 6,
+  opinion_gathering: 4,
+  introduced: 5,
+  preparing: 6,
+  reported: 7,
 };
 
 export function getBillStatusLabel(
@@ -78,6 +79,8 @@ export function getBillStatusLabel(
   switch (status) {
     case "preparing":
       return "準備中";
+    case "opinion_gathering":
+      return "意見募集";
     case "introduced":
       return "議案提出済み";
     case "in_originating_house":

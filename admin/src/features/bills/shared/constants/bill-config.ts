@@ -19,6 +19,10 @@ export const BILL_STATUS_CONFIG: Record<
     icon: Settings,
     color: "text-gray-600 bg-gray-50",
   },
+  opinion_gathering: {
+    icon: Clock,
+    color: "text-purple-600 bg-purple-50",
+  },
   introduced: {
     icon: FileText,
     color: "text-blue-600 bg-blue-50",

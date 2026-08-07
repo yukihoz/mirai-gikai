@@ -17,6 +17,7 @@ const billBaseSchema = z.object({
     .max(200, "議案名は200文字以内で入力してください"),
   status: z.enum([
     "preparing",
+    "opinion_gathering",
     "introduced",
     "in_originating_house",
     "in_receiving_house",
@@ -27,6 +28,7 @@ const billBaseSchema = z.object({
   meeting_body: z.enum([
     "定例会",
     "臨時会",
+    "AIインタビュー",
     "企画総務委員会",
     "区民文教委員会",
     "福祉保健委員会",

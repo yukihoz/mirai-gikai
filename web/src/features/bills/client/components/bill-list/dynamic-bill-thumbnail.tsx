@@ -299,6 +299,7 @@ const meetingBodyColors: Record<string, { bg: string; text: string }> = {
   // 本会議・定例会 -> 【パープル系】 (変更指定あり)
   定例会: { bg: "bg-purple-50", text: "text-purple-500/20" },
   臨時会: { bg: "bg-purple-50", text: "text-purple-500/20" },
+  AIインタビュー: { bg: "bg-purple-50", text: "text-purple-500/20" },
 
   // 区民・文教系 -> 【オレンジ・イエロー系】
   区民文教委員会: { bg: "bg-orange-50", text: "text-orange-500/20" },

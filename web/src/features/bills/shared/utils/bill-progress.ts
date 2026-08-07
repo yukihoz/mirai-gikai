@@ -3,6 +3,7 @@ import type { BillStatusEnum, MeetingBody } from "../types";
 // ステップ番号マッピング
 const STATUS_TO_STEP: Record<BillStatusEnum, number> = {
   preparing: 0,
+  opinion_gathering: 1,
   introduced: 1,
   in_originating_house: 2,
   in_receiving_house: 3,

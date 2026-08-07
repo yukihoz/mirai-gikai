@@ -32,6 +32,7 @@ import { ThumbnailUpload } from "./thumbnail-upload";
 
 const BILL_STATUS_OPTIONS: Array<{ value: BillStatus; label: string }> = [
   { value: "preparing", label: "準備中" },
+  { value: "opinion_gathering", label: "意見募集" },
   { value: "introduced", label: "議案提出済み" },
   { value: "in_originating_house", label: "付託" },
   { value: "in_receiving_house", label: "付託（継続審査等）" },
@@ -43,6 +44,7 @@ const BILL_STATUS_OPTIONS: Array<{ value: BillStatus; label: string }> = [
 const MEETING_BODY_OPTIONS: Array<{ value: MeetingBody; label: string }> = [
   { value: "定例会", label: "定例会" },
   { value: "臨時会", label: "臨時会" },
+  { value: "AIインタビュー", label: "AIインタビュー" },
   { value: "企画総務委員会", label: "企画総務委員会" },
   { value: "区民文教委員会", label: "区民文教委員会" },
   { value: "福祉保健委員会", label: "福祉保健委員会" },
