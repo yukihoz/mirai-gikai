@@ -7,53 +7,53 @@ describe("getBillStatusLabel", () => {
     expect(getBillStatusLabel("preparing")).toBe("準備中");
   });
 
-  it("returns '提出済み' for introduced", () => {
-    expect(getBillStatusLabel("introduced")).toBe("提出済み");
+  it("returns '議案提出済み' for introduced", () => {
+    expect(getBillStatusLabel("introduced")).toBe("議案提出済み");
   });
 
-  it("returns '成立' for enacted", () => {
-    expect(getBillStatusLabel("enacted")).toBe("成立");
+  it("returns '議案可決' for enacted", () => {
+    expect(getBillStatusLabel("enacted")).toBe("議案可決");
   });
 
-  it("returns '否決' for rejected", () => {
-    expect(getBillStatusLabel("rejected")).toBe("否決");
+  it("returns '議案否決' for rejected", () => {
+    expect(getBillStatusLabel("rejected")).toBe("議案否決");
   });
 
   describe("in_originating_house", () => {
-    it("returns '定例会審議中' when meetingBody is 定例会", () => {
+    it("returns '定例会付託' when meetingBody is 定例会", () => {
       expect(getBillStatusLabel("in_originating_house", "定例会")).toBe(
-        "定例会審議中"
+        "定例会付託"
       );
     });
 
-    it("returns '臨時会審議中' when meetingBody is 臨時会", () => {
+    it("returns '臨時会付託' when meetingBody is 臨時会", () => {
       expect(getBillStatusLabel("in_originating_house", "臨時会")).toBe(
-        "臨時会審議中"
+        "臨時会付託"
       );
     });
 
-    it("returns '審議中' when meetingBody is undefined", () => {
-      expect(getBillStatusLabel("in_originating_house")).toBe("審議中");
+    it("returns '付託' when meetingBody is undefined", () => {
+      expect(getBillStatusLabel("in_originating_house")).toBe("付託");
     });
 
-    it("returns '審議中' when meetingBody is null", () => {
-      expect(getBillStatusLabel("in_originating_house", null)).toBe("審議中");
+    it("returns '付託' when meetingBody is null", () => {
+      expect(getBillStatusLabel("in_originating_house", null)).toBe("付託");
     });
   });
 
   describe("in_receiving_house", () => {
-    it("returns '審議中' regardless of meetingBody", () => {
+    it("returns '定例会付託' when meetingBody is 定例会", () => {
       expect(getBillStatusLabel("in_receiving_house", "定例会")).toBe(
-        "審議中"
+        "定例会付託"
       );
     });
 
-    it("returns '審議中' when meetingBody is undefined", () => {
-      expect(getBillStatusLabel("in_receiving_house")).toBe("審議中");
+    it("returns '付託' when meetingBody is undefined", () => {
+      expect(getBillStatusLabel("in_receiving_house")).toBe("付託");
     });
 
-    it("returns '審議中' when meetingBody is null", () => {
-      expect(getBillStatusLabel("in_receiving_house", null)).toBe("審議中");
+    it("returns '付託' when meetingBody is null", () => {
+      expect(getBillStatusLabel("in_receiving_house", null)).toBe("付託");
     });
   });
 

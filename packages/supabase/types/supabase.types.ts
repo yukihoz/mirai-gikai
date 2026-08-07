@@ -101,8 +101,8 @@ export type Database = {
           is_featured: boolean
           is_review_completed: boolean
           knowledge_source: string | null
+          meeting_body: Database["public"]["Enums"]["meeting_body_enum"]
           name: string
-          originating_house: Database["public"]["Enums"]["house_enum"]
           publish_status: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order: number | null
           published_at: string | null
@@ -124,8 +124,8 @@ export type Database = {
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
+          meeting_body: Database["public"]["Enums"]["meeting_body_enum"]
           name: string
-          originating_house: Database["public"]["Enums"]["house_enum"]
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
           published_at?: string | null
@@ -147,8 +147,8 @@ export type Database = {
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
+          meeting_body?: Database["public"]["Enums"]["meeting_body_enum"]
           name?: string
-          originating_house?: Database["public"]["Enums"]["house_enum"]
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
           published_at?: string | null
@@ -1372,9 +1372,9 @@ export type Database = {
         | "enacted"
         | "rejected"
         | "preparing"
+        | "reported"
       chat_role_enum: "user" | "system" | "assistant"
       difficulty_level_enum: "normal" | "hard"
-      house_enum: "HR" | "HC"
       interview_config_status_enum: "public" | "closed"
       interview_feedback_tag_enum:
         | "irrelevant_questions"
@@ -1389,6 +1389,19 @@ export type Database = {
         | "daily_life_affected"
         | "general_citizen"
       interview_role_enum: "assistant" | "user"
+      meeting_body_enum:
+        | "定例会"
+        | "臨時会"
+        | "企画総務委員会"
+        | "区民文教委員会"
+        | "福祉保健委員会"
+        | "環境建設委員会"
+        | "築地等都市基盤対策特別委員会"
+        | "地域活性化対策特別委員会"
+        | "子ども子育て・高齢者対策特別委員会"
+        | "防災等安全対策特別委員会"
+        | "予算特別委員会"
+        | "決算特別委員会"
       moderation_status_enum: "ok" | "warning" | "ng"
       stance_type_enum:
         | "for"
@@ -1538,10 +1551,10 @@ export const Constants = {
         "enacted",
         "rejected",
         "preparing",
+        "reported",
       ],
       chat_role_enum: ["user", "system", "assistant"],
       difficulty_level_enum: ["normal", "hard"],
-      house_enum: ["HR", "HC"],
       interview_config_status_enum: ["public", "closed"],
       interview_feedback_tag_enum: [
         "irrelevant_questions",
@@ -1558,6 +1571,20 @@ export const Constants = {
         "general_citizen",
       ],
       interview_role_enum: ["assistant", "user"],
+      meeting_body_enum: [
+        "定例会",
+        "臨時会",
+        "企画総務委員会",
+        "区民文教委員会",
+        "福祉保健委員会",
+        "環境建設委員会",
+        "築地等都市基盤対策特別委員会",
+        "地域活性化対策特別委員会",
+        "子ども子育て・高齢者対策特別委員会",
+        "防災等安全対策特別委員会",
+        "予算特別委員会",
+        "決算特別委員会",
+      ],
       moderation_status_enum: ["ok", "warning", "ng"],
       stance_type_enum: [
         "for",
@@ -1573,3 +1600,4 @@ export const Constants = {
     },
   },
 } as const
+

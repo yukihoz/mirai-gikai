@@ -2,24 +2,27 @@ import { describe, expect, it } from "vitest";
 import { getCardStatusLabel, getStatusVariant } from "./bill-status";
 
 describe("getCardStatusLabel", () => {
+  it("introduced → 議案提出済み", () => {
+    expect(getCardStatusLabel("introduced")).toBe("議案提出済み");
+  });
+
   it.each([
-    ["introduced", "区議会審議中"],
-    ["in_originating_house", "区議会審議中"],
-    ["in_receiving_house", "区議会審議中"],
+    ["in_originating_house", "付託"],
+    ["in_receiving_house", "付託"],
   ] as const)("審議中ステータス %s → %s", (status, expected) => {
     expect(getCardStatusLabel(status)).toBe(expected);
   });
 
-  it("enacted → 法案成立", () => {
-    expect(getCardStatusLabel("enacted")).toBe("法案成立");
+  it("enacted → 議案可決", () => {
+    expect(getCardStatusLabel("enacted")).toBe("議案可決");
   });
 
-  it("rejected → 否決", () => {
-    expect(getCardStatusLabel("rejected")).toBe("否決");
+  it("rejected → 議案否決", () => {
+    expect(getCardStatusLabel("rejected")).toBe("議案否決");
   });
 
-  it("preparing → 法案提出前", () => {
-    expect(getCardStatusLabel("preparing")).toBe("法案提出前");
+  it("preparing → 準備中", () => {
+    expect(getCardStatusLabel("preparing")).toBe("準備中");
   });
 });
 
