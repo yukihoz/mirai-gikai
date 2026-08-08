@@ -31,10 +31,11 @@ jobs:
       # db push で数時間ハングした）
       - name: Supabase db push
         run: |
-          supabase db push --include-all
+          supabase db push --include-all --password $SUPABASE_DB_PASSWORD
           supabase config push
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
           SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET }}
           ADMIN_AUTH_CALLBACK_URL: ${{ secrets.ADMIN_AUTH_CALLBACK_URL }}
