@@ -39,12 +39,12 @@ const FEATURES: {
   {
     iconSrc: "/icons/interview-messages.svg",
     iconSize: { w: 33, h: 26 },
-    text: `寄せられた回答は${env.teamName}の政策検討に活用します`,
+    text: "寄せられた回答は今後の政策検討に活用します",
   },
   {
     iconSrc: "/icons/interview-landmark.svg",
     iconSize: { w: 30, h: 29 },
-    text: `ご意見は${env.teamName}を通じて${env.assemblyName}に届けられる可能性があります`,
+    text: `ご意見は${env.assemblyName}に届けられる可能性があります`,
   },
 ];
 
@@ -83,13 +83,8 @@ function _InterviewLPHero({
   return (
     <div className="flex flex-col items-center gap-6 px-4">
       <div className="flex flex-col items-center gap-3">
-        <div className="inline-flex items-center justify-center gap-2 px-6 py-1 mb-3 bg-primary rounded-2xl">
-          <span className="text-[13px] font-medium text-white leading-tight">
-            当事者・有識者の方へ
-          </span>
-        </div>
         <h1 className="text-2xl font-bold text-center leading-[1.5]">
-          法案についてのAIインタビュー
+          提案についてのAIインタビュー
         </h1>
         <Link href={billLink as Route}>
           <div className="inline-flex items-center justify-center gap-2.5 px-4 py-2 bg-white rounded-xl hover:bg-gray-50 transition-opacity cursor-pointer">
@@ -169,7 +164,7 @@ function _InterviewOverviewSection({
             variant="outline"
             className="w-full border border-black rounded-[100px] h-[48px] px-6 font-bold text-[15px] hover:opacity-90 transition-opacity flex items-center justify-center gap-4"
           >
-            <span>法案詳細はこちら</span>
+            <span>詳細はこちら</span>
             <ArrowRight className="size-4" />
           </Button>
         </Link>
@@ -298,7 +293,7 @@ function _InterviewFooterActions({
       <Link href={billLink as Route}>
         <Button variant="outline" className="w-full">
           <Undo2 className="size-5" />
-          <span>法案詳細に戻る</span>
+          <span>詳細に戻る</span>
         </Button>
       </Link>
     </div>
