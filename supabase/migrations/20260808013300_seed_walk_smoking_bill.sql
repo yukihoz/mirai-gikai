@@ -47,17 +47,15 @@ INSERT INTO public.bill_contents (
   updated_at = NOW();
 
 INSERT INTO public.interview_configs (
-  id, bill_id, status, system_prompt_template, overview_text, created_at, updated_at
+  id, bill_id, name, status, created_at, updated_at
 ) VALUES (
   '82333c65-6fbb-4de1-87c0-62b910fecf4d',
   '82333c65-6fbb-4de1-87c0-62b910fecf4d',
+  '中央区の歩きたばこ・路上喫煙対策と「過料」導入の是非',
   'public',
-  'あなたは中央区の歩きたばこ・路上喫煙対策に関する意見ヒアリングを行うAIインタビューアーです。相手の立場（区民、就業者、来訪者、喫煙者/非喫煙者）に配慮しながら、過料導入の是非やマナー向上策について深く意見を引き出してください。',
-  '中央区の歩きたばこ・路上喫煙対策と「過料」導入の是非についてご意見をお聞かせください。',
   NOW(),
   NOW()
 ) ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
   status = EXCLUDED.status,
-  system_prompt_template = EXCLUDED.system_prompt_template,
-  overview_text = EXCLUDED.overview_text,
   updated_at = NOW();
