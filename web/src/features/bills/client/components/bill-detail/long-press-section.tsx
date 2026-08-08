@@ -39,8 +39,8 @@ export function LongPressSection() {
         {/* 右側：イラスト */}
         <div className="absolute bottom-[-54px] right-3 flex-shrink-0">
           <Image
-            src="/illustrations/inspiration-simple-green.svg"
-            alt="電球のイラスト"
+            src="/illustrations/choju64_0015_1.svg"
+            alt="鳥獣戯画イラスト"
             width={122}
             height={157}
             className="object-contain"

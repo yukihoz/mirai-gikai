@@ -53,13 +53,13 @@ function _InterviewCTAButton({ billId }: { billId: string }) {
 
 function _InterviewIllustration() {
   return (
-    <div className="absolute right-[-16px] sm:right-6 bottom-[-32px] w-[113.6px] h-[177px] pointer-events-none">
+    <div className="absolute right-[-10px] sm:right-4 bottom-[-16px] w-[160px] sm:w-[210px] h-auto pointer-events-none">
       <Image
-        src="/illustrations/interview-illustration.png"
+        src="/illustrations/choju113_0015_1.svg"
         alt=""
-        width={114}
-        height={177}
-        className="object-contain"
+        width={720}
+        height={391}
+        className="w-full h-auto object-contain"
       />
     </div>
   );

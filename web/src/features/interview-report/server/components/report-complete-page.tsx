@@ -60,12 +60,16 @@ export async function ReportCompletePage({
       <div className="bg-white rounded-b-[32px] px-4 pt-30 md:pt-16 pb-8">
         <div className="flex flex-col items-center gap-4">
           {/* 完了イラスト */}
-          <Image
-            src="/illustrations/interview-complete.svg"
-            alt="完了"
-            width={236}
-            height={152}
-          />
+          <div className="w-full max-w-[520px] h-auto my-2 flex justify-center">
+            <Image
+              src="/illustrations/choju110_0027_1.svg"
+              alt="完了"
+              width={720}
+              height={392}
+              className="w-full h-auto max-h-[280px] md:max-h-[340px] object-contain"
+              priority
+            />
+          </div>
 
           {/* 完了メッセージ */}
           <h1 className="text-2xl font-bold text-center text-gray-800 leading-relaxed">

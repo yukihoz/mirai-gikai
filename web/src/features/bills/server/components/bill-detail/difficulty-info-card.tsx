@@ -18,13 +18,13 @@ export async function DifficultyInfoCard() {
           maintainScrollFromBottom
         />
       </div>
-      <div className="absolute right-6 top-6 w-[121px] h-[128px]">
+      <div className="absolute right-4 bottom-2 sm:right-6 w-[140px] sm:w-[170px] h-auto flex items-center justify-center">
         <Image
-          src="/images/readingbook_woman_green.png"
+          src="/illustrations/choju74_0020_1.svg"
           alt=""
-          width={121}
-          height={128}
-          className="object-contain"
+          width={720}
+          height={580}
+          className="w-full h-auto max-h-[110px] object-contain"
         />
       </div>
     </div>
