@@ -50,7 +50,7 @@ export async function getFeaturedBills(): Promise<BillWithContent[]> {
         };
       }) as BillWithContent[];
     },
-    ["featured-bills-list-v3", difficultyLevel],
+    ["featured-bills-list-v4", difficultyLevel],
     {
       revalidate: 600, // 10分（600秒）
       tags: [CACHE_TAGS.BILLS, CACHE_TAGS.INTERVIEW_CONFIGS],

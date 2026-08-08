@@ -43,7 +43,7 @@ export async function getBillById(id: string): Promise<BillWithContent | null> {
         tags,
       };
     },
-    ["bill-by-id-v5", id, difficultyLevel],
+    ["bill-by-id-v6", id, difficultyLevel],
     {
       revalidate: 600, // 10分（600秒）
       tags: [CACHE_TAGS.BILLS, `bill-${id}`],
