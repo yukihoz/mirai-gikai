@@ -43,5 +43,5 @@ jobs:
       # 成功したら Vercel デプロイを開始
       - name: Trigger Vercel Deploy Hook
         run: |
-          curl -X POST "${{ secrets.WEB_VERCEL_DEPLOY_HOOK_URL }}"
-          curl -X POST "${{ secrets.ADMIN_VERCEL_DEPLOY_HOOK_URL }}"
+          if [ -n "${{ secrets.WEB_VERCEL_DEPLOY_HOOK_URL }}" ]; then curl -X POST "${{ secrets.WEB_VERCEL_DEPLOY_HOOK_URL }}"; fi
+          if [ -n "${{ secrets.ADMIN_VERCEL_DEPLOY_HOOK_URL }}" ]; then curl -X POST "${{ secrets.ADMIN_VERCEL_DEPLOY_HOOK_URL }}"; fi
