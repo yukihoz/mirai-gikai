@@ -8,7 +8,7 @@ import {
 } from "@/components/layouts/legal-page-layout";
 
 export const metadata: Metadata = {
-  title: "みらい議会AIインタビューデータ利用規約 | みらい議会",
+  title: "みらい議会AIインタビューデータ利用規約 | みらい議会@中央区",
   description:
     "みらい議会のAIインタビューデータをオープンデータとして利用するにあたっての条件を定めています。",
 };
@@ -28,7 +28,7 @@ export default function InterviewDataTermsPage() {
         </LegalParagraph>
 
         <LegalParagraph>
-          本規約は、政治団体「チームみらい」（以下「当組織」といいます。）が運営する「みらい議会」のAIインタビュー機能（以下「みらい議会AIインタビュー機能」といいます。）を通じて取得した回答内容に基づき、当組織がオープンデータとして公開するデータセット（以下「本データ」といいます。）を、第三者（以下「利用者」といいます。）が利用するにあたっての条件を定めるものです。利用者は、本データをダウンロードまたは利用することにより、本規約に同意したものとみなされます。
+          本規約は、ほづみゆうき（以下「当運営者」といいます。）が提供する「みらい議会@中央区」のAIインタビュー機能（以下「みらい議会AIインタビュー機能」といいます。）を通じて取得した回答内容に基づき、当運営者がオープンデータとして公開するデータセット（以下「本データ」といいます。）を、第三者（以下「利用者」といいます。）が利用するにあたっての条件を定めるものです。利用者は、本データをダウンロードまたは利用することにより、本規約に同意したものとみなされます。
         </LegalParagraph>
 
         <section className="space-y-4">
@@ -89,9 +89,9 @@ export default function InterviewDataTermsPage() {
           </LegalParagraph>
           <LegalList
             items={[
-              "データ出典：「みらい議会AIインタビュー（チームみらい）」",
-              "データ提供元URL：https://gikai.team-mir.ai/",
-              "本規約のURL：https://gikai.team-mir.ai/developers/interview-data-terms",
+              "データ出典：「みらい議会AIインタビュー（ほづみゆうき）」",
+              "データ提供元URL：https://mirai-gikai.yukihoz.tokyo/",
+              "本規約のURL：https://mirai-gikai.yukihoz.tokyo/developers/interview-data-terms",
               {
                 id: "license",
                 content: (
@@ -115,38 +115,38 @@ export default function InterviewDataTermsPage() {
         <section className="space-y-4">
           <LegalSectionTitle>第5条（利用停止）</LegalSectionTitle>
           <LegalParagraph>
-            当組織は、利用者が本規約に違反したと判断した場合、事前に通知することなく、本データの利用停止、ダウンロードの制限、当該成果物の公開停止の要請、その他当組織が必要と判断する措置を講じることができるものとします。本条の措置は、損害賠償その他の請求を妨げるものではありません。
+            当運営者は、利用者が本規約に違反したと判断した場合、事前に通知することなく、本データの利用停止、ダウンロードの制限、当該成果物の公開停止の要請、その他当運営者が必要と判断する措置を講じることができるものとします。本条の措置は、損害賠償その他の請求を妨げるものではありません。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
           <LegalSectionTitle>第6条（本データに関する権利）</LegalSectionTitle>
           <LegalParagraph>
-            本データに関する一切の権利は、当組織または正当な権利者に帰属します。本規約は、第2条に定める範囲を超えて、利用者にいかなる権利の譲渡またはライセンスを行うものではありません。
+            本データに関する一切の権利は、当運営者または正当な権利者に帰属します。本規約は、第2条に定める範囲を超えて、利用者にいかなる権利の譲渡またはライセンスを行うものではありません。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
           <LegalSectionTitle>第7条（無保証および免責）</LegalSectionTitle>
           <LegalParagraph>
-            当組織は、本データの正確性、完全性、最新性、有用性、特定目的への適合性等について、いかなる保証も行いません。本データは、AIによる対話を通じて取得された回答内容を基にしたものであり、誤った情報、偏った見解、不適切な表現等を含む可能性があることを利用者は理解した上で利用するものとします。
+            当運営者は、本データの正確性、完全性、最新性、有用性、特定目的への適合性等について、いかなる保証も行いません。本データは、AIによる対話を通じて取得された回答内容を基にしたものであり、誤った情報、偏った見解、不適切な表現等を含む可能性があることを利用者は理解した上で利用するものとします。
           </LegalParagraph>
           <LegalParagraph>
-            当組織は、本データの利用または利用不能に起因または関連して利用者または第三者に生じた一切の損害について、責任を負わないものとします。
+            当運営者は、本データの利用または利用不能に起因または関連して利用者または第三者に生じた一切の損害について、責任を負わないものとします。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
           <LegalSectionTitle>第8条（本データの提供停止）</LegalSectionTitle>
           <LegalParagraph>
-            当組織は、利用者への事前通知なく、本データの提供内容の変更、提供範囲の縮小、または提供の停止を行うことができるものとし、それにより生じた損害について一切の責任を負いません。
+            当運営者は、利用者への事前通知なく、本データの提供内容の変更、提供範囲の縮小、または提供の停止を行うことができるものとし、それにより生じた損害について一切の責任を負いません。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
           <LegalSectionTitle>第9条（規約の変更）</LegalSectionTitle>
           <LegalParagraph>
-            当組織は、必要に応じて本規約を変更することができ、変更後に利用者が本データを利用した場合、当該変更に同意したものとみなします。
+            当運営者は、必要に応じて本規約を変更することができ、変更後に利用者が本データを利用した場合、当該変更に同意したものとみなします。
           </LegalParagraph>
         </section>
 
@@ -162,7 +162,7 @@ export default function InterviewDataTermsPage() {
           <LegalParagraph>
             本規約および本データに関するお問い合わせは、下記までご連絡ください。
           </LegalParagraph>
-          <LegalParagraph>support@team-mir.ai</LegalParagraph>
+          <LegalParagraph>contact@mirai-gikai-chuo.jp</LegalParagraph>
         </section>
       </Container>
     </LegalPageLayout>
