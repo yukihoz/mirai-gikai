@@ -8,7 +8,7 @@ import {
 } from "@/components/layouts/legal-page-layout";
 
 export const metadata: Metadata = {
-  title: "みらい議会AIインタビューデータ利用規約 | みらい議会@中央区",
+  title: "みらい議会@中央区 AIインタビューデータ利用規約",
   description:
     "みらい議会のAIインタビューデータをオープンデータとして利用するにあたっての条件を定めています。",
 };
@@ -18,7 +18,7 @@ const CC_BY_LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/deed.ja";
 export default function InterviewDataTermsPage() {
   return (
     <LegalPageLayout
-      title="みらい議会AIインタビューデータ利用規約"
+      title="みらい議会@中央区 AIインタビューデータ利用規約"
       enLabel="Data Terms"
       className="pt-24 md:pt-12"
     >
@@ -162,7 +162,7 @@ export default function InterviewDataTermsPage() {
           <LegalParagraph>
             本規約および本データに関するお問い合わせは、下記までご連絡ください。
           </LegalParagraph>
-          <LegalParagraph>contact@mirai-gikai-chuo.jp</LegalParagraph>
+          <LegalParagraph>yukihozumi@gmail.com</LegalParagraph>
         </section>
       </Container>
     </LegalPageLayout>
