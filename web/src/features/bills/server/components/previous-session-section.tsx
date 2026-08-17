@@ -66,10 +66,12 @@ export function PreviousSessionSection({
             <span className="flex items-center gap-4">
               {session.is_active
                 ? "その他の提出議案・報告事項"
-                : (session.name.includes(new Date(session.start_date).getFullYear().toString())
-                  ? session.name
-                  : `${new Date(session.start_date).getFullYear()}年 ${session.name}`) + " の提出議案・報告事項"
-              }
+                : (session.name.includes(
+                    new Date(session.start_date).getFullYear().toString()
+                  )
+                    ? session.name
+                    : `${new Date(session.start_date).getFullYear()}年 ${session.name}`) +
+                  " の提出議案・報告事項"}
               <span className="shrink-0">{totalBillCount}件</span>
             </span>
             <ChevronRight className="h-6 w-6 text-gray-600 group-hover:translate-x-0.5 transition-transform" />

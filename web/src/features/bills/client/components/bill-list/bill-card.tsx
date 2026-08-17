@@ -21,7 +21,9 @@ export function BillCard({ bill }: BillCardProps) {
       <div className="flex flex-col">
         {/* バッジエリア（注目） */}
         {bill.is_featured && (
-          <div className={`${bill.thumbnail_url != null ? "absolute" : "relative"} top-3 left-3 z-10 pointer-events-none`}>
+          <div
+            className={`${bill.thumbnail_url != null ? "absolute" : "relative"} top-3 left-3 z-10 pointer-events-none`}
+          >
             <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-medium text-mirai-text bg-mirai-highlight rounded-[20px] shadow-sm pointer-events-auto">
               注目🔥
             </span>
@@ -68,7 +70,12 @@ export function BillCard({ bill }: BillCardProps) {
                     {bill.meeting_body}
                   </span>
                   {(bill.submitted_date || bill.published_at) && (
-                    <time>{formatDateWithDots(bill.submitted_date || bill.published_at!)} 提出</time>
+                    <time>
+                      {formatDateWithDots(
+                        bill.submitted_date || bill.published_at!
+                      )}{" "}
+                      提出
+                    </time>
                   )}
                 </div>
               </div>

@@ -130,10 +130,7 @@ function BillRow({ bill }: { bill: BillWithDietSession }) {
         </div>
       </TableCell>
       <TableCell>
-        <StatusBadge
-          status={bill.status}
-          meetingBody={bill.meeting_body}
-        />
+        <StatusBadge status={bill.status} meetingBody={bill.meeting_body} />
       </TableCell>
       <TableCell className="text-gray-600">
         {bill.submitted_date

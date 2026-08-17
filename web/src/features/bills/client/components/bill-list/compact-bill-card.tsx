@@ -42,7 +42,8 @@ export function CompactBillCard({ bill, className }: CompactBillCardProps) {
             </span>
             {(bill.submitted_date || bill.published_at) && (
               <span className="text-xs text-muted-foreground">
-                {formatDateWithDots(bill.submitted_date || bill.published_at!)} {statusLabel}
+                {formatDateWithDots(bill.submitted_date || bill.published_at!)}{" "}
+                {statusLabel}
               </span>
             )}
           </div>

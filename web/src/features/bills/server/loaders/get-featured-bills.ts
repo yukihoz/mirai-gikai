@@ -21,10 +21,7 @@ export async function getFeaturedBills(): Promise<BillWithContent[]> {
   // 会期に関わらずすべてのFeatured議案を表示するため、dietSessionIdにnullを渡す
   return unstable_cache(
     async (): Promise<BillWithContent[]> => {
-      const data = await findFeaturedBillsWithContents(
-        difficultyLevel,
-        null
-      );
+      const data = await findFeaturedBillsWithContents(difficultyLevel, null);
 
       if (data.length === 0) {
         return [];

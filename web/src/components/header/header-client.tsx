@@ -45,7 +45,9 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
                 alt={env.siteTitle}
                 className="h-12 w-auto md:h-14"
               />
-              <div className="text-xl font-bold whitespace-nowrap">{env.siteTitle}</div>
+              <div className="text-xl font-bold whitespace-nowrap">
+                {env.siteTitle}
+              </div>
             </Link>
           </div>
 

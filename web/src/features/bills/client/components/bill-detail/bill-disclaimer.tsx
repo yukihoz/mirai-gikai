@@ -9,9 +9,12 @@ export function BillDisclaimer() {
     <div className="space-y-6">
       {/* ほづみゆうきについて */}
       <div className="space-y-4">
-        <h3 className="text-sm font-bold text-primary-accent">ほづみゆうきについて</h3>
+        <h3 className="text-sm font-bold text-primary-accent">
+          ほづみゆうきについて
+        </h3>
         <p className="text-[15px] leading-[28px] text-black">
-          東京都中央区議会議員。妻と娘2人の4人家族。 文部科学省、子育て系NPOのシステム&政策提言担当を経て現職へ。「データ分析に基づき子どもにも大人にもやさしい中央区」を目指して区議選に完全無所属で挑戦し当選。
+          東京都中央区議会議員。妻と娘2人の4人家族。
+          文部科学省、子育て系NPOのシステム&政策提言担当を経て現職へ。「データ分析に基づき子どもにも大人にもやさしい中央区」を目指して区議選に完全無所属で挑戦し当選。
         </p>
         <div className="flex flex-wrap gap-3 items-center">
           {Object.entries(HOZUMI_SOCIAL_LINKS).map(([key, sns]) => (
@@ -27,7 +30,11 @@ export function BillDisclaimer() {
                 alt={sns.name}
                 width={48}
                 height={48}
-                className={sns.hasBorder ? "rounded-full border border-mirai-border-light" : ""}
+                className={
+                  sns.hasBorder
+                    ? "rounded-full border border-mirai-border-light"
+                    : ""
+                }
               />
             </a>
           ))}
@@ -38,7 +45,8 @@ export function BillDisclaimer() {
       <div className="space-y-3">
         <h3 className="text-sm font-bold text-black">掲載コンテンツについて</h3>
         <p className="text-xs leading-relaxed text-mirai-text-note">
-          掲載されている議案等の情報は、{env.assemblyName}に提出された議案などの公開情報を基に、ほづみゆうきがAIを活用しながら背景情報を整理したものです。
+          掲載されている議案等の情報は、{env.assemblyName}
+          に提出された議案などの公開情報を基に、ほづみゆうきがAIを活用しながら背景情報を整理したものです。
         </p>
       </div>
 

@@ -18,18 +18,16 @@ export function CurrentDietSession({ session }: CurrentDietSessionProps) {
           <h2 className="text-xl font-bold text-gray-800 leading-[0.9]">
             本日は
           </h2>
-          <div
-            className="inline-flex items-center justify-center px-5 py-1.5 rounded-[50px] shrink-0 bg-mirai-gradient"
-          >
+          <div className="inline-flex items-center justify-center px-5 py-1.5 rounded-[50px] shrink-0 bg-mirai-gradient">
             <span className="text-base font-bold leading-[1.48]">
               {env.assemblyName}会期中
             </span>
           </div>
         </div>
-          <div className="text-sm leading-[1.5] shrink-0">
-            <div>{session.name}</div>
-            <div>{formatDateWithDots(session.start_date)}〜</div>
-          </div>
+        <div className="text-sm leading-[1.5] shrink-0">
+          <div>{session.name}</div>
+          <div>{formatDateWithDots(session.start_date)}〜</div>
+        </div>
       </div>
     </div>
   );

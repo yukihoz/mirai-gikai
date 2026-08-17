@@ -18,9 +18,7 @@ export default async function Home() {
     await loadHomeData();
 
   // ゆくゆくタグ機能がマージされたらBFFに統合する
-  const [currentDifficulty] = await Promise.all([
-    getDifficultyLevel(),
-  ]);
+  const [currentDifficulty] = await Promise.all([getDifficultyLevel()]);
 
   const toBillChatContext = (bill: BillWithContent) => {
     return {
@@ -34,8 +32,6 @@ export default async function Home() {
   return (
     <>
       <Hero />
-
-
 
       {/* 議案一覧セクション */}
       <Container className="">

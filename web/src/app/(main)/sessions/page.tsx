@@ -18,7 +18,9 @@ export default async function SessionsPage() {
     <Container className="py-12">
       <div className="flex flex-col gap-10">
         <div>
-          <h1 className="text-3xl font-bold text-mirai-text mb-4">過去の会期一覧</h1>
+          <h1 className="text-3xl font-bold text-mirai-text mb-4">
+            過去の会期一覧
+          </h1>
           <p className="text-sm text-mirai-text-secondary">
             {env.assemblyName}でこれまでに開催された会期の一覧です。
           </p>
@@ -29,7 +31,7 @@ export default async function SessionsPage() {
             const startDate = new Date(session.start_date);
             const endDate = new Date(session.end_date);
             const year = startDate.getFullYear();
-            
+
             // 名称の中に年が含まれているかチェック（重複表示防止）
             const displayName = session.name.includes(year.toString())
               ? session.name

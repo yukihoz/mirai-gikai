@@ -38,7 +38,9 @@ export function LinkButton({
           height={icon.height}
           className="flex-shrink-0"
         />
-        <span className="text-xs font-bold whitespace-nowrap mt-0.5">{children}</span>
+        <span className="text-xs font-bold whitespace-nowrap mt-0.5">
+          {children}
+        </span>
         <Image
           src="/icons/arrow-right.svg"
           alt=""

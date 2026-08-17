@@ -183,9 +183,7 @@ describe("ChatWindow", () => {
     expect(dialog).toHaveStyle({ maxHeight: "640px" });
     expect(screen.getAllByRole("button", { name: /何|法案/ })).toHaveLength(3);
 
-    await user.click(
-      screen.getByRole("button", { name: /って何？/ })
-    );
+    await user.click(screen.getByRole("button", { name: /って何？/ }));
     expect(sendMessage).toHaveBeenCalledWith({
       text: expect.stringMatching(/って何？/),
       metadata: {

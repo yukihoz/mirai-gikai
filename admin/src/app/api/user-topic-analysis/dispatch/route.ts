@@ -98,7 +98,10 @@ export async function POST(request: Request) {
         try {
           await runAnalysis(version.id, billId, strategy);
         } catch (execError) {
-          console.error("[UserTopicAnalysis] In-process analysis failed:", execError);
+          console.error(
+            "[UserTopicAnalysis] In-process analysis failed:",
+            execError
+          );
         }
       });
     }

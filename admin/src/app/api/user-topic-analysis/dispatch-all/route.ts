@@ -62,7 +62,10 @@ export async function POST(request: Request) {
       try {
         await runAnalyzeAll(strategy);
       } catch (execError) {
-        console.error("[UserTopicAnalysis] In-process analyze-all failed:", execError);
+        console.error(
+          "[UserTopicAnalysis] In-process analyze-all failed:",
+          execError
+        );
       }
     });
     return json({ started: true, strategy });

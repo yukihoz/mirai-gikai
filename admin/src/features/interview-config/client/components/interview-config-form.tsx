@@ -379,7 +379,9 @@ export function InterviewConfigForm({
                     <FormLabel>質問テーマ</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder={"賛否とその理由\n日常生活への具体的な影響\n懸念点やリスクの指摘\n期待する改善案\n自身（回答者）のバックグラウンド"}
+                        placeholder={
+                          "賛否とその理由\n日常生活への具体的な影響\n懸念点やリスクの指摘\n期待する改善案\n自身（回答者）のバックグラウンド"
+                        }
                         className="min-h-[100px] resize-y"
                         value={arrayToText(field.value)}
                         onChange={(e) => {

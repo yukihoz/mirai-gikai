@@ -155,7 +155,8 @@ function _InterviewOverviewSection({
           について、AIがあなたの考えを深掘りするチャット型インタビューです
         </p>
         <p>
-          いただいたご意見は、政策研究や{env.assemblyName}での審議に活用し、{env.siteShortName}上に公開される可能性があります。
+          いただいたご意見は、政策研究や{env.assemblyName}での審議に活用し、
+          {env.siteShortName}上に公開される可能性があります。
         </p>
       </div>
       <div>
