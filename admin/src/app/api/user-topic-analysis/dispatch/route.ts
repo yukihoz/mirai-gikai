@@ -1,3 +1,5 @@
+import { after } from "next/server";
+import { runAnalysis } from "@mirai-gikai/topic-analysis-core/analyze";
 import {
   PROMPT_VERSION,
   TOPIC_MODEL,
@@ -11,7 +13,7 @@ import {
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
 import { executeTopicAnalysisJob } from "@/lib/cloud-run-job";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -19,7 +21,7 @@ const json = (body: unknown, status = 200) =>
     headers: { "Content-Type": "application/json" },
   });
 
-/** ユーザー向けトピック分析の手動実行入口（Admin）。version 作成 → Cloud Run Job 起動。 */
+/** ユーザー向けトピック分析の手動実行入口（Admin）。version 作成 → Cloud Run Job 起動（未設定時はインプロセス実行にフォールバック）。 */
 export async function POST(request: Request) {
   try {
     await requireAdmin();
@@ -87,12 +89,18 @@ export async function POST(request: Request) {
         `--strategy=${strategy}`,
       ]);
     } catch (triggerError) {
-      // ジョブ起動に失敗した場合は version を failed にして残骸（pending のまま）を防ぐ。
-      const message =
-        triggerError instanceof Error ? triggerError.message : "trigger failed";
-      await updateVersionStatus(version.id, "failed", message);
-      console.error("[UserTopicAnalysis] Failed to trigger job:", triggerError);
-      return json({ error: message }, 502);
+      console.warn(
+        "[UserTopicAnalysis] Cloud Run trigger failed/unconfigured, fallback to in-process after():",
+        triggerError
+      );
+      // Cloud Run が未設定、または起動に失敗した場合は Next.js の after() でインプロセス実行
+      after(async () => {
+        try {
+          await runAnalysis(version.id, billId, strategy);
+        } catch (execError) {
+          console.error("[UserTopicAnalysis] In-process analysis failed:", execError);
+        }
+      });
     }
 
     return json({ versionId: version.id });

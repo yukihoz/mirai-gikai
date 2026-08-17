@@ -1,7 +1,9 @@
+import { after } from "next/server";
+import { runAnalyzeAll } from "@mirai-gikai/topic-analysis-core/analyze";
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
 import { executeTopicAnalysisJob } from "@/lib/cloud-run-job";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -12,6 +14,7 @@ const json = (body: unknown, status = 200) =>
 /**
  * 全議案トピック分析の手動実行入口（Admin）。
  * version は worker 側で議案ごとに作成するため、ここでは Cloud Run Job を起動するだけ。
+ * 未設定時は after() によるインプロセス実行にフォールバック。
  * 既定は incremental（差分）。1 実行で全議案を順次処理する。
  */
 export async function POST(request: Request) {
@@ -51,10 +54,17 @@ export async function POST(request: Request) {
     ]);
     return json({ started: true, strategy });
   } catch (error) {
-    console.error("[UserTopicAnalysis] dispatch-all failed:", error);
-    return json(
-      { error: error instanceof Error ? error.message : "dispatch failed" },
-      502
+    console.warn(
+      "[UserTopicAnalysis] dispatch-all Cloud Run trigger failed, fallback to in-process after():",
+      error
     );
+    after(async () => {
+      try {
+        await runAnalyzeAll(strategy);
+      } catch (execError) {
+        console.error("[UserTopicAnalysis] In-process analyze-all failed:", execError);
+      }
+    });
+    return json({ started: true, strategy });
   }
 }
