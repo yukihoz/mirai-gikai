@@ -26,3 +26,11 @@ export {
   MAX_MINUTES_CHARS,
 } from "../prompts/build-discussion-prompt";
 export type { DiscussionInput } from "../prompts/build-discussion-prompt";
+export {
+  countDecision,
+  describeStats,
+  emptyStats,
+  shouldRefetch,
+  shouldRegenerate,
+} from "./should-refetch";
+export type { IngestStats, KnownSource } from "./should-refetch";

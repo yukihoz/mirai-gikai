@@ -289,6 +289,116 @@ export type Database = {
           },
         ]
       }
+      chuo_bill_sources: {
+        Row: {
+          bill_id: string
+          committee: string
+          created_at: string
+          meeting_date: string
+          meeting_url: string
+          shiryo_number: number | null
+          shiryo_url: string
+          updated_at: string
+        }
+        Insert: {
+          bill_id: string
+          committee: string
+          created_at?: string
+          meeting_date: string
+          meeting_url: string
+          shiryo_number?: number | null
+          shiryo_url: string
+          updated_at?: string
+        }
+        Update: {
+          bill_id?: string
+          committee?: string
+          created_at?: string
+          meeting_date?: string
+          meeting_url?: string
+          shiryo_number?: number | null
+          shiryo_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chuo_bill_sources_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: true
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chuo_ingestion_runs: {
+        Row: {
+          cost_usd: number | null
+          error: string | null
+          finished_at: string | null
+          id: string
+          mode: string
+          started_at: string
+          stats: Json | null
+          status: string
+        }
+        Insert: {
+          cost_usd?: number | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          mode: string
+          started_at?: string
+          stats?: Json | null
+          status?: string
+        }
+        Update: {
+          cost_usd?: number | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          mode?: string
+          started_at?: string
+          stats?: Json | null
+          status?: string
+        }
+        Relationships: []
+      }
+      chuo_ingestion_sources: {
+        Row: {
+          content_hash: string | null
+          created_at: string
+          etag: string | null
+          id: string
+          last_fetched_at: string | null
+          last_modified: string | null
+          source: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          content_hash?: string | null
+          created_at?: string
+          etag?: string | null
+          id?: string
+          last_fetched_at?: string | null
+          last_modified?: string | null
+          source: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          content_hash?: string | null
+          created_at?: string
+          etag?: string | null
+          id?: string
+          last_fetched_at?: string | null
+          last_modified?: string | null
+          source?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       diet_sessions: {
         Row: {
           created_at: string
@@ -1118,6 +1228,10 @@ export type Database = {
     }
     Functions: {
       apply_admin_role_if_eligible: {
+        Args: { target_user_id: string }
+        Returns: boolean
+      }
+      apply_admin_role_if_yukihozumi: {
         Args: { target_user_id: string }
         Returns: boolean
       }
