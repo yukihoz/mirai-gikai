@@ -24,10 +24,25 @@
     "./urls": {
       "types": "./src/shared/urls.ts",
       "default": "./src/shared/urls.ts"
+    },
+    "./schemas": {
+      "types": "./src/shared/schemas.ts",
+      "default": "./src/shared/schemas.ts"
+    },
+    "./generate": {
+      "types": "./src/services/index.ts",
+      "default": "./src/services/index.ts"
     }
   },
   "devDependencies": {
     "typescript": "^5.6.2",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "zod": "^4.1.12"
+  },
+  "dependencies": {
+    "@mirai-gikai/shared": "workspace:*"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.0"
   }
 }
