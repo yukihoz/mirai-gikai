@@ -16,6 +16,14 @@
     "./types": {
       "types": "./src/shared/types.ts",
       "default": "./src/shared/types.ts"
+    },
+    "./fetchers": {
+      "types": "./src/fetchers/index.ts",
+      "default": "./src/fetchers/index.ts"
+    },
+    "./urls": {
+      "types": "./src/shared/urls.ts",
+      "default": "./src/shared/urls.ts"
     }
   },
   "devDependencies": {
