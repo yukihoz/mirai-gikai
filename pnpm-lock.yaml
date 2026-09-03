@@ -173,6 +173,10 @@ importers:
         version: 5.9.3
 
   packages/chuo-ingest:
+    dependencies:
+      '@mirai-gikai/shared':
+        specifier: workspace:*
+        version: link:../shared
     devDependencies:
       typescript:
         specifier: ^5.6.2
@@ -180,6 +184,9 @@ importers:
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.13.3)(@vitest/ui@3.2.4)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.9.0)
+      zod:
+        specifier: ^4.1.12
+        version: 4.4.3
 
   packages/seed:
     dependencies:
