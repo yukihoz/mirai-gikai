@@ -77,17 +77,27 @@ describe("buildDiscussionPrompt", () => {
     expect(system).toContain("1つの論点にまとめて");
   });
 
-  it("印の無い発言は直前の資料の続きだと伝える", () => {
-    expect(system).toContain("印が無い発言は、直前に印が付いた資料の続き");
+  it("印が付くのは番号を口に出した回だけだと伝える", () => {
+    expect(system).toContain("資料番号を口に出した回にしか付きません");
   });
 
-  it("判断できない発言は捨てさせる", () => {
-    expect(system).toContain("どれかに割り当てず捨てて");
+  it("印の無い発言は直前の資料の続きとして読ませる", () => {
+    expect(system).toContain("直前に印が付いた資料の続き");
   });
 
-  it("議題の質疑を含めさせない", () => {
-    expect(system).toContain("議題");
-    expect(system).toContain("含めないでください");
+  it("番号を言わない委員は内容から紐づけさせる", () => {
+    expect(system).toContain("資料番号を一度も口に出さない委員もいます");
+    expect(system).toContain("発言の内容と");
+    expect(system).toContain("件名を照らし合わせて");
+  });
+
+  it("除外はどの資料にも当てはまらないときだけにする", () => {
+    expect(system).toContain("どの資料にも当てはまらない発言だけ");
+  });
+
+  it("渡す範囲が理事者報告への質疑だけだと伝える", () => {
+    expect(system).toContain("理事者報告についての質疑は終了いたします");
+    expect(system).toContain("あらかじめ取り除いてあります");
   });
 });
 
