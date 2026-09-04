@@ -7,20 +7,28 @@ import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/ge
 import { BillDisclaimer } from "@/features/bills/client/components/bill-detail/bill-disclaimer";
 import { BillsByTagSection } from "@/features/bills/server/components/bills-by-tag-section";
 import { FeaturedBillSection } from "@/features/bills/server/components/featured-bill-section";
-import { BillsByMeetingBodySection } from "@/features/bills/server/components/bills-by-meeting-body-section";
-import { RecentBillsSection } from "@/features/bills/server/components/recent-bills-section";
+import { BillsSearchSection } from "@/features/bills/server/components/bills-search-section";
 import { loadHomeData } from "@/features/bills/server/loaders/load-home-data";
+import {
+  parseBillsSearchParams,
+  type RawSearchParams,
+} from "@/features/bills/shared/utils/parse-bills-search-params";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<RawSearchParams>;
+}) {
+  const searchState = parseBillsSearchParams(await searchParams);
   const {
     billsByTag,
     featuredBills,
     comingSoonBills,
-    recentBills,
-    byMeetingBody,
-  } = await loadHomeData();
+    searchResult,
+    categories,
+  } = await loadHomeData(searchState);
 
   // ゆくゆくタグ機能がマージされたらBFFに統合する
   const [currentDifficulty] = await Promise.all([getDifficultyLevel()]);
@@ -54,17 +62,16 @@ export default async function Home() {
         </div>
       </Container>
 
-      {/* 最近の報告資料と、会議体ごとのまとめ */}
-      {(recentBills.length > 0 || byMeetingBody.length > 0) && (
-        <div className="bg-mirai-surface-muted py-10">
-          <Container>
-            <div className="flex flex-col gap-12">
-              <RecentBillsSection bills={recentBills} />
-              <BillsByMeetingBodySection groups={byMeetingBody} />
-            </div>
-          </Container>
-        </div>
-      )}
+      {/* 報告資料を探す */}
+      <div className="bg-mirai-surface-muted py-10">
+        <Container>
+          <BillsSearchSection
+            params={searchState}
+            result={searchResult}
+            categories={categories}
+          />
+        </Container>
+      </div>
 
       <Container className="pt-12 pb-6">
         <div className="grid grid-cols-1 md:grid-cols-[1fr,320px] gap-12 lg:gap-20">

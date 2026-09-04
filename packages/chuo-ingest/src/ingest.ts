@@ -7,6 +7,8 @@ import {
   findKnownSource,
   saveSource,
   startRun,
+  findCategories,
+  replaceBillCategories,
   upsertBillContent,
   upsertBillFromShiryo,
 } from "./repositories/ingest-repository";
@@ -20,6 +22,7 @@ import {
   saveShiryoImageUrl,
   uploadShiryoImage,
 } from "./services/render-shiryo-image";
+import { generateCategories } from "./services/generate-categories";
 import { generateExplanations } from "./services/generate-explanation";
 import type { ObjectGenerator } from "./services/generate-explanation";
 import {
@@ -96,6 +99,8 @@ export async function runIngest(options: IngestOptions): Promise<IngestResult> {
   }
 
   const runId = await startRun("explain");
+  // カテゴリの一覧は実行中に変わらない。資料ごとに引き直さない
+  const categories = await findCategories();
   let stats = emptyStats();
   let stoppedBy: string | undefined;
 
@@ -133,6 +138,7 @@ export async function runIngest(options: IngestOptions): Promise<IngestResult> {
             committee: parsed.committee,
             date: parsed.date,
             report,
+            categories,
             force: options.force,
           });
           stats = countDecision(stats, outcome);
@@ -182,6 +188,8 @@ async function ingestOneShiryo(params: {
   committee: string;
   date: string;
   report: { number: number | null; title: string };
+  /** 選べるカテゴリの一覧。実行のはじめに1回だけ読む */
+  categories: { id: string; label: string }[];
   force?: boolean;
 }): Promise<"new" | "changed" | "forced" | "unchanged"> {
   const known = await findKnownSource("shiryo_pdf", params.shiryoUrl);
@@ -242,6 +250,24 @@ async function ingestOneShiryo(params: {
     const explanation = explanations[difficulty];
     if (explanation === undefined) continue;
     await upsertBillContent({ billId, difficulty, explanation });
+  }
+
+  // カテゴリを付ける。一覧の絞り込みに使う。
+  // 失敗しても記事は成立するので、警告にとどめる。
+  try {
+    const tagIds = await generateCategories({
+      input: {
+        title: params.report.title,
+        articleTitle: normal.title,
+        summary: normal.summary,
+        sourceText: pdf.text,
+        categories: params.categories,
+      },
+      generate: params.generate,
+    });
+    await replaceBillCategories({ billId, tagIds });
+  } catch (error) {
+    console.warn(`  カテゴリを付けられなかった: ${String(error)}`);
   }
 
   // 資料の1ページ目を画像にして記事に載せる。

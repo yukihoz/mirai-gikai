@@ -1,8 +1,7 @@
-import type { Route } from "next";
 import { ExternalLink } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import type { ComingSoonBill } from "@/features/bills/shared/types";
-import { env } from "@/lib/env";
 import { Card, CardContent } from "../ui/card";
 
 interface ComingSoonSectionProps {
@@ -20,20 +19,6 @@ export function ComingSoonSection({ bills }: ComingSoonSectionProps) {
           ))}
         </div>
       )}
-
-      {/* 区議会議案情報へのリンク */}
-      <div className="text-right text-sm text-mirai-text-secondary">
-        <Link
-          href="https://www.kugikai.city.chuo.lg.jp/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:opacity-80 inline-flex items-center gap-1"
-        >
-          {env.assemblyName}に提出されているすべての情報は、{" "}
-          <span className="underline">中央区議会Webサイトへ</span>
-          <ExternalLink className="h-3 w-3" />
-        </Link>
-      </div>
     </section>
   );
 }
