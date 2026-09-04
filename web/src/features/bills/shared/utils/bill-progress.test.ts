@@ -58,16 +58,8 @@ describe("getStepState", () => {
 });
 
 describe("getOrderedSteps", () => {
-  test("定例会の場合はステップ順序がそのまま", () => {
-    const result = getOrderedSteps("定例会", BASE_STEPS);
-    expect(result[0].label).toBe("報告資料\n提出");
-    expect(result[1].label).toBe("衆議院\n審議");
-    expect(result[2].label).toBe("参議院\n審議");
-    expect(result[3].label).toBe("報告資料\n成立");
-  });
-
-  test("臨時会の場合もステップ順序がそのまま", () => {
-    const result = getOrderedSteps("臨時会", BASE_STEPS);
+  test("渡した並びをそのまま返す", () => {
+    const result = getOrderedSteps(BASE_STEPS);
     expect(result[0].label).toBe("報告資料\n提出");
     expect(result[1].label).toBe("衆議院\n審議");
     expect(result[2].label).toBe("参議院\n審議");
@@ -76,7 +68,7 @@ describe("getOrderedSteps", () => {
 
   test("元の配列を変更しない", () => {
     const original = [...BASE_STEPS.map((s) => ({ ...s }))];
-    getOrderedSteps("臨時会", BASE_STEPS);
+    getOrderedSteps(BASE_STEPS);
     expect(BASE_STEPS[1].label).toBe(original[1].label);
     expect(BASE_STEPS[2].label).toBe(original[2].label);
   });

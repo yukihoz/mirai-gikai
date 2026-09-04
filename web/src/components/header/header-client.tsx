@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DifficultySelector } from "@/features/bill-difficulty/client/components/difficulty-selector";
@@ -9,7 +8,6 @@ import { InterviewHeaderActions } from "@/features/interview-session/client/comp
 import { sendDifficultyStateEvent } from "@/lib/analytics/preference-state-events";
 import { useOnPageView } from "@/lib/analytics/use-on-page-view";
 import { isInterviewPage, isMainPage } from "@/lib/page-layout-utils";
-import { routes } from "@/lib/routes";
 import { env } from "@/lib/env";
 import { RubyToggle } from "@/lib/rubyful";
 import { HamburgerMenu } from "./hamburger-menu";
@@ -40,6 +38,7 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
               className="flex items-center space-x-2"
               aria-label="ホーム"
             >
+              {/* biome-ignore lint/performance/noImgElement: ロゴはCSSで高さを決めて横幅を自動にしている。next/image は寸法指定を要求し、Vercelの画像最適化にも乗るため、全ページに出るロゴでは割に合わない */}
               <img
                 src="/img/logo.png"
                 alt={env.siteTitle}

@@ -56,7 +56,6 @@ export default async function Home() {
               session={previousSessionData.session}
               bills={previousSessionData.bills}
               totalBillCount={previousSessionData.totalBillCount}
-              title="最近の議案"
             />
           </Container>
         </div>

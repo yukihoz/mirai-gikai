@@ -1,5 +1,3 @@
-import React from "react";
-
 // 簡単な文字列表現からシード（数値）を生成するハッシュ関数
 function hashString(str: string): number {
   let hash = 0;
@@ -714,7 +712,7 @@ function DynamicThumbnail({ title, meetingBody }: DynamicThumbnailProps) {
 
   // 会議体に紐づく色を取得
   const colorTheme =
-    meetingBodyColors[meetingBody] || meetingBodyColors["デフォルト"];
+    meetingBodyColors[meetingBody] || meetingBodyColors.デフォルト;
 
   return (
     <div

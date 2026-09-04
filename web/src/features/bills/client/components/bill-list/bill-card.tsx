@@ -15,6 +15,8 @@ interface BillCardProps {
 export function BillCard({ bill }: BillCardProps) {
   const displayTitle = bill.bill_content?.title;
   const summary = bill.bill_content?.summary;
+  // 提出日が無い議案は公開日で代用する
+  const billDate = bill.submitted_date ?? bill.published_at;
 
   return (
     <Card className="border border-black hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
@@ -69,13 +71,8 @@ export function BillCard({ bill }: BillCardProps) {
                   <span className="inline-flex items-center border border-gray-200 px-1.5 py-0.5 rounded-[4px] bg-gray-50 text-[11px] text-gray-700">
                     {bill.meeting_body}
                   </span>
-                  {(bill.submitted_date || bill.published_at) && (
-                    <time>
-                      {formatDateWithDots(
-                        bill.submitted_date || bill.published_at!
-                      )}{" "}
-                      提出
-                    </time>
+                  {billDate !== null && (
+                    <time>{formatDateWithDots(billDate)} 提出</time>
                   )}
                 </div>
               </div>

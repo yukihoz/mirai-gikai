@@ -13,7 +13,6 @@ interface PreviousSessionSectionProps {
   session: DietSession;
   bills: BillWithContent[];
   totalBillCount: number;
-  title?: string;
 }
 
 const VISIBLE_BILLS = 5;
@@ -22,7 +21,6 @@ export function PreviousSessionSection({
   session,
   bills,
   totalBillCount,
-  title = "過去の議案",
 }: PreviousSessionSectionProps) {
   const visibleBills = bills.slice(0, VISIBLE_BILLS);
   const showMoreButton = totalBillCount > visibleBills.length;
@@ -33,12 +31,8 @@ export function PreviousSessionSection({
   }
 
   const sessionBillsUrl = routes.kokkaiSessionBills(session.slug);
-  const startDate = new Date(session.start_date);
-  const endDate = new Date(session.end_date);
-  const sessionDescription = session.is_active
-    ? `${startDate.getFullYear()}.${startDate.getMonth() + 1}月〜実施中の${session.name}`
-    : `${startDate.getFullYear()}.${startDate.getMonth() + 1}月〜${endDate.getMonth() + 1}月に実施された${session.name}`;
-
+  const _startDate = new Date(session.start_date);
+  const _endDate = new Date(session.end_date);
   return (
     <section className="flex flex-col gap-6">
       {/* Archiveヘッダー (アクティブな場合は非表示) */}

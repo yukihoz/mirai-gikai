@@ -16,6 +16,7 @@ export function OgpPreviewCard({ ogImageUrl, billName }: OgpPreviewCardProps) {
         <div className="aspect-[1200/630] w-full animate-pulse rounded bg-muted" />
       )}
       {/* eslint-disable-next-line @next/next/no-img-element */}
+      {/* biome-ignore lint/performance/noImgElement: OGP画像は外部で生成されるURLで、読み込み完了を onLoad で受けて表示を切り替えている。next/image ではこの制御を保てない */}
       <img
         src={ogImageUrl}
         alt={`${billName}に対する意見のOGP画像`}
