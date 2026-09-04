@@ -214,6 +214,76 @@ export async function findPublishedBillsByDietSession(
 /**
  * 前回の区議会会期の公開済み議案を取得（成立法案を優先、件数制限あり）
  */
+/** 一覧に必要な列。どのクエリでも同じ形で返す */
+const BILL_LIST_SELECT = `
+      *,
+      bill_contents!inner (
+        id,
+        bill_id,
+        title,
+        summary,
+        content,
+        difficulty_level,
+        created_at,
+        updated_at
+      )
+    `;
+
+/**
+ * 公開中の議案を新しい順に取る。会期は問わない。
+ *
+ * 会期で区切ると年度替わりの直後に0件になるため、トップの
+ * 「最近の報告資料」は会期をまたいで並べる。
+ */
+export async function findRecentBills(
+  difficultyLevel: DifficultyLevelEnum,
+  limit: number
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select(BILL_LIST_SELECT)
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel)
+    .order("submitted_date", { ascending: false, nullsFirst: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Failed to fetch recent bills:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+/**
+ * 会議体ごとにまとめるための議案を、新しい順にまとめて取る。
+ *
+ * 会議体は8つ前後で、1年ぶんでも数百件に収まる。会議体ごとに
+ * クエリを分けると本数が増えるので、まとめて引いてから振り分ける。
+ */
+export async function findRecentBillsByMeetingBody(
+  difficultyLevel: DifficultyLevelEnum,
+  limit = 500
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select(BILL_LIST_SELECT)
+    .eq("publish_status", "published")
+    .not("meeting_body", "is", null)
+    .eq("bill_contents.difficulty_level", difficultyLevel)
+    .order("submitted_date", { ascending: false, nullsFirst: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Failed to fetch bills by meeting body:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
 export async function findPreviousSessionBills(
   dietSessionId: string,
   difficultyLevel: DifficultyLevelEnum,
