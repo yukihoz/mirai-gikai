@@ -1280,7 +1280,7 @@ const meetingBodyColors: Record<string, { bg: string; text: string }> = {
     bg: "bg-teal-50",
     text: "text-teal-500/20",
   },
-  区制施行80周年等にぎわい創出対策特別委員会: {
+  "区制施行８０周年等にぎわいの向上・創出対策特別委員会": {
     bg: "bg-amber-50",
     text: "text-amber-500/30",
   },

@@ -101,7 +101,7 @@ export type Database = {
           is_featured: boolean
           is_review_completed: boolean
           knowledge_source: string | null
-          meeting_body: Database["public"]["Enums"]["meeting_body_enum"]
+          meeting_body: string
           name: string
           publish_status: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order: number | null
@@ -124,7 +124,7 @@ export type Database = {
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
-          meeting_body: Database["public"]["Enums"]["meeting_body_enum"]
+          meeting_body: string
           name: string
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
@@ -147,7 +147,7 @@ export type Database = {
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
-          meeting_body?: Database["public"]["Enums"]["meeting_body_enum"]
+          meeting_body?: string
           name?: string
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
