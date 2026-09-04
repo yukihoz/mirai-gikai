@@ -98,9 +98,9 @@ describe("find_sessions_ordered_by_total_content_richness() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(3);
-    expect(data![0].session_id).toBe(session2.id); // 90
-    expect(data![1].session_id).toBe(session1.id); // 60
-    expect(data![2].session_id).toBe(session3.id); // 30
+    expect(data?.[0]?.session_id).toBe(session2.id); // 90
+    expect(data?.[1]?.session_id).toBe(session1.id); // 60
+    expect(data?.[2]?.session_id).toBe(session3.id); // 30
   });
 
   it("充実度の昇順でセッションIDを返す", async () => {
@@ -126,8 +126,8 @@ describe("find_sessions_ordered_by_total_content_richness() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].session_id).toBe(session2.id); // 20
-    expect(data![1].session_id).toBe(session1.id); // 80
+    expect(data?.[0]?.session_id).toBe(session2.id); // 20
+    expect(data?.[1]?.session_id).toBe(session1.id); // 80
   });
 
   it("充実度がnullのセッションはNULLS LASTで末尾に配置される", async () => {
@@ -138,7 +138,7 @@ describe("find_sessions_ordered_by_total_content_richness() 関数", () => {
     const sessionWithRichness = await createTestSession(config.id, testUser.id);
     await createTestReport(sessionWithRichness.id, 50);
 
-    const sessionNoReport = await createTestSession(config.id, testUser.id);
+    await createTestSession(config.id, testUser.id);
     // レポートなし → total_content_richness = null
 
     const sessionNullRichness = await createTestSession(config.id, testUser.id);
@@ -156,7 +156,7 @@ describe("find_sessions_ordered_by_total_content_richness() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(3);
-    expect(data![0].session_id).toBe(sessionWithRichness.id); // 50
+    expect(data?.[0]?.session_id).toBe(sessionWithRichness.id); // 50
     // null系は末尾
   });
 
@@ -185,8 +185,8 @@ describe("find_sessions_ordered_by_total_content_richness() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].session_id).toBe(sessions[3].id); // 40
-    expect(data![1].session_id).toBe(sessions[2].id); // 30
+    expect(data?.[0]?.session_id).toBe(sessions[3].id); // 40
+    expect(data?.[1]?.session_id).toBe(sessions[2].id); // 30
   });
 
   it("別のconfigのセッションは含まれない", async () => {
@@ -214,7 +214,7 @@ describe("find_sessions_ordered_by_total_content_richness() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].session_id).toBe(session1.id);
+    expect(data?.[0]?.session_id).toBe(session1.id);
   });
 
   it("存在しないconfig_idでは空配列を返す", async () => {

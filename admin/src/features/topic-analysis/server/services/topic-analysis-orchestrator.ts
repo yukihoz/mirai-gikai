@@ -30,6 +30,22 @@ import { generateOverallSummary } from "./step5-generate-summary";
  *
  * バージョンを作成し、パイプラインを実行する
  */
+/**
+ * 前の工程が残した値を取り出す。
+ *
+ * PhaseData は工程が進むにつれて埋まっていくため、型の上ではすべて任意。
+ * 実際には各工程が特定の値を前提にしている。`!` で素通しすると、undefined の
+ * まま先へ進んで別の場所で理由の分からないエラーになるので、ここで止める。
+ */
+function requirePhaseValue<T>(value: T | undefined, name: keyof PhaseData): T {
+  if (value === undefined) {
+    throw new Error(
+      `分析の途中経過に ${name} がない。前の工程が終わっていない可能性がある`
+    );
+  }
+  return value;
+}
+
 export async function runTopicAnalysis(billId: string) {
   await registerNodeTelemetry();
 
@@ -121,9 +137,15 @@ async function runPhase2Steps(
   versionId: string,
   phaseData: PhaseData
 ): Promise<PhaseData> {
-  const flatOpinions = phaseData.flat_opinions!;
-  const mergedTopicNames = phaseData.merged_topic_names!;
-  const billTitle = phaseData.bill_title!;
+  const flatOpinions = requirePhaseValue(
+    phaseData.flat_opinions,
+    "flat_opinions"
+  );
+  const mergedTopicNames = requirePhaseValue(
+    phaseData.merged_topic_names,
+    "merged_topic_names"
+  );
+  const billTitle = requirePhaseValue(phaseData.bill_title, "bill_title");
 
   // Step 4: 意見分類
   await updateVersionStep(versionId, ANALYSIS_STEPS.CLASSIFY_OPINIONS.label);
@@ -150,12 +172,23 @@ async function runPhase3Steps(
   billId: string,
   phaseData: PhaseData
 ): Promise<void> {
-  const flatOpinions = phaseData.flat_opinions!;
-  const mergedTopicNames = phaseData.merged_topic_names!;
-  const billTitle = phaseData.bill_title!;
-  const validSessionIds = new Set(phaseData.valid_session_ids!);
+  const flatOpinions = requirePhaseValue(
+    phaseData.flat_opinions,
+    "flat_opinions"
+  );
+  const mergedTopicNames = requirePhaseValue(
+    phaseData.merged_topic_names,
+    "merged_topic_names"
+  );
+  const billTitle = requirePhaseValue(phaseData.bill_title, "bill_title");
+  const validSessionIds = new Set(
+    requirePhaseValue(phaseData.valid_session_ids, "valid_session_ids")
+  );
   const sessionConfigMap = phaseData.session_config_map ?? {};
-  const classifications = phaseData.classifications!;
+  const classifications = requirePhaseValue(
+    phaseData.classifications,
+    "classifications"
+  );
 
   // トピックごとの意見をグループ化
   const topicOpinionsMap = new Map<string, FlatOpinion[]>();
@@ -210,7 +243,7 @@ async function runPhase3Steps(
     })),
     billTitle,
     flatOpinions.length,
-    phaseData.sessions_count!
+    requirePhaseValue(phaseData.sessions_count, "sessions_count")
   );
 
   // Step 7: 結果保存
@@ -272,11 +305,14 @@ async function runPhase3Steps(
   }
 
   const intermediateResults: IntermediateResults = {
-    step1_raw_topics: phaseData.raw_topics!,
+    step1_raw_topics: requirePhaseValue(phaseData.raw_topics, "raw_topics"),
     step2_merged_topics: mergedTopicNames,
     step3_classifications: classifications,
     opinions_count: flatOpinions.length,
-    sessions_count: phaseData.sessions_count!,
+    sessions_count: requirePhaseValue(
+      phaseData.sessions_count,
+      "sessions_count"
+    ),
   };
 
   await updateVersionResult(versionId, summaryMd, intermediateResults);

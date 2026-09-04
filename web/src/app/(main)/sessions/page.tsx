@@ -29,7 +29,6 @@ export default async function SessionsPage() {
         <div className="grid grid-cols-1 gap-4">
           {sessions.map((session) => {
             const startDate = new Date(session.start_date);
-            const endDate = new Date(session.end_date);
             const year = startDate.getFullYear();
 
             // 名称の中に年が含まれているかチェック（重複表示防止）

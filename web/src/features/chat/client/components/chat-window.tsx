@@ -105,7 +105,10 @@ function ChatMessages({
         {/* サンプル質問チップ */}
         <div className="flex flex-wrap gap-3">
           {(billContext
-            ? [`この報告資料のポイントは？`, "この報告資料は私にどんな影響がある？"]
+            ? [
+                `この報告資料のポイントは？`,
+                "この報告資料は私にどんな影響がある？",
+              ]
             : [
                 `${env.siteShortName}って何？`,
                 `${env.assemblyName}って何をするところ？`,

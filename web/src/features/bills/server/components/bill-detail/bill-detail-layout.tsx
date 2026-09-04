@@ -70,7 +70,6 @@ export async function BillDetailLayout({
               <div className="my-8">
                 <BillStatusProgress
                   status={bill.status}
-                  meetingBody={bill.meeting_body}
                   statusNote={bill.status_note}
                 />
               </div>

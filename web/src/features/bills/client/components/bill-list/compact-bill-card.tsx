@@ -18,6 +18,8 @@ interface CompactBillCardProps {
 export function CompactBillCard({ bill, className }: CompactBillCardProps) {
   const displayTitle = bill.bill_content?.title || bill.name;
   const statusLabel = bill.status === "enacted" ? "成立" : "提出";
+  // 提出日が無い議案は公開日で代用する
+  const billDate = bill.submitted_date ?? bill.published_at;
 
   return (
     <Card
@@ -40,10 +42,9 @@ export function CompactBillCard({ bill, className }: CompactBillCardProps) {
             <span className="inline-flex items-center border border-gray-200 px-1.5 py-0.5 rounded-[4px] bg-gray-50 text-[10px] text-gray-600">
               {bill.meeting_body}
             </span>
-            {(bill.submitted_date || bill.published_at) && (
+            {billDate !== null && (
               <span className="text-xs text-muted-foreground">
-                {formatDateWithDots(bill.submitted_date || bill.published_at!)}{" "}
-                {statusLabel}
+                {formatDateWithDots(billDate)} {statusLabel}
               </span>
             )}
           </div>

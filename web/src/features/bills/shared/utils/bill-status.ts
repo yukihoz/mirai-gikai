@@ -1,4 +1,3 @@
-import { env } from "@/lib/env";
 import type { BillStatusEnum } from "../types";
 
 /** カード用の簡略化されたステータスラベルを取得 */

@@ -17,7 +17,7 @@ const Patterns = {
     const angle = (seed % 4) * 45;
     const width = 10 + (seed % 20);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p1-${seed}`}
@@ -44,7 +44,7 @@ const Patterns = {
     const radius = 4 + (seed % 8);
     const spacing = radius * 4;
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p2-${seed}`}
@@ -74,7 +74,7 @@ const Patterns = {
   },
   Waves: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p3-${seed}`}
@@ -97,7 +97,7 @@ const Patterns = {
   Circles: ({ seed }: { seed: number }) => {
     const size = 60 + (seed % 40);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p4-${seed}`}
@@ -132,7 +132,7 @@ const Patterns = {
   Grid: ({ seed }: { seed: number }) => {
     const size = 20 + (seed % 20);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p5-${seed}`}
@@ -154,7 +154,7 @@ const Patterns = {
   },
   Zigzag: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p6-${seed}`}
@@ -177,7 +177,7 @@ const Patterns = {
   Crosshatch: ({ seed }: { seed: number }) => {
     const size = 15 + (seed % 15);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p7-${seed}`}
@@ -212,7 +212,7 @@ const Patterns = {
   },
   Triangles: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p8-${seed}`}
@@ -240,7 +240,7 @@ const Patterns = {
     const s = 15;
     const h = s * Math.sqrt(3);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p9-${seed}`}
@@ -268,7 +268,7 @@ const Patterns = {
   },
   Concentric: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p10-${seed}`}
@@ -304,7 +304,7 @@ const Patterns = {
   Squares: ({ seed }: { seed: number }) => {
     const size = 10 + (seed % 10);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p11-${seed}`}
@@ -336,7 +336,7 @@ const Patterns = {
   },
   Diamonds: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p12-${seed}`}
@@ -365,7 +365,7 @@ const Patterns = {
   },
   Plus: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p13-${seed}`}
@@ -387,7 +387,7 @@ const Patterns = {
   },
   Stars: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p14-${seed}`}
@@ -408,7 +408,7 @@ const Patterns = {
   },
   Macaroni: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p15-${seed}`}
@@ -440,7 +440,7 @@ const Patterns = {
   },
   Rain: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p16-${seed}`}
@@ -477,7 +477,7 @@ const Patterns = {
   },
   Bricks: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p17-${seed}`}
@@ -520,7 +520,7 @@ const Patterns = {
   },
   VariedDots: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p18-${seed}`}
@@ -539,7 +539,7 @@ const Patterns = {
   },
   Isometric: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p19-${seed}`}
@@ -570,7 +570,7 @@ const Patterns = {
   },
   Rings: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p20-${seed}`}
@@ -625,7 +625,7 @@ const Patterns = {
   Chevrons: ({ seed }: { seed: number }) => {
     const size = 16 + (seed % 10);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p21-${seed}`}
@@ -648,7 +648,7 @@ const Patterns = {
   Scales: ({ seed }: { seed: number }) => {
     const size = 20 + (seed % 12);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p22-${seed}`}
@@ -671,7 +671,7 @@ const Patterns = {
   Lattice: ({ seed }: { seed: number }) => {
     const size = 18 + (seed % 14);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p23-${seed}`}
@@ -693,7 +693,7 @@ const Patterns = {
   Pills: ({ seed }: { seed: number }) => {
     const w = 22 + (seed % 10);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p24-${seed}`}
@@ -720,7 +720,7 @@ const Patterns = {
   Sprinkles: ({ seed }: { seed: number }) => {
     const size = 26 + (seed % 10);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p25-${seed}`}
@@ -765,7 +765,7 @@ const Patterns = {
     const size = 24 + (seed % 12);
     const h = size / 2;
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p26-${seed}`}
@@ -787,7 +787,7 @@ const Patterns = {
   Ticks: ({ seed }: { seed: number }) => {
     const gap = 12 + (seed % 8);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p27-${seed}`}
@@ -814,7 +814,7 @@ const Patterns = {
   Bubbles: ({ seed }: { seed: number }) => {
     const size = 34 + (seed % 14);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p28-${seed}`}
@@ -850,7 +850,7 @@ const Patterns = {
     const size = 20 + (seed % 10);
     const h = size / 2;
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p29-${seed}`}
@@ -873,7 +873,7 @@ const Patterns = {
   Weave: ({ seed }: { seed: number }) => {
     const size = 16 + (seed % 10);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p30-${seed}`}
@@ -904,7 +904,7 @@ const Patterns = {
   Arrows: ({ seed }: { seed: number }) => {
     const size = 22 + (seed % 10);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p31-${seed}`}
@@ -928,7 +928,7 @@ const Patterns = {
     const size = 28 + (seed % 12);
     const r = size * 0.22;
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p32-${seed}`}
@@ -973,7 +973,7 @@ const Patterns = {
   Notches: ({ seed }: { seed: number }) => {
     const size = 18 + (seed % 12);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p33-${seed}`}
@@ -1000,7 +1000,7 @@ const Patterns = {
   Ripples: ({ seed }: { seed: number }) => {
     const size = 30 + (seed % 16);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p34-${seed}`}
@@ -1039,7 +1039,7 @@ const Patterns = {
   Bars: ({ seed }: { seed: number }) => {
     const unit = 10 + (seed % 6);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p35-${seed}`}
@@ -1072,7 +1072,7 @@ const Patterns = {
   Seigaiha: ({ seed }: { seed: number }) => {
     const size = 24 + (seed % 12);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p36-${seed}`}
@@ -1107,7 +1107,7 @@ const Patterns = {
     const c = size / 2;
     const a = size * 0.3;
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p37-${seed}`}
@@ -1137,7 +1137,7 @@ const Patterns = {
   Terrace: ({ seed }: { seed: number }) => {
     const size = 20 + (seed % 12);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p38-${seed}`}
@@ -1171,7 +1171,7 @@ const Patterns = {
   Threads: ({ seed }: { seed: number }) => {
     const size = 14 + (seed % 10);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p39-${seed}`}
@@ -1195,7 +1195,7 @@ const Patterns = {
   Confetti: ({ seed }: { seed: number }) => {
     const size = 30 + (seed % 14);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p40-${seed}`}

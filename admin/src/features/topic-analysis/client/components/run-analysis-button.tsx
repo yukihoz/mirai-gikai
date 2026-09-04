@@ -84,13 +84,14 @@ export function RunAnalysisButton({
       if (data.status === "completed") {
         stopPolling();
         setIsRunning(false);
-        router.push(
-          routes.billTopicAnalysisDetail(
-            billId,
-            configId,
-            versionIdRef.current!
-          ) as Route
-        );
+        // 分析を開始したときに必ず入れているが、型の上では未設定でもありうる。
+        // 遷移先が決まらないときは一覧の再読み込みだけにしておく
+        const versionId = versionIdRef.current;
+        if (versionId !== null) {
+          router.push(
+            routes.billTopicAnalysisDetail(billId, configId, versionId) as Route
+          );
+        }
         router.refresh();
       } else if (data.status === "failed") {
         stopPolling();

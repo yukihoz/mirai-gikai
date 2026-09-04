@@ -237,6 +237,9 @@ importers:
 
   packages/supabase:
     dependencies:
+      '@mirai-gikai/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@supabase/ssr':
         specifier: ^0.5.2
         version: 0.5.2(@supabase/supabase-js@2.74.0)

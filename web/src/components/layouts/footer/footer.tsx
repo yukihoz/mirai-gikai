@@ -1,7 +1,6 @@
 "use client";
 
 import type { Route } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isInterviewPage } from "@/lib/page-layout-utils";
@@ -32,6 +31,7 @@ function FooterLogoSection() {
   return (
     <div className="flex flex-col items-center text-center mb-9">
       <Link href={routes.home()} aria-label={`${env.siteTitle} トップページ`}>
+        {/* biome-ignore lint/performance/noImgElement: ロゴはCSSで高さを決めて横幅を自動にしている。next/image は寸法指定を要求し、Vercelの画像最適化にも乗るため、全ページに出るロゴでは割に合わない */}
         <img
           src="/img/logo.png"
           alt={env.siteTitle}

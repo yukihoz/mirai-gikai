@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
 import { env } from "@/lib/env";
@@ -14,6 +13,7 @@ export function DesktopMenuLogo() {
     >
       {/* ロゴ */}
       <div className="relative w-[160px] h-auto">
+        {/* biome-ignore lint/performance/noImgElement: ロゴはCSSで高さを決めて横幅を自動にしている。next/image は寸法指定を要求し、Vercelの画像最適化にも乗るため、全ページに出るロゴでは割に合わない */}
         <img
           src="/img/logo.png"
           alt={env.siteTitle}

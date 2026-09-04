@@ -1,4 +1,4 @@
-import type { BillStatusEnum, MeetingBody } from "../../../shared/types";
+import type { BillStatusEnum } from "../../../shared/types";
 import {
   calculateProgressWidth,
   getCurrentStep,
@@ -9,7 +9,6 @@ import {
 
 interface BillStatusProgressProps {
   status: BillStatusEnum;
-  meetingBody: MeetingBody;
   statusNote?: string | null;
 }
 
@@ -94,13 +93,12 @@ function ProgressStep({
 
 export function BillStatusProgress({
   status,
-  meetingBody,
   statusNote,
 }: BillStatusProgressProps) {
   const isPreparing = status === "preparing";
   const currentStep = getCurrentStep(status);
 
-  const orderedSteps = getOrderedSteps(meetingBody, BASE_STEPS);
+  const orderedSteps = getOrderedSteps(BASE_STEPS);
   const progressWidth = calculateProgressWidth(currentStep);
 
   const statusMessage = getStatusMessage(status, statusNote);
