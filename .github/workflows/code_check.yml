@@ -40,6 +40,11 @@ jobs:
 
       - name: Run Test with Coverage
         run: pnpm run test:coverage
+        # env.ts は読み込み時に接続情報を要求する。ここでは Supabase に
+        # 接続しないので、ビルドと同じダミー値を渡して読み込みを通す
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_dummy-for-build-check
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5

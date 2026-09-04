@@ -136,7 +136,7 @@ describe("MCP bills tools", () => {
       }>("create_bill", {
         name: `MCP作成テスト-${Date.now()}`,
         status: "introduced",
-        originating_house: "HR",
+        meeting_body: "福祉保健委員会",
         status_note: null,
         submitted_date: "2025-04-01",
         is_featured: false,
@@ -166,7 +166,7 @@ describe("MCP bills tools", () => {
       }>("create_bill", {
         name: `MCP作成テスト空-${Date.now()}`,
         status: "introduced",
-        originating_house: "HR",
+        meeting_body: "福祉保健委員会",
         status_note: null,
         submitted_date: "",
         is_featured: false,
@@ -191,7 +191,7 @@ describe("MCP bills tools", () => {
       }>("create_bill", {
         name: `MCP作成テスト省略-${Date.now()}`,
         status: "introduced",
-        originating_house: "HR",
+        meeting_body: "福祉保健委員会",
         status_note: null,
         is_featured: false,
         is_review_completed: false,
@@ -219,7 +219,7 @@ describe("MCP bills tools", () => {
         billId: bill.id,
         name: "更新後",
         status: "enacted",
-        originating_house: "HC",
+        meeting_body: "企画総務委員会",
         status_note: null,
         is_featured: false,
         is_review_completed: true,
@@ -230,12 +230,12 @@ describe("MCP bills tools", () => {
 
       const { data } = await adminClient
         .from("bills")
-        .select("name, status, originating_house, is_review_completed")
+        .select("name, status, meeting_body, is_review_completed")
         .eq("id", bill.id)
         .single();
       expect(data?.name).toBe("更新後");
       expect(data?.status).toBe("enacted");
-      expect(data?.originating_house).toBe("HC");
+      expect(data?.meeting_body).toBe("企画総務委員会");
       expect(data?.is_review_completed).toBe(true);
     });
 
@@ -243,7 +243,7 @@ describe("MCP bills tools", () => {
       const bill = await createTestBill({
         name: "部分更新元",
         status: "introduced",
-        originating_house: "HR",
+        meeting_body: "福祉保健委員会",
       });
       billIds.push(bill.id);
 
@@ -254,19 +254,19 @@ describe("MCP bills tools", () => {
 
       const { data } = await adminClient
         .from("bills")
-        .select("name, status, originating_house")
+        .select("name, status, meeting_body")
         .eq("id", bill.id)
         .single();
       expect(data?.name).toBe("部分更新元");
       expect(data?.status).toBe("introduced");
-      expect(data?.originating_house).toBe("HR");
+      expect(data?.meeting_body).toBe("福祉保健委員会");
     });
 
     it("一部のフィールドのみ指定した場合、他のフィールドは変更されない", async () => {
       const bill = await createTestBill({
         name: "更新前の名前",
         status: "introduced",
-        originating_house: "HR",
+        meeting_body: "福祉保健委員会",
         is_featured: false,
       });
       billIds.push(bill.id);
@@ -287,13 +287,13 @@ describe("MCP bills tools", () => {
       const { data } = await adminClient
         .from("bills")
         .select(
-          "name, status, originating_house, is_featured, submitted_date, status_note"
+          "name, status, meeting_body, is_featured, submitted_date, status_note"
         )
         .eq("id", bill.id)
         .single();
       expect(data?.name).toBe("更新後の名前のみ");
       expect(data?.status).toBe("introduced");
-      expect(data?.originating_house).toBe("HR");
+      expect(data?.meeting_body).toBe("福祉保健委員会");
       expect(data?.is_featured).toBe(false);
       expect(data?.status_note).toBe("初期備考");
       expect(new Date(data?.submitted_date ?? "").toISOString()).toBe(
@@ -339,7 +339,7 @@ describe("MCP bills tools", () => {
         billId: bill.id,
         name: "ナレッジ無し更新後",
         status: "introduced",
-        originating_house: "HR",
+        meeting_body: "福祉保健委員会",
         status_note: null,
         is_featured: false,
         is_review_completed: false,
@@ -375,7 +375,7 @@ describe("MCP bills tools", () => {
         billId: bill.id,
         name: "成立後",
         status: "enacted",
-        originating_house: "HR",
+        meeting_body: "福祉保健委員会",
         status_note: null,
         is_featured: false,
         is_review_completed: true,
