@@ -1,4 +1,4 @@
-import type { BillStatusEnum, MeetingBody } from "../types";
+import type { BillStatusEnum } from "../types";
 
 // ステップ番号マッピング
 const STATUS_TO_STEP: Record<BillStatusEnum, number> = {
@@ -22,7 +22,7 @@ export function getStatusMessage(
   status: BillStatusEnum,
   statusNote: string | null | undefined
 ): string {
-  if (status === "preparing") return "法案提出前";
+  if (status === "preparing") return "報告資料提出前";
   return statusNote || "";
 }
 
@@ -39,14 +39,16 @@ export function getStepState(
 }
 
 /**
- * 発議院に応じてステップ順序を調整する
+ * ステップ順序を組み立てる。
+ *
+ * 国会版では発議院（衆議院か参議院か）で順序を入れ替えていたが、
+ * 区議会に発議院は無いため、いまは元の並びをそのまま複製して返す。
+ * 呼び出し側が配列を書き換えても元を壊さないよう、コピーは残す。
  */
 export function getOrderedSteps(
-  meetingBody: MeetingBody,
   baseSteps: readonly { readonly label: string }[]
 ): { label: string }[] {
-  const steps = baseSteps.map((s) => ({ label: s.label }));
-  return steps;
+  return baseSteps.map((s) => ({ label: s.label }));
 }
 
 /**

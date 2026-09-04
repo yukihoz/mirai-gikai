@@ -7,6 +7,12 @@ import {
   createTestUser,
 } from "../utils";
 
+/** insert の戻りが空でないことを確かめてから使う */
+function requireRow<T>(row: T | null, label: string): T {
+  if (row === null) throw new Error(`${label} の作成に失敗した`);
+  return row;
+}
+
 describe("count_sessions_by_config_ids", () => {
   let bill1: { id: string };
   let bill2: { id: string };
@@ -26,7 +32,7 @@ describe("count_sessions_by_config_ids", () => {
       .insert({ bill_id: bill1.id, status: "public", name: "設定1" })
       .select()
       .single();
-    configId1 = c1!.id;
+    configId1 = requireRow(c1, "設定1").id;
 
     for (let i = 0; i < 3; i++) {
       await adminClient.from("interview_sessions").insert({
@@ -43,7 +49,7 @@ describe("count_sessions_by_config_ids", () => {
       .select()
       .single();
     if (c2Error) throw new Error(`config2 作成失敗: ${c2Error.message}`);
-    configId2 = c2!.id;
+    configId2 = requireRow(c2, "設定2").id;
 
     await adminClient.from("interview_sessions").insert({
       interview_config_id: configId2,
@@ -57,7 +63,7 @@ describe("count_sessions_by_config_ids", () => {
       .insert({ bill_id: bill2.id, status: "closed", name: "設定3（空）" })
       .select()
       .single();
-    configIdEmpty = c3!.id;
+    configIdEmpty = requireRow(c3, "設定3").id;
   });
 
   afterAll(async () => {
@@ -76,7 +82,7 @@ describe("count_sessions_by_config_ids", () => {
     expect(data).toHaveLength(2);
 
     const map = new Map(
-      data!.map((r) => [r.interview_config_id, r.session_count])
+      (data ?? []).map((r) => [r.interview_config_id, r.session_count])
     );
     expect(map.get(configId1)).toBe(3);
     expect(map.get(configId2)).toBe(1);

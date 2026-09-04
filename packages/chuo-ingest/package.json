@@ -1,0 +1,58 @@
+{
+  "name": "@mirai-gikai/chuo-ingest",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./parsers": {
+      "types": "./src/parsers/index.ts",
+      "default": "./src/parsers/index.ts"
+    },
+    "./types": {
+      "types": "./src/shared/types.ts",
+      "default": "./src/shared/types.ts"
+    },
+    "./fetchers": {
+      "types": "./src/fetchers/index.ts",
+      "default": "./src/fetchers/index.ts"
+    },
+    "./urls": {
+      "types": "./src/shared/urls.ts",
+      "default": "./src/shared/urls.ts"
+    },
+    "./schemas": {
+      "types": "./src/shared/schemas.ts",
+      "default": "./src/shared/schemas.ts"
+    },
+    "./generate": {
+      "types": "./src/services/index.ts",
+      "default": "./src/services/index.ts"
+    },
+    "./ingest": {
+      "types": "./src/ingest.ts",
+      "default": "./src/ingest.ts"
+    },
+    "./ingest-discussions": {
+      "types": "./src/ingest-discussions.ts",
+      "default": "./src/ingest-discussions.ts"
+    }
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2",
+    "vitest": "^3.2.4",
+    "zod": "^4.1.12"
+  },
+  "dependencies": {
+    "@mirai-gikai/shared": "workspace:*",
+    "@mirai-gikai/supabase": "workspace:*",
+    "ai": "^6.0.3"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.0"
+  }
+}

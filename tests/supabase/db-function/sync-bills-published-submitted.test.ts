@@ -18,18 +18,18 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
           status: "introduced" as const,
+          meeting_body: "福祉保健委員会",
           submitted_date: timestamp,
         })
         .select("id, submitted_date, published_at")
         .single();
 
       expect(error).toBeNull();
-      expect(data).not.toBeNull();
-      billIds.push(data!.id);
-      expect(data!.submitted_date).toBe(timestamp);
-      expect(data!.published_at).toBe(timestamp);
+      if (data === null) throw new Error("議案を作成できなかった");
+      billIds.push(data.id);
+      expect(data.submitted_date).toBe(timestamp);
+      expect(data.published_at).toBe(timestamp);
     });
 
     it("published_at のみ指定すると submitted_date に同期される", async () => {
@@ -38,18 +38,18 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
           status: "introduced" as const,
+          meeting_body: "福祉保健委員会",
           published_at: timestamp,
         })
         .select("id, submitted_date, published_at")
         .single();
 
       expect(error).toBeNull();
-      expect(data).not.toBeNull();
-      billIds.push(data!.id);
-      expect(data!.published_at).toBe(timestamp);
-      expect(data!.submitted_date).toBe(timestamp);
+      if (data === null) throw new Error("議案を作成できなかった");
+      billIds.push(data.id);
+      expect(data.published_at).toBe(timestamp);
+      expect(data.submitted_date).toBe(timestamp);
     });
 
     it("両方NULLの場合はNULLのまま", async () => {
@@ -57,17 +57,17 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
           status: "introduced" as const,
+          meeting_body: "福祉保健委員会",
         })
         .select("id, submitted_date, published_at")
         .single();
 
       expect(error).toBeNull();
-      expect(data).not.toBeNull();
-      billIds.push(data!.id);
-      expect(data!.submitted_date).toBeNull();
-      expect(data!.published_at).toBeNull();
+      if (data === null) throw new Error("議案を作成できなかった");
+      billIds.push(data.id);
+      expect(data.submitted_date).toBeNull();
+      expect(data.published_at).toBeNull();
     });
   });
 
@@ -77,28 +77,29 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
           status: "introduced" as const,
+          meeting_body: "福祉保健委員会",
         })
         .select("id")
         .single();
-      billIds.push(bill!.id);
+      if (bill === null) throw new Error("議案を作成できなかった");
+      billIds.push(bill.id);
 
       const newTimestamp = "2026-05-01T10:00:00+00:00";
       const { error } = await adminClient
         .from("bills")
         .update({ submitted_date: newTimestamp })
-        .eq("id", bill!.id);
+        .eq("id", bill.id);
       expect(error).toBeNull();
 
       const { data: updated } = await adminClient
         .from("bills")
         .select("submitted_date, published_at")
-        .eq("id", bill!.id)
+        .eq("id", bill.id)
         .single();
 
-      expect(updated!.submitted_date).toBe(newTimestamp);
-      expect(updated!.published_at).toBe(newTimestamp);
+      expect(updated?.submitted_date).toBe(newTimestamp);
+      expect(updated?.published_at).toBe(newTimestamp);
     });
 
     it("published_at を変更すると submitted_date に同期される", async () => {
@@ -106,28 +107,29 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
           status: "introduced" as const,
+          meeting_body: "福祉保健委員会",
         })
         .select("id")
         .single();
-      billIds.push(bill!.id);
+      if (bill === null) throw new Error("議案を作成できなかった");
+      billIds.push(bill.id);
 
       const newTimestamp = "2026-06-01T10:00:00+00:00";
       const { error } = await adminClient
         .from("bills")
         .update({ published_at: newTimestamp })
-        .eq("id", bill!.id);
+        .eq("id", bill.id);
       expect(error).toBeNull();
 
       const { data: updated } = await adminClient
         .from("bills")
         .select("submitted_date, published_at")
-        .eq("id", bill!.id)
+        .eq("id", bill.id)
         .single();
 
-      expect(updated!.published_at).toBe(newTimestamp);
-      expect(updated!.submitted_date).toBe(newTimestamp);
+      expect(updated?.published_at).toBe(newTimestamp);
+      expect(updated?.submitted_date).toBe(newTimestamp);
     });
 
     it("両カラム同時変更時は submitted_date が優先される", async () => {
@@ -136,13 +138,14 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
           status: "introduced" as const,
+          meeting_body: "福祉保健委員会",
           submitted_date: initialTimestamp,
         })
         .select("id")
         .single();
-      billIds.push(bill!.id);
+      if (bill === null) throw new Error("議案を作成できなかった");
+      billIds.push(bill.id);
 
       const submittedValue = "2026-07-01T10:00:00+00:00";
       const publishedValue = "2026-08-01T10:00:00+00:00";
@@ -152,18 +155,18 @@ describe("sync_bills_published_submitted トリガー", () => {
           submitted_date: submittedValue,
           published_at: publishedValue,
         })
-        .eq("id", bill!.id);
+        .eq("id", bill.id);
       expect(error).toBeNull();
 
       const { data: updated } = await adminClient
         .from("bills")
         .select("submitted_date, published_at")
-        .eq("id", bill!.id)
+        .eq("id", bill.id)
         .single();
 
       // submitted_date が優先される
-      expect(updated!.submitted_date).toBe(submittedValue);
-      expect(updated!.published_at).toBe(submittedValue);
+      expect(updated?.submitted_date).toBe(submittedValue);
+      expect(updated?.published_at).toBe(submittedValue);
     });
   });
 });

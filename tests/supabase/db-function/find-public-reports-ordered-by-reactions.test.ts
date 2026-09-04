@@ -135,9 +135,9 @@ describe("find_public_reports_by_bill_id_ordered_by_reactions() 関数", () => {
     expect(data).toHaveLength(3);
     // weighted: report2=81, report3=81, report1=80
     // report2とreport3は同スコア → created_at降順（後に作られたreport3が先）
-    expect(data![0].id).toBe(report3.id); // weighted=81 (created later)
-    expect(data![1].id).toBe(report2.id); // weighted=81 (created earlier)
-    expect(data![2].id).toBe(report1.id); // weighted=80
+    expect(data?.[0]?.id).toBe(report3.id); // weighted=81 (created later)
+    expect(data?.[1]?.id).toBe(report2.id); // weighted=81 (created earlier)
+    expect(data?.[2]?.id).toBe(report1.id); // weighted=80
   });
 
   it("hmmリアクションは重み付きスコアに影響しない", async () => {
@@ -168,8 +168,8 @@ describe("find_public_reports_by_bill_id_ordered_by_reactions() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].id).toBe(report1.id); // weighted=80 (hmmはスコアに寄与しない)
-    expect(data![1].id).toBe(report2.id); // weighted=71
+    expect(data?.[0]?.id).toBe(report1.id); // weighted=80 (hmmはスコアに寄与しない)
+    expect(data?.[1]?.id).toBe(report2.id); // weighted=71
   });
 
   it("helpfulが同数の場合はtotal_content_richnessの差で順序が決まる", async () => {
@@ -196,8 +196,8 @@ describe("find_public_reports_by_bill_id_ordered_by_reactions() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].id).toBe(report2.id); // weighted=90
-    expect(data![1].id).toBe(report1.id); // weighted=70
+    expect(data?.[0]?.id).toBe(report2.id); // weighted=90
+    expect(data?.[1]?.id).toBe(report1.id); // weighted=70
   });
 
   it("非公開レポートは返さない", async () => {
@@ -221,7 +221,7 @@ describe("find_public_reports_by_bill_id_ordered_by_reactions() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].id).toBe(publicReport.id);
+    expect(data?.[0]?.id).toBe(publicReport.id);
   });
 
   it("p_limitで返却件数を制限できる", async () => {
@@ -271,8 +271,8 @@ describe("find_public_reports_by_bill_id_ordered_by_reactions() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].id).toBe(report2.id);
-    expect(data![1].id).toBe(report3.id);
+    expect(data?.[0]?.id).toBe(report2.id);
+    expect(data?.[1]?.id).toBe(report3.id);
   });
 
   it("p_stanceでスタンスフィルターをかけられる", async () => {
@@ -297,7 +297,7 @@ describe("find_public_reports_by_bill_id_ordered_by_reactions() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    const ids = data!.map((r: { id: string }) => r.id);
+    const ids = (data ?? []).map((r: { id: string }) => r.id);
     expect(ids).toContain(reportFor.id);
     expect(ids).toContain(reportFor2.id);
   });
@@ -337,9 +337,9 @@ describe("find_public_reports_by_bill_id_ordered_by_reactions() 関数", () => {
     expect(error).toBeNull();
     expect(data).toHaveLength(3);
     // newest first: report3 > report2 > report1
-    expect(data![0].id).toBe(report3.id);
-    expect(data![1].id).toBe(report2.id);
-    expect(data![2].id).toBe(report1.id);
+    expect(data?.[0]?.id).toBe(report3.id);
+    expect(data?.[1]?.id).toBe(report2.id);
+    expect(data?.[2]?.id).toBe(report1.id);
   });
 
   it("p_sort_order='recommended'（デフォルト）で重み付きスコア降順にソートされる", async () => {
@@ -366,8 +366,8 @@ describe("find_public_reports_by_bill_id_ordered_by_reactions() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].id).toBe(report2.id); // higher score
-    expect(data![1].id).toBe(report1.id); // lower score
+    expect(data?.[0]?.id).toBe(report2.id); // higher score
+    expect(data?.[1]?.id).toBe(report1.id); // lower score
   });
 
   it("p_offsetとp_stanceを組み合わせてページネーションできる", async () => {
@@ -399,7 +399,7 @@ describe("find_public_reports_by_bill_id_ordered_by_reactions() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].id).toBe(report2.id);
+    expect(data?.[0]?.id).toBe(report2.id);
   });
 });
 
@@ -446,10 +446,10 @@ describe("count_public_reports_by_stance() 関数", () => {
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
 
-    const forRow = data!.find(
+    const forRow = (data ?? []).find(
       (r: { stance: string; count: number }) => r.stance === "for"
     );
-    const againstRow = data!.find(
+    const againstRow = (data ?? []).find(
       (r: { stance: string; count: number }) => r.stance === "against"
     );
     expect(forRow?.count).toBe(2);
@@ -476,7 +476,7 @@ describe("count_public_reports_by_stance() 関数", () => {
     );
 
     expect(error).toBeNull();
-    const forRow = data!.find(
+    const forRow = (data ?? []).find(
       (r: { stance: string; count: number }) => r.stance === "for"
     );
     expect(forRow?.count).toBe(1);

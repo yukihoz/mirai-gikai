@@ -3,22 +3,31 @@
  * アプリケーション全体で使用する環境変数を一元管理
  */
 
-if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-  throw new Error("環境変数 NEXT_PUBLIC_SUPABASE_URL が設定されていません");
-}
-if (!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
-  throw new Error(
-    "環境変数 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY が設定されていません"
-  );
-}
+import { requirePublicEnv } from "@mirai-gikai/shared/env/require-public-env";
+
+const vercelEnv = process.env.VERCEL_ENV;
+
+const supabaseUrl = requirePublicEnv({
+  name: "NEXT_PUBLIC_SUPABASE_URL",
+  value: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  previewFallback: "https://preview-not-configured.invalid",
+  vercelEnv,
+});
+
+const supabasePublishableKey = requirePublicEnv({
+  name: "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+  value: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  previewFallback: "preview-not-configured",
+  vercelEnv,
+});
 
 export const env = {
   adminUrl: process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
     : process.env.ADMIN_URL || "http://localhost:3001",
   webUrl: process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3000",
-  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  supabasePublishableKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  supabaseUrl,
+  supabasePublishableKey,
   revalidateSecret: process.env.REVALIDATE_SECRET,
   // トピック分析・バックフィルを実行する Cloud Run Job のトリガ設定
   gcp: {

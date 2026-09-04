@@ -5,16 +5,16 @@ import { buildBillChatSystemHardPrompt } from "./bill-chat-system-hard";
 describe("buildBillChatSystemHardPrompt", () => {
   it("4つのパラメータがプロンプトに埋め込まれる", () => {
     const result = buildBillChatSystemHardPrompt(
-      "テスト法案名",
-      "テスト法案タイトル",
-      "テスト法案要約",
-      "テスト法案詳細"
+      "テスト報告資料名",
+      "テスト報告資料タイトル",
+      "テスト報告資料要約",
+      "テスト報告資料詳細"
     );
 
-    expect(result).toContain("テスト法案名");
-    expect(result).toContain("テスト法案タイトル");
-    expect(result).toContain("テスト法案要約");
-    expect(result).toContain("テスト法案詳細");
+    expect(result).toContain("テスト報告資料名");
+    expect(result).toContain("テスト報告資料タイトル");
+    expect(result).toContain("テスト報告資料要約");
+    expect(result).toContain("テスト報告資料詳細");
   });
 
   it("難易度「難しい」セクションが含まれる", () => {

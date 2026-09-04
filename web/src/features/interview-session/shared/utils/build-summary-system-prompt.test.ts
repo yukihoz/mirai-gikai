@@ -9,7 +9,7 @@ const makeBill = (
   overrides: Partial<BillWithContent> = {}
 ): BillWithContent => ({
   id: "bill-1",
-  name: "テスト法案",
+  name: "テスト報告資料",
   is_featured: false,
   meeting_body: "定例会",
   is_review_completed: true,
@@ -32,9 +32,9 @@ const makeBill = (
   bill_content: {
     id: "bc-1",
     bill_id: "bill-1",
-    title: "テスト法案タイトル",
-    summary: "テスト法案の要約です",
-    content: "テスト法案の内容",
+    title: "テスト報告資料タイトル",
+    summary: "テスト報告資料の要約です",
+    content: "テスト報告資料の内容",
     difficulty_level: "normal",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -54,9 +54,9 @@ describe("buildSummarySystemPrompt", () => {
       ],
     });
 
-    expect(result).toContain("テスト法案");
-    expect(result).toContain("テスト法案タイトル");
-    expect(result).toContain("テスト法案の要約です");
+    expect(result).toContain("テスト報告資料");
+    expect(result).toContain("テスト報告資料タイトル");
+    expect(result).toContain("テスト報告資料の要約です");
     expect(result).toContain("- 医療");
     expect(result).toContain("- 教育");
     expect(result).toContain("assistant: こんにちは");
@@ -70,9 +70,9 @@ describe("buildSummarySystemPrompt", () => {
       messages: [{ role: "user", content: "テスト" }],
     });
 
-    expect(result).toContain("- 法案名: \n");
-    expect(result).toContain("- 法案タイトル: \n");
-    expect(result).toContain("- 法案要約: \n");
+    expect(result).toContain("- 報告資料名: \n");
+    expect(result).toContain("- 報告資料タイトル: \n");
+    expect(result).toContain("- 報告資料要約: \n");
   });
 
   it("テーマ未設定の場合「（テーマ未設定）」が含まれる", () => {

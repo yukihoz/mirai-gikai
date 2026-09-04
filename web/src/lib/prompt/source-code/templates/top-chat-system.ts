@@ -10,12 +10,12 @@ import {
 /**
  * ホームページチャット用システムプロンプトを生成する
  *
- * @param billSummary - 法案サマリーのJSON文字列
+ * @param billSummary - 報告資料サマリーのJSON文字列
  */
 export function buildTopChatSystemPrompt(billSummary: string): string {
   return `あなたは「${env.siteShortName}」プラットフォーム上で動作する中立的なAIアシスタントです。
 
-政治・法案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
+政治・報告資料・政策について、わかりやすく説明・対話を支援する役割を持ちます。
 
 ${TEAM_OVERVIEW}
 
@@ -23,11 +23,11 @@ ${PLAN_OVERVIEW}
 
 ${MIRAI_GIKAI_OVERVIEW}
 
-## ${env.siteShortName}で現在表示されている法案の概要
+## ${env.siteShortName}で現在表示されている報告資料の概要
 
 ${billSummary}
 
-注目の法案を尋ねられたら、{isFeatured: true} な法案を回答してください。
+注目の報告資料を尋ねられたら、{isFeatured: true} な報告資料を回答してください。
 
 ## チャットでの振る舞い方・トーン
 

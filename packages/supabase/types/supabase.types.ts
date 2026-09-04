@@ -101,7 +101,7 @@ export type Database = {
           is_featured: boolean
           is_review_completed: boolean
           knowledge_source: string | null
-          meeting_body: Database["public"]["Enums"]["meeting_body_enum"]
+          meeting_body: string
           name: string
           publish_status: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order: number | null
@@ -124,7 +124,7 @@ export type Database = {
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
-          meeting_body: Database["public"]["Enums"]["meeting_body_enum"]
+          meeting_body: string
           name: string
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
@@ -147,7 +147,7 @@ export type Database = {
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
-          meeting_body?: Database["public"]["Enums"]["meeting_body_enum"]
+          meeting_body?: string
           name?: string
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
@@ -288,6 +288,178 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      chuo_bill_sources: {
+        Row: {
+          bill_id: string
+          committee: string
+          created_at: string
+          discussions_linked_at: string | null
+          meeting_date: string
+          meeting_url: string
+          minutes_url: string | null
+          shiryo_image_height: number | null
+          shiryo_image_url: string | null
+          shiryo_image_width: number | null
+          shiryo_number: number | null
+          shiryo_url: string
+          updated_at: string
+        }
+        Insert: {
+          bill_id: string
+          committee: string
+          created_at?: string
+          discussions_linked_at?: string | null
+          meeting_date: string
+          meeting_url: string
+          minutes_url?: string | null
+          shiryo_image_height?: number | null
+          shiryo_image_url?: string | null
+          shiryo_image_width?: number | null
+          shiryo_number?: number | null
+          shiryo_url: string
+          updated_at?: string
+        }
+        Update: {
+          bill_id?: string
+          committee?: string
+          created_at?: string
+          discussions_linked_at?: string | null
+          meeting_date?: string
+          meeting_url?: string
+          minutes_url?: string | null
+          shiryo_image_height?: number | null
+          shiryo_image_url?: string | null
+          shiryo_image_width?: number | null
+          shiryo_number?: number | null
+          shiryo_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chuo_bill_sources_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: true
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chuo_discussions: {
+        Row: {
+          answer: string
+          answerers: string[]
+          bill_id: string
+          created_at: string
+          display_order: number
+          id: string
+          question: string
+          questioners: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          answerers?: string[]
+          bill_id: string
+          created_at?: string
+          display_order: number
+          id?: string
+          question: string
+          questioners: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          answerers?: string[]
+          bill_id?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          question?: string
+          questioners?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chuo_discussions_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chuo_ingestion_runs: {
+        Row: {
+          cost_usd: number | null
+          error: string | null
+          finished_at: string | null
+          id: string
+          mode: string
+          started_at: string
+          stats: Json | null
+          status: string
+        }
+        Insert: {
+          cost_usd?: number | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          mode: string
+          started_at?: string
+          stats?: Json | null
+          status?: string
+        }
+        Update: {
+          cost_usd?: number | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          mode?: string
+          started_at?: string
+          stats?: Json | null
+          status?: string
+        }
+        Relationships: []
+      }
+      chuo_ingestion_sources: {
+        Row: {
+          content_hash: string | null
+          created_at: string
+          etag: string | null
+          id: string
+          last_fetched_at: string | null
+          last_modified: string | null
+          source: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          content_hash?: string | null
+          created_at?: string
+          etag?: string | null
+          id?: string
+          last_fetched_at?: string | null
+          last_modified?: string | null
+          source: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          content_hash?: string | null
+          created_at?: string
+          etag?: string | null
+          id?: string
+          last_fetched_at?: string | null
+          last_modified?: string | null
+          source?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
       }
       diet_sessions: {
         Row: {
@@ -1121,6 +1293,10 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: boolean
       }
+      apply_admin_role_if_yukihozumi: {
+        Args: { target_user_id: string }
+        Returns: boolean
+      }
       bulk_publish_reports: {
         Args: {
           p_config_id: string
@@ -1404,6 +1580,10 @@ export type Database = {
         | "予算特別委員会"
         | "決算特別委員会"
         | "AIインタビュー"
+        | "築地まちづくり・環境対策特別委員会"
+        | "子ども・教育環境整備対策特別委員会"
+        | "区民生活等安全・安心対策特別委員会"
+        | "区制施行80周年等にぎわい創出対策特別委員会"
       moderation_status_enum: "ok" | "warning" | "ng"
       stance_type_enum:
         | "for"
@@ -1588,6 +1768,10 @@ export const Constants = {
         "予算特別委員会",
         "決算特別委員会",
         "AIインタビュー",
+        "築地まちづくり・環境対策特別委員会",
+        "子ども・教育環境整備対策特別委員会",
+        "区民生活等安全・安心対策特別委員会",
+        "区制施行80周年等にぎわい創出対策特別委員会",
       ],
       moderation_status_enum: ["ok", "warning", "ng"],
       stance_type_enum: [

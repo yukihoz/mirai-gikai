@@ -335,7 +335,7 @@ describe("get_interview_statistics() 関数", () => {
 
     const s1 = await createTestSession(config.id, testUser.id);
     const s2 = await createTestSession(config.id, testUser.id);
-    const s3 = await createTestSession(config.id, testUser.id); // コストなし
+    await createTestSession(config.id, testUser.id); // コストなし
 
     // s1: 2件のコストイベント
     await adminClient.from("chat_usage_events").insert([

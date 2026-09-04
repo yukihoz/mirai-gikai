@@ -3,15 +3,23 @@
  * アプリケーション全体で使用する環境変数を一元管理
  */
 
-if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-  throw new Error("環境変数 NEXT_PUBLIC_SUPABASE_URL が設定されていません");
-}
+import { requirePublicEnv } from "@mirai-gikai/shared/env/require-public-env";
 
-if (!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
-  throw new Error(
-    "環境変数 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY が設定されていません"
-  );
-}
+const vercelEnv = process.env.VERCEL_ENV;
+
+const supabaseUrl = requirePublicEnv({
+  name: "NEXT_PUBLIC_SUPABASE_URL",
+  value: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  previewFallback: "https://preview-not-configured.invalid",
+  vercelEnv,
+});
+
+const supabasePublishableKey = requirePublicEnv({
+  name: "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+  value: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  previewFallback: "preview-not-configured",
+  vercelEnv,
+});
 
 const chatDailyUserCostLimitUsdRaw =
   process.env.CHAT_DAILY_USER_COST_LIMIT_USD ||
@@ -73,8 +81,8 @@ const getWebUrl = () => {
 export const env = {
   webUrl: getWebUrl(),
   adminUrl: process.env.ADMIN_URL || "http://localhost:3001",
-  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  supabasePublishableKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  supabaseUrl,
+  supabasePublishableKey,
   revalidateSecret: process.env.REVALIDATE_SECRET,
   siteTitle: process.env.NEXT_PUBLIC_SITE_TITLE || "みらい議会@中央区",
   siteShortName: process.env.NEXT_PUBLIC_SITE_SHORT_NAME || "みらい議会@中央区",

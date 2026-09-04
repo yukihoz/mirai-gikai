@@ -12,8 +12,6 @@ import {
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
   adminClient,
-  cleanupTestBill,
-  cleanupTestUser,
   createTestBill,
   createTestUser,
   type TestUser,

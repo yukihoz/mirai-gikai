@@ -122,9 +122,9 @@ describe("find_sessions_ordered_by_helpful_count() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(3);
-    expect(data![0].session_id).toBe(session2.id); // 3
-    expect(data![1].session_id).toBe(session3.id); // 2
-    expect(data![2].session_id).toBe(session1.id); // 1
+    expect(data?.[0]?.session_id).toBe(session2.id); // 3
+    expect(data?.[1]?.session_id).toBe(session3.id); // 2
+    expect(data?.[2]?.session_id).toBe(session1.id); // 1
   });
 
   it("参考になるリアクション数の昇順でセッションIDを返す", async () => {
@@ -152,8 +152,8 @@ describe("find_sessions_ordered_by_helpful_count() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].session_id).toBe(session2.id); // 1
-    expect(data![1].session_id).toBe(session1.id); // 2
+    expect(data?.[0]?.session_id).toBe(session2.id); // 1
+    expect(data?.[1]?.session_id).toBe(session1.id); // 2
   });
 
   it("リアクションなしのセッションは0として扱われる", async () => {
@@ -167,7 +167,7 @@ describe("find_sessions_ordered_by_helpful_count() 関数", () => {
     await createTestReactions(report1.id, [testUsers[0].id, testUsers[1].id]);
 
     // session2: no report (no reactions)
-    const session2 = await createTestSession(config.id, testUsers[0].id);
+    await createTestSession(config.id, testUsers[0].id);
 
     // session3: report but no reactions
     const session3 = await createTestSession(config.id, testUsers[0].id);
@@ -185,7 +185,7 @@ describe("find_sessions_ordered_by_helpful_count() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(3);
-    expect(data![0].session_id).toBe(session1.id); // 2
+    expect(data?.[0]?.session_id).toBe(session1.id); // 2
     // session2 and session3 both have 0, sorted by started_at DESC
   });
 
@@ -225,8 +225,8 @@ describe("find_sessions_ordered_by_helpful_count() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].session_id).toBe(session2.id); // 2 helpful
-    expect(data![1].session_id).toBe(session1.id); // 1 helpful
+    expect(data?.[0]?.session_id).toBe(session2.id); // 2 helpful
+    expect(data?.[1]?.session_id).toBe(session1.id); // 1 helpful
   });
 
   it("offset/limitでページネーションが正しく動作する", async () => {
@@ -259,8 +259,8 @@ describe("find_sessions_ordered_by_helpful_count() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].session_id).toBe(sessions[2].id); // 3 helpful
-    expect(data![1].session_id).toBe(sessions[1].id); // 2 helpful
+    expect(data?.[0]?.session_id).toBe(sessions[2].id); // 3 helpful
+    expect(data?.[1]?.session_id).toBe(sessions[1].id); // 2 helpful
   });
 
   it("別のconfigのセッションは含まれない", async () => {
@@ -294,7 +294,7 @@ describe("find_sessions_ordered_by_helpful_count() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].session_id).toBe(session1.id);
+    expect(data?.[0]?.session_id).toBe(session1.id);
   });
 
   it("存在しないconfig_idでは空配列を返す", async () => {

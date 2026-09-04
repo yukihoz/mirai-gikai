@@ -21,10 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  type BillStatus,
-  type MeetingBody,
-} from "@/features/bills/shared/types";
+import type { BillStatus, MeetingBody } from "@/features/bills/shared/types";
 import type { DietSession } from "@/features/diet-sessions/shared/types";
 import type { BillCreateInput } from "../../shared/types";
 import { shouldAutoCloseInterviewOnBillStatus } from "../../shared/utils/should-auto-close-interview";
@@ -61,6 +58,23 @@ const MEETING_BODY_OPTIONS: Array<{ value: MeetingBody; label: string }> = [
   { value: "防災等安全対策特別委員会", label: "防災等安全対策特別委員会" },
   { value: "予算特別委員会", label: "予算特別委員会" },
   { value: "決算特別委員会", label: "決算特別委員会" },
+  // 2026年5月に組み替えられた特別委員会
+  {
+    value: "築地まちづくり・環境対策特別委員会",
+    label: "築地まちづくり・環境対策特別委員会",
+  },
+  {
+    value: "区制施行８０周年等にぎわいの向上・創出対策特別委員会",
+    label: "区制施行８０周年等にぎわいの向上・創出対策特別委員会",
+  },
+  {
+    value: "子ども・教育環境整備対策特別委員会",
+    label: "子ども・教育環境整備対策特別委員会",
+  },
+  {
+    value: "区民生活等安全・安心対策特別委員会",
+    label: "区民生活等安全・安心対策特別委員会",
+  },
 ];
 
 interface BillFormFieldsProps {
@@ -185,11 +199,13 @@ export function BillFormFields({
         name="submitted_date"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>法案提出日 *</FormLabel>
+            <FormLabel>報告資料提出日 *</FormLabel>
             <FormControl>
               <Input type="date" {...field} />
             </FormControl>
-            <FormDescription>法案の提出日を設定してください</FormDescription>
+            <FormDescription>
+              報告資料の提出日を設定してください
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -252,7 +268,7 @@ export function BillFormFields({
               />
             </FormControl>
             <FormDescription>
-              衆議院の議案ページURLを入力してください（「これから掲載される法案」表示時に外部リンクとして使用）
+              衆議院の議案ページURLを入力してください（「これから掲載される報告資料」表示時に外部リンクとして使用）
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -269,7 +285,7 @@ export function BillFormFields({
               <Input
                 {...field}
                 value={field.value || ""}
-                placeholder="221-kaku-1-mof-法案名"
+                placeholder="221-kaku-1-mof-報告資料名"
               />
             </FormControl>
             <FormDescription>

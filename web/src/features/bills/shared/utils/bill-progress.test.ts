@@ -8,19 +8,19 @@ import {
 } from "./bill-progress";
 
 const BASE_STEPS = [
-  { label: "法案\n提出" },
+  { label: "報告資料\n提出" },
   { label: "衆議院\n審議" },
   { label: "参議院\n審議" },
-  { label: "法案\n成立" },
+  { label: "報告資料\n成立" },
 ] as const;
 
 describe("getStatusMessage", () => {
-  test("preparing の場合は '法案提出前' を返す", () => {
-    expect(getStatusMessage("preparing", null)).toBe("法案提出前");
+  test("preparing の場合は '報告資料提出前' を返す", () => {
+    expect(getStatusMessage("preparing", null)).toBe("報告資料提出前");
   });
 
-  test("preparing の場合は statusNote があっても '法案提出前' を返す", () => {
-    expect(getStatusMessage("preparing", "審議中メモ")).toBe("法案提出前");
+  test("preparing の場合は statusNote があっても '報告資料提出前' を返す", () => {
+    expect(getStatusMessage("preparing", "審議中メモ")).toBe("報告資料提出前");
   });
 
   test("preparing 以外で statusNote がある場合はそれを返す", () => {
@@ -58,25 +58,17 @@ describe("getStepState", () => {
 });
 
 describe("getOrderedSteps", () => {
-  test("定例会の場合はステップ順序がそのまま", () => {
-    const result = getOrderedSteps("定例会", BASE_STEPS);
-    expect(result[0].label).toBe("法案\n提出");
+  test("渡した並びをそのまま返す", () => {
+    const result = getOrderedSteps(BASE_STEPS);
+    expect(result[0].label).toBe("報告資料\n提出");
     expect(result[1].label).toBe("衆議院\n審議");
     expect(result[2].label).toBe("参議院\n審議");
-    expect(result[3].label).toBe("法案\n成立");
-  });
-
-  test("臨時会の場合もステップ順序がそのまま", () => {
-    const result = getOrderedSteps("臨時会", BASE_STEPS);
-    expect(result[0].label).toBe("法案\n提出");
-    expect(result[1].label).toBe("衆議院\n審議");
-    expect(result[2].label).toBe("参議院\n審議");
-    expect(result[3].label).toBe("法案\n成立");
+    expect(result[3].label).toBe("報告資料\n成立");
   });
 
   test("元の配列を変更しない", () => {
     const original = [...BASE_STEPS.map((s) => ({ ...s }))];
-    getOrderedSteps("臨時会", BASE_STEPS);
+    getOrderedSteps(BASE_STEPS);
     expect(BASE_STEPS[1].label).toBe(original[1].label);
     expect(BASE_STEPS[2].label).toBe(original[2].label);
   });
