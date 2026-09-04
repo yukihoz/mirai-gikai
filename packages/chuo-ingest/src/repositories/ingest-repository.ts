@@ -16,16 +16,70 @@ export type IngestSourceKind =
   | "shiryo_pdf"
   | "minutes";
 
-/** 取り込み実行を開始し、実行IDを返す */
+/**
+ * 動いたまま放置された実行を見捨てるまでの時間。
+ *
+ * 全件の取り込みでも1時間はかからない。これを超えて `running` のままなら
+ * プロセスが落ちて記録だけ残ったものとみなす。
+ */
+const STALE_RUN_MS = 2 * 60 * 60 * 1000;
+
+/** すでに同じモードの取り込みが動いているときに投げる */
+export class IngestAlreadyRunningError extends Error {
+  constructor(mode: string) {
+    super(
+      `${mode} の取り込みがすでに動いている。` +
+        "二重に走らせるとAIの費用を二重に払うことになるため中止する。"
+    );
+    this.name = "IngestAlreadyRunningError";
+  }
+}
+
+/**
+ * 取り込み実行を開始し、実行IDを返す。
+ *
+ * 同じモードの実行が動いていれば始めない。`chuo_ingestion_runs` の
+ * 部分ユニークインデックスがモードごとに `running` を1つに限っているので、
+ * 排他はDBが決める。プロセス一覧を見て判断すると、起動直後や終了間際の
+ * 実行を見落として二重に走らせることになる。
+ */
 export async function startRun(mode: string): Promise<string> {
+  await abandonStaleRuns(mode);
+
   const { data, error } = await createAdminClient()
     .from("chuo_ingestion_runs")
     .insert({ mode, status: "running" })
     .select("id")
     .single();
 
+  // 23505 = unique_violation。同じモードの running が先にいる
+  if (error?.code === "23505") throw new IngestAlreadyRunningError(mode);
   if (error) throw new Error(`実行ログを作れなかった: ${error.message}`);
   return data.id;
+}
+
+/**
+ * 落ちたまま `running` で残った記録を片付ける。
+ *
+ * これをしないと、一度プロセスが落ちただけで以後ずっと起動できなくなる。
+ */
+async function abandonStaleRuns(mode: string): Promise<void> {
+  const threshold = new Date(Date.now() - STALE_RUN_MS).toISOString();
+
+  const { error } = await createAdminClient()
+    .from("chuo_ingestion_runs")
+    .update({
+      status: "abandoned",
+      finished_at: new Date().toISOString(),
+      error: "実行が終わらないまま放置されたため打ち切り扱いにした",
+    })
+    .eq("mode", mode)
+    .eq("status", "running")
+    .lt("started_at", threshold);
+
+  if (error) {
+    throw new Error(`古い実行ログを片付けられなかった: ${error.message}`);
+  }
 }
 
 /** 取り込み実行を終える */

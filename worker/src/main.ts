@@ -7,6 +7,7 @@ import { runBackfill } from "@mirai-gikai/topic-analysis-core/backfill";
 import { resolveBackfillParams } from "@mirai-gikai/topic-analysis-core/backfill-params";
 import { runTagBackfill } from "@mirai-gikai/topic-analysis-core/tag-backfill";
 import { runIngest } from "@mirai-gikai/chuo-ingest/ingest";
+import { runIngestDiscussions } from "@mirai-gikai/chuo-ingest/ingest-discussions";
 
 /**
  * Cloud Run Job のエントリポイント。
@@ -32,7 +33,8 @@ type Mode =
   | "analyze-all"
   | "backfill"
   | "tag-backfill"
-  | "chuo-ingest";
+  | "chuo-ingest"
+  | "chuo-discussions";
 
 /** --strategy をパースする（未指定・不正値は fallback）。 */
 function parseStrategy(
@@ -141,8 +143,20 @@ async function main(): Promise<void> {
     return;
   }
 
+  // 委員会での質疑を資料に紐づける。議事録はみえる議会のJSONから取る。
+  if (mode === "chuo-discussions") {
+    await runIngestDiscussions({
+      from: args.from,
+      to: args.to,
+      force: args.force === "true",
+      limit: args.limit === undefined ? undefined : Number(args.limit),
+      dryRun: args["dry-run"] === "true",
+    });
+    return;
+  }
+
   throw new Error(
-    `Unknown --mode=${mode ?? "(none)"} (expected "analyze" / "analyze-all" / "backfill" / "tag-backfill" / "chuo-ingest")`
+    `Unknown --mode=${mode ?? "(none)"} (expected "analyze" / "analyze-all" / "backfill" / "tag-backfill" / "chuo-ingest" / "chuo-discussions")`
   );
 }
 

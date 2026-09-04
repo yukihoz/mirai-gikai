@@ -11,10 +11,12 @@ import { BillStatusProgress } from "../../../client/components/bill-detail/bill-
 import { MiraiStanceCard } from "../../../client/components/bill-detail/mirai-stance-card";
 import type { BillWithContent } from "../../../shared/types";
 import { BillShareButtons } from "../share/bill-share-buttons";
+import { getChuoDiscussions } from "../../loaders/get-chuo-discussions";
 import { getChuoShiryo } from "../../loaders/get-chuo-shiryo";
 import { BillContent } from "./bill-content";
 import { BillDetailHeader } from "./bill-detail-header";
 import { ChuoShiryoImage } from "../../../client/components/bill-detail/chuo-shiryo-image";
+import { ChuoDiscussions } from "./chuo-discussions";
 import { ChuoShiryoSource } from "./chuo-shiryo-source";
 
 interface BillDetailLayoutProps {
@@ -27,13 +29,19 @@ export async function BillDetailLayout({
   currentDifficulty,
 }: BillDetailLayoutProps) {
   const showMiraiStance = bill.status === "preparing" || bill.mirai_stance;
-  const [interviewConfig, publicReportsResult, topicAnalysis, chuoShiryo] =
-    await Promise.all([
-      getInterviewConfig(bill.id),
-      getPublicReportsByBillId(bill.id),
-      getPublicTopicAnalysis(bill.id),
-      getChuoShiryo(bill.id),
-    ]);
+  const [
+    interviewConfig,
+    publicReportsResult,
+    topicAnalysis,
+    chuoShiryo,
+    chuoDiscussions,
+  ] = await Promise.all([
+    getInterviewConfig(bill.id),
+    getPublicReportsByBillId(bill.id),
+    getPublicTopicAnalysis(bill.id),
+    getChuoShiryo(bill.id),
+    getChuoDiscussions(bill.id),
+  ]);
 
   return (
     <div className="container mx-auto pb-8 max-w-4xl">
@@ -85,10 +93,20 @@ export async function BillDetailLayout({
 
           <BillContent bill={bill} />
 
-          {/* 資料の全文への導線。この先に入る委員会での質疑よりは前に置く */}
+          {/* 資料の全文への導線。委員会での質疑よりは前に置く */}
           {chuoShiryo && (
             <div className="my-8">
               <ChuoShiryoSource shiryo={chuoShiryo} />
+            </div>
+          )}
+
+          {/* 会議録が公開されるまで質疑は空。そのときはセクションごと出さない */}
+          {chuoShiryo && chuoDiscussions.length > 0 && (
+            <div className="my-8">
+              <ChuoDiscussions
+                discussions={chuoDiscussions}
+                shiryo={chuoShiryo}
+              />
             </div>
           )}
         </Container>

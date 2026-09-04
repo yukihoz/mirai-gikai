@@ -1,7 +1,7 @@
 import "server-only";
 
-import { unstable_cache } from "next/cache";
 import { createAdminClient } from "@mirai-gikai/supabase";
+import { unstable_cache } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 
 /** 議案のもとになった委員会資料 */
@@ -18,6 +18,8 @@ export type ChuoShiryo = {
   shiryoNumber: number | null;
   committee: string;
   meetingDate: string;
+  /** 委員会の会議録（みえる議会）。まだ公開されていなければ null */
+  minutesUrl: string | null;
 };
 
 /**
@@ -35,7 +37,7 @@ export async function getChuoShiryo(
       const { data, error } = await createAdminClient()
         .from("chuo_bill_sources")
         .select(
-          "meeting_url, shiryo_url, shiryo_image_url, shiryo_image_width, shiryo_image_height, shiryo_number, committee, meeting_date"
+          "meeting_url, shiryo_url, shiryo_image_url, shiryo_image_width, shiryo_image_height, shiryo_number, committee, meeting_date, minutes_url"
         )
         .eq("bill_id", billId)
         .maybeSingle();
@@ -55,9 +57,10 @@ export async function getChuoShiryo(
         shiryoNumber: data.shiryo_number,
         committee: data.committee,
         meetingDate: data.meeting_date,
+        minutesUrl: data.minutes_url,
       };
     },
-    ["chuo-shiryo-v1", billId],
+    ["chuo-shiryo-v2", billId],
     { revalidate: 600, tags: [CACHE_TAGS.BILLS, `bill-${billId}`] }
   )();
 }
