@@ -36,6 +36,21 @@ export const explanationSchema = z.object({
 
 export type Explanation = z.infer<typeof explanationSchema>;
 
+/**
+ * 資料に付けるカテゴリ。
+ *
+ * ラベルで受けてから既存のタグに突き合わせる。IDを選ばせると、
+ * それらしい形の存在しないIDを作ってくることがある。
+ */
+export const categorySelectionSchema = z.object({
+  categories: z
+    .array(z.string().min(1).max(40))
+    .max(3)
+    .describe("当てはまるカテゴリのラベル。一覧の表記をそのまま返す"),
+});
+
+export type CategorySelection = z.infer<typeof categorySelectionSchema>;
+
 /** 委員会で交わされた質疑1件（論点単位） */
 export const discussionTopicSchema = z.object({
   /** 論点の見出し（例: なぜ「LoGoフォーム」を使うのか） */
