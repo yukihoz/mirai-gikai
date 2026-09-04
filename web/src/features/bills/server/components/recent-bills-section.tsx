@@ -1,3 +1,6 @@
+import type { Route } from "next";
+import Link from "next/link";
+import { routes } from "@/lib/routes";
 import { CompactBillCard } from "../../client/components/bill-list/compact-bill-card";
 import type { BillWithContent } from "../../shared/types";
 
@@ -22,7 +25,9 @@ export function RecentBillsSection({ bills }: RecentBillsSectionProps) {
 
       <div className="flex flex-col gap-3">
         {bills.map((bill) => (
-          <CompactBillCard key={bill.id} bill={bill} />
+          <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
+            <CompactBillCard bill={bill} />
+          </Link>
         ))}
       </div>
     </section>
