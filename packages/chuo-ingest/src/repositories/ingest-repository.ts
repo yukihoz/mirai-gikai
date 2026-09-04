@@ -187,16 +187,49 @@ export type UpsertBillParams = {
  * **必ず下書きで作る。** 生成した内容をそのまま公開しない。
  * 公開の判断は人がadminで行う。
  */
+/**
+ * 開催日を含む会期を引く。
+ *
+ * トップページの一覧も会期一覧ページも、議案が会期に紐づいていることを
+ * 前提にしている。ここが空だと、記事を公開してもどこからも辿れない。
+ *
+ * 期間が重なる会期が登録されていることがあるため、開始日が新しいほう
+ * （より限定された会期）を採る。
+ */
+export async function findSessionForDate(
+  meetingDate: string
+): Promise<string | null> {
+  const { data, error } = await createAdminClient()
+    .from("diet_sessions")
+    .select("id")
+    .lte("start_date", meetingDate)
+    .gte("end_date", meetingDate)
+    .order("start_date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw new Error(`会期を引けなかった: ${error.message}`);
+  return data?.id ?? null;
+}
+
 export async function upsertBillFromShiryo(
   params: UpsertBillParams
 ): Promise<{ billId: string; created: boolean }> {
   const client = createAdminClient();
   const existing = await findBillByShiryoUrl(params.shiryoUrl);
+  const dietSessionId = await findSessionForDate(params.meetingDate);
+
+  if (dietSessionId === null) {
+    console.warn(
+      `[ingest] ${params.meetingDate} を含む会期が無い。一覧に出ないので会期を登録すること`
+    );
+  }
 
   const fields = {
     name: params.name,
     meeting_body: toMeetingBody(params.committee) as never,
     status: "reported" as const,
+    diet_session_id: dietSessionId,
     submitted_date: `${params.meetingDate}T00:00:00+09:00`,
     shugiin_url: params.meetingUrl,
     knowledge_source: params.knowledgeSource.slice(0, 40_000),

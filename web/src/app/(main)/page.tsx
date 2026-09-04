@@ -7,14 +7,20 @@ import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/ge
 import { BillDisclaimer } from "@/features/bills/client/components/bill-detail/bill-disclaimer";
 import { BillsByTagSection } from "@/features/bills/server/components/bills-by-tag-section";
 import { FeaturedBillSection } from "@/features/bills/server/components/featured-bill-section";
-import { PreviousSessionSection } from "@/features/bills/server/components/previous-session-section";
+import { BillsByMeetingBodySection } from "@/features/bills/server/components/bills-by-meeting-body-section";
+import { RecentBillsSection } from "@/features/bills/server/components/recent-bills-section";
 import { loadHomeData } from "@/features/bills/server/loaders/load-home-data";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
 
 export default async function Home() {
-  const { billsByTag, featuredBills, comingSoonBills, previousSessionData } =
-    await loadHomeData();
+  const {
+    billsByTag,
+    featuredBills,
+    comingSoonBills,
+    recentBills,
+    byMeetingBody,
+  } = await loadHomeData();
 
   // ゆくゆくタグ機能がマージされたらBFFに統合する
   const [currentDifficulty] = await Promise.all([getDifficultyLevel()]);
@@ -48,15 +54,14 @@ export default async function Home() {
         </div>
       </Container>
 
-      {/* 最近の議案セクション（旧：前回の会期） */}
-      {previousSessionData && (
+      {/* 最近の報告資料と、会議体ごとのまとめ */}
+      {(recentBills.length > 0 || byMeetingBody.length > 0) && (
         <div className="bg-mirai-surface-muted py-10">
           <Container>
-            <PreviousSessionSection
-              session={previousSessionData.session}
-              bills={previousSessionData.bills}
-              totalBillCount={previousSessionData.totalBillCount}
-            />
+            <div className="flex flex-col gap-12">
+              <RecentBillsSection bills={recentBills} />
+              <BillsByMeetingBodySection groups={byMeetingBody} />
+            </div>
           </Container>
         </div>
       )}
