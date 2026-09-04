@@ -32,6 +32,10 @@
     "./generate": {
       "types": "./src/services/index.ts",
       "default": "./src/services/index.ts"
+    },
+    "./ingest": {
+      "types": "./src/ingest.ts",
+      "default": "./src/ingest.ts"
     }
   },
   "devDependencies": {
@@ -40,7 +44,9 @@
     "zod": "^4.1.12"
   },
   "dependencies": {
-    "@mirai-gikai/shared": "workspace:*"
+    "@mirai-gikai/shared": "workspace:*",
+    "@mirai-gikai/supabase": "workspace:*",
+    "ai": "^6.0.3"
   },
   "peerDependencies": {
     "zod": "^4.0.0"

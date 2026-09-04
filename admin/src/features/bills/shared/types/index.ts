@@ -7,7 +7,10 @@ export type BillUpdate = Database["public"]["Tables"]["bills"]["Update"];
 export type BillStatus = Database["public"]["Enums"]["bill_status_enum"];
 export type BillPublishStatus =
   Database["public"]["Enums"]["bill_publish_status"];
-export type MeetingBody = Database["public"]["Enums"]["meeting_body_enum"];
+// bills.meeting_body は text。委員会名は区が決めるもので、
+// アプリが値の集合を持たない（数年ごとに組み替えられる）。
+export type MeetingBody =
+  Database["public"]["Tables"]["bills"]["Row"]["meeting_body"];
 
 export type BillWithContent = Bill & {
   bill_content?: Database["public"]["Tables"]["bill_contents"]["Row"];

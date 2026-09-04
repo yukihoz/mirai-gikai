@@ -35,6 +35,22 @@ const nextConfig: NextConfig = {
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/bill-thumbnails/**",
       },
+      // 委員会資料の1ページ目を画像にしたもの
+      {
+        protocol: "https",
+        hostname: "127.0.0.1",
+        pathname: "/storage/v1/object/public/shiryo-images/**",
+      },
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
+        pathname: "/storage/v1/object/public/shiryo-images/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/shiryo-images/**",
+      },
       ...(isDev
         ? [
             {

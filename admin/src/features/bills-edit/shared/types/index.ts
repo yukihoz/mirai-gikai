@@ -25,21 +25,10 @@ const billBaseSchema = z.object({
     "rejected",
     "reported",
   ]),
-  meeting_body: z.enum([
-    "定例会",
-    "臨時会",
-    "AIインタビュー",
-    "企画総務委員会",
-    "区民文教委員会",
-    "福祉保健委員会",
-    "環境建設委員会",
-    "築地等都市基盤対策特別委員会",
-    "地域活性化対策特別委員会",
-    "子ども子育て・高齢者対策特別委員会",
-    "防災等安全対策特別委員会",
-    "予算特別委員会",
-    "決算特別委員会",
-  ]),
+  // bills.meeting_body は text。委員会は数年ごとに組み替えられ、正式名称には
+  // 63バイトを超えるものもあるため、値の集合をここで固定しない。
+  // 選べる委員会は admin のフォーム（bill-form-fields）が提示する。
+  meeting_body: z.string().min(1, "会議体は必須です"),
   status_note: z
     .string()
     .max(500, "ステータス備考は500文字以内で入力してください")
@@ -48,7 +37,7 @@ const billBaseSchema = z.object({
     .string()
     .refine(
       (val) => val === "" || /^\d{4}-\d{2}-\d{2}$/.test(val),
-      "法案提出日は YYYY-MM-DD 形式で入力してください"
+      "報告資料提出日は YYYY-MM-DD 形式で入力してください"
     )
     .optional(),
   thumbnail_url: z.string().nullable().optional(),

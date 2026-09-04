@@ -14,7 +14,10 @@ export type BillContentUpdate =
 export type MiraiStance = Database["public"]["Tables"]["mirai_stances"]["Row"];
 
 // Enums
-export type MeetingBody = Database["public"]["Enums"]["meeting_body_enum"];
+// bills.meeting_body は text。委員会名は区が決めるもので、
+// アプリが値の集合を持たない（数年ごとに組み替えられる）。
+export type MeetingBody =
+  Database["public"]["Tables"]["bills"]["Row"]["meeting_body"];
 export type BillStatusEnum = Database["public"]["Enums"]["bill_status_enum"];
 export type StanceTypeEnum = Database["public"]["Enums"]["stance_type_enum"];
 

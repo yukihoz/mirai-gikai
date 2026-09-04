@@ -83,7 +83,7 @@ async function prepareSlotContext(
     // 指定された billId と、report から辿った bill_id が一致しているか検証。
     // 不一致 = UI の想定外 or 別法案のレポート混入なので拒否する。
     if (detail.snapshot.billId !== params.billId) {
-      throw new Error("選択されたレポートが対象法案と一致しません");
+      throw new Error("選択されたレポートが対象報告資料と一致しません");
     }
     emitStatus("ペルソナ抽出中...");
     const persona = await generatePersona({

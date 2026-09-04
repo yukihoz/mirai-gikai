@@ -63,7 +63,7 @@ export function MobileChatDialog({
           }}
         >
           <DialogPrimitive.Title className="sr-only">
-            国会や法案についてAIに質問する
+            国会や報告資料についてAIに質問する
           </DialogPrimitive.Title>
           <DialogPrimitive.Close asChild>
             <Button

@@ -6,6 +6,7 @@ import {
 import { runBackfill } from "@mirai-gikai/topic-analysis-core/backfill";
 import { resolveBackfillParams } from "@mirai-gikai/topic-analysis-core/backfill-params";
 import { runTagBackfill } from "@mirai-gikai/topic-analysis-core/tag-backfill";
+import { runIngest } from "@mirai-gikai/chuo-ingest/ingest";
 
 /**
  * Cloud Run Job のエントリポイント。
@@ -26,7 +27,12 @@ import { runTagBackfill } from "@mirai-gikai/topic-analysis-core/tag-backfill";
  * 必須env: SUPABASE_URL, SUPABASE_SECRET_KEY, AI_GATEWAY_API_KEY
  */
 
-type Mode = "analyze" | "analyze-all" | "backfill" | "tag-backfill";
+type Mode =
+  | "analyze"
+  | "analyze-all"
+  | "backfill"
+  | "tag-backfill"
+  | "chuo-ingest";
 
 /** --strategy をパースする（未指定・不正値は fallback）。 */
 function parseStrategy(
@@ -115,8 +121,28 @@ async function main(): Promise<void> {
     return;
   }
 
+  // 中央区議会の委員会資料から議案の下書きを作る。
+  // 生成した内容は draft のままにし、公開はadminで人が判断する。
+  if (mode === "chuo-ingest") {
+    const year = Number(args.year);
+    const month = Number(args.month);
+    if (!Number.isInteger(year) || !Number.isInteger(month)) {
+      throw new Error("chuo-ingest mode requires --year=<YYYY> --month=<M>");
+    }
+    await runIngest({
+      year,
+      month,
+      from: args.from,
+      to: args.to,
+      force: args.force === "true",
+      limit: args.limit === undefined ? undefined : Number(args.limit),
+      dryRun: args["dry-run"] === "true",
+    });
+    return;
+  }
+
   throw new Error(
-    `Unknown --mode=${mode ?? "(none)"} (expected "analyze" / "analyze-all" / "backfill" / "tag-backfill")`
+    `Unknown --mode=${mode ?? "(none)"} (expected "analyze" / "analyze-all" / "backfill" / "tag-backfill" / "chuo-ingest")`
   );
 }
 

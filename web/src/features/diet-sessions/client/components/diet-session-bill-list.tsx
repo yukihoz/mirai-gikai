@@ -29,14 +29,14 @@ export function DietSessionBillList({ session, bills }: Props) {
           />
         </h1>
         <p className="text-sm font-bold text-primary-accent">
-          過去の{env.assemblyName}に提出された法案
+          過去の{env.assemblyName}に提出された報告資料
         </p>
       </div>
 
       {/* セクションヘッダー */}
       <div className="flex flex-col gap-0.5">
         <h2 className="text-[22px] font-bold text-black leading-[1.48] flex items-center gap-4">
-          {startDate.getFullYear()}年 {session.name}の提出法案
+          {startDate.getFullYear()}年 {session.name}の提出報告資料
           <span>{bills.length}件</span>
         </h2>
         <p className="text-xs font-medium text-mirai-text">
@@ -47,7 +47,7 @@ export function DietSessionBillList({ session, bills }: Props) {
       {/* フィルター付き法案リスト */}
       {bills.length === 0 ? (
         <p className="text-center py-12 text-muted-foreground">
-          この会期の法案はまだありません
+          この会期の報告資料はまだありません
         </p>
       ) : (
         <BillListWithStatusFilter bills={bills} />
@@ -56,7 +56,7 @@ export function DietSessionBillList({ session, bills }: Props) {
       {/* 衆議院リンク */}
       {session.shugiin_url && (
         <div className="flex items-center gap-1 text-[13px] font-medium text-mirai-text">
-          {startDate.getFullYear()}年{session.name}に提出された全ての法案は
+          {startDate.getFullYear()}年{session.name}に提出された全ての報告資料は
           <a
             href={session.shugiin_url}
             target="_blank"

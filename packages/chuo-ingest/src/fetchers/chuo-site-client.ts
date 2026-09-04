@@ -73,11 +73,19 @@ export class ChuoSiteClient {
     };
   }
 
-  /** PDFを取得してテキストにする。PDFそのものは残さない。 */
-  async fetchPdfText(url: string): Promise<FetchedText> {
+  /**
+   * PDFを取得してテキストにする。PDFそのものは残さない。
+   *
+   * `bytes` を返すのは、呼び出し側が1ページ目を画像にするため。
+   * 画像化が終わればそのまま捨てる（保存しない方針は変えない）。
+   */
+  async fetchPdfText(
+    url: string
+  ): Promise<FetchedText & { bytes: Uint8Array }> {
     const { bytes, headers } = await this.fetchBinary(url);
     return {
       url,
+      bytes,
       text: await this.pdfToText(bytes),
       // ハッシュはPDFの中身から取る。テキスト化の実装を変えても、
       // 「同じPDFかどうか」の判定が揺れないようにする。

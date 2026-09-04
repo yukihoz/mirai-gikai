@@ -101,7 +101,7 @@ export type Database = {
           is_featured: boolean
           is_review_completed: boolean
           knowledge_source: string | null
-          meeting_body: Database["public"]["Enums"]["meeting_body_enum"]
+          meeting_body: string
           name: string
           publish_status: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order: number | null
@@ -124,7 +124,7 @@ export type Database = {
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
-          meeting_body: Database["public"]["Enums"]["meeting_body_enum"]
+          meeting_body: string
           name: string
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
@@ -147,7 +147,7 @@ export type Database = {
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
-          meeting_body?: Database["public"]["Enums"]["meeting_body_enum"]
+          meeting_body?: string
           name?: string
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
@@ -296,6 +296,9 @@ export type Database = {
           created_at: string
           meeting_date: string
           meeting_url: string
+          shiryo_image_height: number | null
+          shiryo_image_url: string | null
+          shiryo_image_width: number | null
           shiryo_number: number | null
           shiryo_url: string
           updated_at: string
@@ -306,6 +309,9 @@ export type Database = {
           created_at?: string
           meeting_date: string
           meeting_url: string
+          shiryo_image_height?: number | null
+          shiryo_image_url?: string | null
+          shiryo_image_width?: number | null
           shiryo_number?: number | null
           shiryo_url: string
           updated_at?: string
@@ -316,6 +322,9 @@ export type Database = {
           created_at?: string
           meeting_date?: string
           meeting_url?: string
+          shiryo_image_height?: number | null
+          shiryo_image_url?: string | null
+          shiryo_image_width?: number | null
           shiryo_number?: number | null
           shiryo_url?: string
           updated_at?: string
@@ -1518,6 +1527,10 @@ export type Database = {
         | "予算特別委員会"
         | "決算特別委員会"
         | "AIインタビュー"
+        | "築地まちづくり・環境対策特別委員会"
+        | "子ども・教育環境整備対策特別委員会"
+        | "区民生活等安全・安心対策特別委員会"
+        | "区制施行80周年等にぎわい創出対策特別委員会"
       moderation_status_enum: "ok" | "warning" | "ng"
       stance_type_enum:
         | "for"
@@ -1702,6 +1715,10 @@ export const Constants = {
         "予算特別委員会",
         "決算特別委員会",
         "AIインタビュー",
+        "築地まちづくり・環境対策特別委員会",
+        "子ども・教育環境整備対策特別委員会",
+        "区民生活等安全・安心対策特別委員会",
+        "区制施行80周年等にぎわい創出対策特別委員会",
       ],
       moderation_status_enum: ["ok", "warning", "ng"],
       stance_type_enum: [
