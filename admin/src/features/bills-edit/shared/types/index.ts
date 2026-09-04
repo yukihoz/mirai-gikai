@@ -39,6 +39,10 @@ const billBaseSchema = z.object({
     "防災等安全対策特別委員会",
     "予算特別委員会",
     "決算特別委員会",
+    "築地まちづくり・環境対策特別委員会",
+    "区制施行80周年等にぎわい創出対策特別委員会",
+    "子ども・教育環境整備対策特別委員会",
+    "区民生活等安全・安心対策特別委員会",
   ]),
   status_note: z
     .string()
@@ -48,7 +52,7 @@ const billBaseSchema = z.object({
     .string()
     .refine(
       (val) => val === "" || /^\d{4}-\d{2}-\d{2}$/.test(val),
-      "法案提出日は YYYY-MM-DD 形式で入力してください"
+      "報告資料提出日は YYYY-MM-DD 形式で入力してください"
     )
     .optional(),
   thumbnail_url: z.string().nullable().optional(),

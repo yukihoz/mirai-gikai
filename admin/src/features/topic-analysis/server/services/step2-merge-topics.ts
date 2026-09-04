@@ -19,9 +19,9 @@ export async function mergeTopics(
   const { object } = await generateObject({
     model: TOPIC_ANALYSIS_MODEL,
     schema: topicMergeSchema,
-    prompt: `あなたは日本の法案に関する市民意見のトピック整理を行います。
+    prompt: `あなたは日本の報告資料に関する市民意見のトピック整理を行います。
 
-## 法案
+## 報告資料
 ${billTitle}
 
 ## タスク

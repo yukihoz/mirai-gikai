@@ -177,6 +177,12 @@ importers:
       '@mirai-gikai/shared':
         specifier: workspace:*
         version: link:../shared
+      '@mirai-gikai/supabase':
+        specifier: workspace:*
+        version: link:../supabase
+      ai:
+        specifier: ^6.0.3
+        version: 6.0.33(zod@4.4.3)
     devDependencies:
       typescript:
         specifier: ^5.6.2
@@ -483,6 +489,9 @@ importers:
 
   worker:
     dependencies:
+      '@mirai-gikai/chuo-ingest':
+        specifier: workspace:*
+        version: link:../packages/chuo-ingest
       '@mirai-gikai/topic-analysis-core':
         specifier: workspace:*
         version: link:../packages/topic-analysis-core

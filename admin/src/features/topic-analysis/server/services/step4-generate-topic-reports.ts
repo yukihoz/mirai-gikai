@@ -70,7 +70,7 @@ async function generateSingleTopicReport(
     schema: topicReportSchema,
     prompt: `あなたは市民意見の分析レポートを作成します。
 
-## 法案
+## 報告資料
 ${billTitle}
 
 ## トピック

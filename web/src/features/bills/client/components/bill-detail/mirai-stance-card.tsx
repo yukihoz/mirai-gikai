@@ -12,12 +12,12 @@ export function MiraiStanceCard({ stance, billStatus }: MiraiStanceCardProps) {
   const isPreparing = billStatus === "preparing";
 
   if (!stance && !isPreparing) {
-    return null; // スタンスがなく、法案提出前でもない場合は何も表示しない
+    return null; // スタンスがなく、報告資料提出前でもない場合は何も表示しない
   }
 
   const styles = getStanceStyles(stance, isPreparing);
   const comment = isPreparing
-    ? "法案提出後、党内で検討のうえ賛否を表明します。"
+    ? "報告資料提出後、党内で検討のうえ賛否を表明します。"
     : stance?.comment;
 
   return (

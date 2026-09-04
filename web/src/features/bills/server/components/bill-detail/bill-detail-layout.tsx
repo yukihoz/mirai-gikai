@@ -11,8 +11,11 @@ import { BillStatusProgress } from "../../../client/components/bill-detail/bill-
 import { MiraiStanceCard } from "../../../client/components/bill-detail/mirai-stance-card";
 import type { BillWithContent } from "../../../shared/types";
 import { BillShareButtons } from "../share/bill-share-buttons";
+import { getChuoShiryo } from "../../loaders/get-chuo-shiryo";
 import { BillContent } from "./bill-content";
 import { BillDetailHeader } from "./bill-detail-header";
+import { ChuoShiryoImage } from "../../../client/components/bill-detail/chuo-shiryo-image";
+import { ChuoShiryoSource } from "./chuo-shiryo-source";
 
 interface BillDetailLayoutProps {
   bill: BillWithContent;
@@ -24,11 +27,12 @@ export async function BillDetailLayout({
   currentDifficulty,
 }: BillDetailLayoutProps) {
   const showMiraiStance = bill.status === "preparing" || bill.mirai_stance;
-  const [interviewConfig, publicReportsResult, topicAnalysis] =
+  const [interviewConfig, publicReportsResult, topicAnalysis, chuoShiryo] =
     await Promise.all([
       getInterviewConfig(bill.id),
       getPublicReportsByBillId(bill.id),
       getPublicTopicAnalysis(bill.id),
+      getChuoShiryo(bill.id),
     ]);
 
   return (
@@ -64,7 +68,29 @@ export async function BillDetailLayout({
               </div>
             )}
 
+          {chuoShiryo?.shiryoImageUrl &&
+            chuoShiryo.shiryoImageWidth !== null &&
+            chuoShiryo.shiryoImageHeight !== null && (
+              <ChuoShiryoImage
+                imageUrl={chuoShiryo.shiryoImageUrl}
+                width={chuoShiryo.shiryoImageWidth}
+                height={chuoShiryo.shiryoImageHeight}
+                label={
+                  chuoShiryo.shiryoNumber === null
+                    ? "資料"
+                    : `資料${chuoShiryo.shiryoNumber}`
+                }
+              />
+            )}
+
           <BillContent bill={bill} />
+
+          {/* 資料の全文への導線。この先に入る委員会での質疑よりは前に置く */}
+          {chuoShiryo && (
+            <div className="my-8">
+              <ChuoShiryoSource shiryo={chuoShiryo} />
+            </div>
+          )}
         </Container>
       </BillDetailClient>
 

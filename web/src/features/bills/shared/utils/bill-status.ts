@@ -20,7 +20,7 @@ export function getCardStatusLabel(status: BillStatusEnum): string {
     case "reported":
       return "報告事項";
     default:
-      return "法案提出前";
+      return "報告資料提出前";
   }
 }
 
