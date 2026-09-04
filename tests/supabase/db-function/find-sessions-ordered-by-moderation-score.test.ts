@@ -97,9 +97,9 @@ describe("find_sessions_ordered_by_moderation_score() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(3);
-    expect(data![0].session_id).toBe(session2.id); // 80
-    expect(data![1].session_id).toBe(session3.id); // 45
-    expect(data![2].session_id).toBe(session1.id); // 10
+    expect(data?.[0]?.session_id).toBe(session2.id); // 80
+    expect(data?.[1]?.session_id).toBe(session3.id); // 45
+    expect(data?.[2]?.session_id).toBe(session1.id); // 10
   });
 
   it("モデレーションスコアの昇順でセッションIDを返す", async () => {
@@ -125,8 +125,8 @@ describe("find_sessions_ordered_by_moderation_score() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].session_id).toBe(session2.id); // 20
-    expect(data![1].session_id).toBe(session1.id); // 60
+    expect(data?.[0]?.session_id).toBe(session2.id); // 20
+    expect(data?.[1]?.session_id).toBe(session1.id); // 60
   });
 
   it("NULLスコアのセッションは末尾に配置される", async () => {
@@ -139,7 +139,7 @@ describe("find_sessions_ordered_by_moderation_score() 関数", () => {
     await createTestReportWithModerationScore(session1.id, 50);
 
     // session2: no report (null score)
-    const session2 = await createTestSession(config.id, testUser.id);
+    await createTestSession(config.id, testUser.id);
 
     // session3: report with null score
     const session3 = await createTestSession(config.id, testUser.id);
@@ -158,7 +158,7 @@ describe("find_sessions_ordered_by_moderation_score() 関数", () => {
 
     expect(descError).toBeNull();
     expect(descData).toHaveLength(3);
-    expect(descData![0].session_id).toBe(session1.id); // 50
+    expect(descData?.[0]?.session_id).toBe(session1.id); // 50
 
     // 昇順でもNULLは末尾
     const { data: ascData, error: ascError } = await adminClient.rpc(
@@ -173,7 +173,7 @@ describe("find_sessions_ordered_by_moderation_score() 関数", () => {
 
     expect(ascError).toBeNull();
     expect(ascData).toHaveLength(3);
-    expect(ascData![0].session_id).toBe(session1.id); // 50
+    expect(ascData?.[0]?.session_id).toBe(session1.id); // 50
   });
 
   it("offset/limitでページネーションが正しく動作する", async () => {
@@ -201,8 +201,8 @@ describe("find_sessions_ordered_by_moderation_score() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].session_id).toBe(sessions[2].id); // 60
-    expect(data![1].session_id).toBe(sessions[1].id); // 40
+    expect(data?.[0]?.session_id).toBe(sessions[2].id); // 60
+    expect(data?.[1]?.session_id).toBe(sessions[1].id); // 40
   });
 
   it("別のconfigのセッションは含まれない", async () => {
@@ -230,7 +230,7 @@ describe("find_sessions_ordered_by_moderation_score() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].session_id).toBe(session1.id);
+    expect(data?.[0]?.session_id).toBe(session1.id);
   });
 
   it("存在しないconfig_idでは空配列を返す", async () => {

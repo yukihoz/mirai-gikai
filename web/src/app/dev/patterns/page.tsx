@@ -19,7 +19,7 @@ const Patterns = {
     const angle = (seed % 4) * 45;
     const width = 10 + (seed % 20);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p1-${seed}`}
@@ -48,7 +48,7 @@ const Patterns = {
     const radius = 4 + (seed % 8);
     const spacing = radius * 4;
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p2-${seed}`}
@@ -80,7 +80,7 @@ const Patterns = {
   // 3: 波線 (Waves)
   Waves: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p3-${seed}`}
@@ -105,7 +105,7 @@ const Patterns = {
   Circles: ({ seed }: { seed: number }) => {
     const size = 60 + (seed % 40);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p4-${seed}`}
@@ -142,7 +142,7 @@ const Patterns = {
   Grid: ({ seed }: { seed: number }) => {
     const size = 20 + (seed % 20);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p5-${seed}`}
@@ -166,7 +166,7 @@ const Patterns = {
   // 6: ジグザグ (Chevron)
   Zigzag: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p6-${seed}`}
@@ -191,7 +191,7 @@ const Patterns = {
   Crosshatch: ({ seed }: { seed: number }) => {
     const size = 15 + (seed % 15);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p7-${seed}`}
@@ -228,7 +228,7 @@ const Patterns = {
   // 8: 三角形 (Tessellation)
   Triangles: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p8-${seed}`}
@@ -258,7 +258,7 @@ const Patterns = {
     const s = 15;
     const h = s * Math.sqrt(3);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p9-${seed}`}
@@ -288,7 +288,7 @@ const Patterns = {
   // 10: 同心円 (Target)
   Concentric: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p10-${seed}`}
@@ -326,7 +326,7 @@ const Patterns = {
   Squares: ({ seed }: { seed: number }) => {
     const size = 10 + (seed % 10);
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p11-${seed}`}
@@ -360,7 +360,7 @@ const Patterns = {
   // 12: アーガイル (Diamond Grid)
   Diamonds: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p12-${seed}`}
@@ -391,7 +391,7 @@ const Patterns = {
   // 13: プラス記号 (Plus)
   Plus: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p13-${seed}`}
@@ -415,7 +415,7 @@ const Patterns = {
   // 14: 星型クロス (4-point Star)
   Stars: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p14-${seed}`}
@@ -438,7 +438,7 @@ const Patterns = {
   // 15: マカロニ (Curved Squiggles)
   Macaroni: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p15-${seed}`}
@@ -472,7 +472,7 @@ const Patterns = {
   // 16: 雨 (Dashes)
   Rain: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p16-${seed}`}
@@ -511,7 +511,7 @@ const Patterns = {
   // 17: レンガ (Bricks)
   Bricks: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p17-${seed}`}
@@ -556,7 +556,7 @@ const Patterns = {
   // 18: 大小のドット
   VariedDots: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p18-${seed}`}
@@ -577,7 +577,7 @@ const Patterns = {
   // 19: キューブ (Isometric)
   Isometric: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p19-${seed}`}
@@ -610,7 +610,7 @@ const Patterns = {
   // 20: 鎖 (Interlocking Rings)
   Rings: ({ seed }: { seed: number }) => {
     return (
-      <svg width="100%" height="100%">
+      <svg width="100%" height="100%" aria-hidden="true">
         <defs>
           <pattern
             id={`p20-${seed}`}
@@ -815,8 +815,11 @@ export default function PatternsDemoPage() {
 
       <div className="space-y-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-          {sampleBills.map((bill, i) => (
-            <div key={i} className="flex flex-col gap-2">
+          {sampleBills.map((bill) => (
+            <div
+              key={`${bill.body}-${bill.title}`}
+              className="flex flex-col gap-2"
+            >
               <DynamicThumbnail title={bill.title} meetingBody={bill.body} />
               <div className="text-xs text-center text-gray-500 mt-2 space-y-1">
                 <p>

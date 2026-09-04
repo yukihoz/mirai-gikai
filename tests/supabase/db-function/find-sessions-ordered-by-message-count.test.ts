@@ -82,9 +82,9 @@ describe("find_sessions_ordered_by_message_count() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(3);
-    expect(data![0].session_id).toBe(session2.id);
-    expect(data![1].session_id).toBe(session1.id);
-    expect(data![2].session_id).toBe(session3.id);
+    expect(data?.[0]?.session_id).toBe(session2.id);
+    expect(data?.[1]?.session_id).toBe(session1.id);
+    expect(data?.[2]?.session_id).toBe(session3.id);
   });
 
   it("メッセージ数の昇順でセッションIDを返す", async () => {
@@ -110,8 +110,8 @@ describe("find_sessions_ordered_by_message_count() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].session_id).toBe(session2.id);
-    expect(data![1].session_id).toBe(session1.id);
+    expect(data?.[0]?.session_id).toBe(session2.id);
+    expect(data?.[1]?.session_id).toBe(session1.id);
   });
 
   it("offset/limitでページネーションが正しく動作する", async () => {
@@ -139,8 +139,8 @@ describe("find_sessions_ordered_by_message_count() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
-    expect(data![0].session_id).toBe(sessions[3].id); // 8メッセージ
-    expect(data![1].session_id).toBe(sessions[2].id); // 6メッセージ
+    expect(data?.[0]?.session_id).toBe(sessions[3].id); // 8メッセージ
+    expect(data?.[1]?.session_id).toBe(sessions[2].id); // 6メッセージ
   });
 
   it("別のconfigのセッションは含まれない", async () => {
@@ -168,7 +168,7 @@ describe("find_sessions_ordered_by_message_count() 関数", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].session_id).toBe(session1.id);
+    expect(data?.[0]?.session_id).toBe(session1.id);
   });
 
   it("メッセージが0件のセッションも結果に含まれる", async () => {
@@ -195,8 +195,8 @@ describe("find_sessions_ordered_by_message_count() 関数", () => {
     expect(error).toBeNull();
     expect(data).toHaveLength(2);
     // 降順: 3件のセッションが先、0件が後
-    expect(data![0].session_id).toBe(sessionWithMessages.id);
-    expect(data![1].session_id).toBe(sessionEmpty.id);
+    expect(data?.[0]?.session_id).toBe(sessionWithMessages.id);
+    expect(data?.[1]?.session_id).toBe(sessionEmpty.id);
   });
 
   it("存在しないconfig_idでは空配列を返す", async () => {

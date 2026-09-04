@@ -114,7 +114,7 @@ describe("find_sessions_ordered_by_message_count() フィルタパラメータ",
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].session_id).toBe(completed.id);
+    expect(data?.[0]?.session_id).toBe(completed.id);
   });
 
   it("p_stanceでスタンスフィルタできる", async () => {
@@ -151,7 +151,7 @@ describe("find_sessions_ordered_by_message_count() フィルタパラメータ",
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].session_id).toBe(s1.id);
+    expect(data?.[0]?.session_id).toBe(s1.id);
   });
 
   it("p_visibilityで公開状態フィルタできる", async () => {
@@ -188,7 +188,7 @@ describe("find_sessions_ordered_by_message_count() フィルタパラメータ",
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].session_id).toBe(s1.id);
+    expect(data?.[0]?.session_id).toBe(s1.id);
   });
 
   it("p_roleで役割フィルタできる", async () => {
@@ -225,7 +225,7 @@ describe("find_sessions_ordered_by_message_count() フィルタパラメータ",
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].session_id).toBe(s1.id);
+    expect(data?.[0]?.session_id).toBe(s1.id);
   });
 
   it("複数フィルタを組み合わせて絞り込める", async () => {
@@ -278,7 +278,7 @@ describe("find_sessions_ordered_by_message_count() フィルタパラメータ",
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].session_id).toBe(s1.id);
+    expect(data?.[0]?.session_id).toBe(s1.id);
   });
 
   it("フィルタパラメータがNULLの場合はフィルタしない（既存動作と同等）", async () => {

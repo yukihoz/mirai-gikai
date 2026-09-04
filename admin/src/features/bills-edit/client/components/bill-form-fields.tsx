@@ -21,10 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  type BillStatus,
-  type MeetingBody,
-} from "@/features/bills/shared/types";
+import type { BillStatus, MeetingBody } from "@/features/bills/shared/types";
 import type { DietSession } from "@/features/diet-sessions/shared/types";
 import type { BillCreateInput } from "../../shared/types";
 import { shouldAutoCloseInterviewOnBillStatus } from "../../shared/utils/should-auto-close-interview";

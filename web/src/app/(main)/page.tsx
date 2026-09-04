@@ -11,7 +11,6 @@ import { PreviousSessionSection } from "@/features/bills/server/components/previ
 import { loadHomeData } from "@/features/bills/server/loaders/load-home-data";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
-import { getJapanTime } from "@/lib/utils/date";
 
 export default async function Home() {
   const { billsByTag, featuredBills, comingSoonBills, previousSessionData } =

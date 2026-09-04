@@ -119,6 +119,10 @@
     "./cost-budget/evaluate": {
       "types": "./src/cost-budget/evaluate-budget.ts",
       "default": "./src/cost-budget/evaluate-budget.ts"
+    },
+    "./env/require-public-env": {
+      "types": "./src/env/require-public-env.ts",
+      "default": "./src/env/require-public-env.ts"
     }
   },
   "dependencies": {

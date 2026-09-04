@@ -114,13 +114,13 @@ describe("get_interview_metrics_by_bill", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    const row = data![0];
-    expect(row.bill_id).toBe(billA.id);
-    expect(Number(row.conducted_count)).toBe(4);
-    expect(Number(row.completed_count)).toBe(3);
-    expect(Number(row.completion_rate)).toBeCloseTo(0.75, 3);
+    const [row] = data ?? [];
+    expect(row?.bill_id).toBe(billA.id);
+    expect(Number(row?.conducted_count)).toBe(4);
+    expect(Number(row?.completed_count)).toBe(3);
+    expect(Number(row?.completion_rate)).toBeCloseTo(0.75, 3);
     // 完了セッションは started_at と completed_at が同時刻のため所要時間0
-    expect(Number(row.total_duration_seconds)).toBe(0);
+    expect(Number(row?.total_duration_seconds)).toBe(0);
   });
 
   it("セッション0件の議案は実施0・完了率0で返す", async () => {
@@ -131,11 +131,11 @@ describe("get_interview_metrics_by_bill", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    const row = data![0];
-    expect(Number(row.conducted_count)).toBe(0);
-    expect(Number(row.completed_count)).toBe(0);
-    expect(Number(row.completion_rate)).toBe(0);
-    expect(Number(row.total_duration_seconds)).toBe(0);
+    const [row] = data ?? [];
+    expect(Number(row?.conducted_count)).toBe(0);
+    expect(Number(row?.completed_count)).toBe(0);
+    expect(Number(row?.completion_rate)).toBe(0);
+    expect(Number(row?.total_duration_seconds)).toBe(0);
   });
 
   it("総回答時間（total_duration_seconds）を完了セッションの所要時間の合計として返す", async () => {
@@ -146,11 +146,11 @@ describe("get_interview_metrics_by_bill", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    const row = data![0];
-    expect(Number(row.conducted_count)).toBe(3);
-    expect(Number(row.completed_count)).toBe(2);
+    const [row] = data ?? [];
+    expect(Number(row?.conducted_count)).toBe(3);
+    expect(Number(row?.completed_count)).toBe(2);
     // 60秒 + 120秒。発言の無い未完了セッションは集計対象外
-    expect(Number(row.total_duration_seconds)).toBe(180);
+    expect(Number(row?.total_duration_seconds)).toBe(180);
   });
 
   it("論理削除済み設定のみの議案は結果に含まれない", async () => {
@@ -170,11 +170,11 @@ describe("get_interview_metrics_by_bill", () => {
     );
 
     expect(error).toBeNull();
-    const byId = new Map(data!.map((r) => [r.bill_id, r]));
+    const byId = new Map((data ?? []).map((r) => [r.bill_id, r]));
     expect(byId.has(billA.id)).toBe(true);
     expect(byId.has(billB.id)).toBe(true);
     // 論理削除済み設定のみの議案は含まれない
     expect(byId.has(billC.id)).toBe(false);
-    expect(Number(byId.get(billA.id)!.conducted_count)).toBe(4);
+    expect(Number(byId.get(billA.id)?.conducted_count)).toBe(4);
   });
 });
