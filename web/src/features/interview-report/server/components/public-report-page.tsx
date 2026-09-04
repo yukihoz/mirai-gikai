@@ -56,7 +56,7 @@ export async function PublicReportPage({
     <div className="min-h-dvh bg-mirai-surface pt-24 md:pt-0">
       <Container>
         <div className="flex flex-col gap-8 pb-8 md:pt-8">
-          {/* パンくず + 法案タイトル */}
+          {/* パンくず + 報告資料タイトル */}
           <div className="flex flex-col gap-2">
             <Breadcrumb items={breadcrumbItems} />
             <Link

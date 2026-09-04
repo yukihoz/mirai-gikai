@@ -13,7 +13,7 @@ const makeBill = (
   overrides: Partial<BillWithContent> = {}
 ): BillWithContent => ({
   id: "bill-1",
-  name: "テスト法案",
+  name: "テスト報告資料",
   is_featured: false,
   meeting_body: "定例会",
   is_review_completed: true,
@@ -36,9 +36,9 @@ const makeBill = (
   bill_content: {
     id: "bc-1",
     bill_id: "bill-1",
-    title: "テスト法案タイトル",
-    summary: "テスト法案の要約です",
-    content: "テスト法案の内容",
+    title: "テスト報告資料タイトル",
+    summary: "テスト報告資料の要約です",
+    content: "テスト報告資料の内容",
     difficulty_level: "normal",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -48,7 +48,7 @@ const makeBill = (
 });
 
 const sampleQuestions = [
-  { id: "q1", question: "この法案についてどう思いますか？" },
+  { id: "q1", question: "この報告資料についてどう思いますか？" },
   {
     id: "q2",
     question: "業務への影響はありますか？",
@@ -68,13 +68,13 @@ const baseParams: InterviewPromptInput = {
 };
 
 describe("buildBulkModeSystemPrompt", () => {
-  it("法案情報がプロンプトに含まれる", () => {
+  it("報告資料情報がプロンプトに含まれる", () => {
     const result = buildBulkModeSystemPrompt(baseParams);
 
-    expect(result).toContain("テスト法案");
-    expect(result).toContain("テスト法案タイトル");
-    expect(result).toContain("テスト法案の要約です");
-    expect(result).toContain("テスト法案の内容");
+    expect(result).toContain("テスト報告資料");
+    expect(result).toContain("テスト報告資料タイトル");
+    expect(result).toContain("テスト報告資料の要約です");
+    expect(result).toContain("テスト報告資料の内容");
   });
 
   it("bill=nullの場合は空文字にフォールバックする", () => {
@@ -83,9 +83,9 @@ describe("buildBulkModeSystemPrompt", () => {
       bill: null,
     });
 
-    expect(result).toContain("- 法案名: \n");
-    expect(result).toContain("- 法案タイトル: \n");
-    expect(result).toContain("- 法案要約: \n");
+    expect(result).toContain("- 報告資料名: \n");
+    expect(result).toContain("- 報告資料タイトル: \n");
+    expect(result).toContain("- 報告資料要約: \n");
   });
 
   it("テーマがプロンプトに含まれる", () => {
@@ -122,7 +122,7 @@ describe("buildBulkModeSystemPrompt", () => {
   it("質問リストがID付きで含まれる", () => {
     const result = buildBulkModeSystemPrompt(baseParams);
 
-    expect(result).toContain("[ID: q1] この法案についてどう思いますか？");
+    expect(result).toContain("[ID: q1] この報告資料についてどう思いますか？");
     expect(result).toContain("[ID: q2] 業務への影響はありますか？");
     expect(result).toContain("[ID: q3] 改善案はありますか？");
   });
@@ -166,10 +166,10 @@ describe("buildBulkModeSystemPrompt", () => {
     expect(result).toContain("（賛成か、反対か）");
   });
 
-  it("法案内容の誤認検知と補足ガイダンスが含まれる", () => {
+  it("報告資料内容の誤認検知と補足ガイダンスが含まれる", () => {
     const result = buildBulkModeSystemPrompt(baseParams);
 
-    expect(result).toContain("法案内容の誤認検知と補足");
+    expect(result).toContain("報告資料内容の誤認検知と補足");
     expect(result).toContain("誤認の兆候例");
     expect(result).toContain("補足の仕方");
     expect(result).toContain("補足しない場合");
@@ -186,7 +186,7 @@ describe("buildBulkModeSystemPrompt", () => {
         "必ず事前定義質問 **[ID: q2] 業務への影響はありますか？**"
       );
       expect(result).toContain("深掘りや他の話題への逸脱は一切禁止");
-      // 特別プロンプトでは法案詳細やテーマは含まれない
+      // 特別プロンプトでは報告資料詳細やテーマは含まれない
       expect(result).not.toContain("<bill_detail>");
     });
 
