@@ -42,7 +42,23 @@ export async function generateDiscussions(
     );
   }
 
-  return dropUnknownShiryo(parsed.data, input.reports);
+  return dropUnknownShiryo(parsed.data, input.reports).map(sortByUtterance);
+}
+
+/**
+ * 論点を議事録に出てきた順に並べ直す。
+ *
+ * モデルはテーマごとに論点をまとめるので、返ってくる順は議事録の順に
+ * ならない。同じ委員が前半と後半に分けて質問した会議では、記事の並びが
+ * 「高橋 → 黒原 → 高橋」のように行き来して読みにくくなる。
+ */
+export function sortByUtterance(discussion: ShiryoDiscussion): ShiryoDiscussion {
+  return {
+    ...discussion,
+    topics: [...discussion.topics].sort(
+      (a, b) => a.firstUtteranceNumber - b.firstUtteranceNumber
+    ),
+  };
 }
 
 /**

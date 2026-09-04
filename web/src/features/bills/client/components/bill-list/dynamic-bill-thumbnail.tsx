@@ -1,3 +1,6 @@
+import React from "react";
+import { getMeetingBodyColor } from "@/features/bills/shared/utils/meeting-body-colors";
+
 // 簡単な文字列表現からシード（数値）を生成するハッシュ関数
 function hashString(str: string): number {
   let hash = 0;
@@ -1239,66 +1242,6 @@ interface DynamicBillThumbnailProps {
   size?: "large" | "small" | "header"; // large: 注目カード等（文字入り）, small: コンパクトカード等（柄のみ）, header: 個別ページヘッダー（柄のみ・薄い）
 }
 
-// 会議体ごとのテーマカラー（Tailwindクラス）を定義する辞書
-const meetingBodyColors: Record<string, { bg: string; text: string }> = {
-  // 企画総務系 -> 【ブルー系】 (変更指定あり)
-  企画総務委員会: { bg: "bg-blue-50", text: "text-blue-500/20" },
-
-  // 本会議・定例会 -> 【パープル系】 (変更指定あり)
-  定例会: { bg: "bg-purple-50", text: "text-purple-500/20" },
-  臨時会: { bg: "bg-purple-50", text: "text-purple-500/20" },
-  AIインタビュー: { bg: "bg-purple-50", text: "text-purple-500/20" },
-
-  // 区民・文教系 -> 【オレンジ・イエロー系】
-  区民文教委員会: { bg: "bg-orange-50", text: "text-orange-500/20" },
-
-  // 福祉保健系 -> 【ピンク・赤系】
-  福祉保健委員会: { bg: "bg-rose-50", text: "text-rose-500/20" },
-
-  // 環境・建設基盤系 -> 【グリーン・エメラルド系】
-  環境建設委員会: { bg: "bg-emerald-50", text: "text-emerald-500/20" },
-  築地等都市基盤対策特別委員会: {
-    bg: "bg-teal-50",
-    text: "text-teal-500/20",
-  },
-
-  // その他特別委員会（アンバー・ピンク・レッド系）
-  地域活性化対策特別委員会: {
-    bg: "bg-amber-50",
-    text: "text-amber-500/30",
-  },
-  "子ども子育て・高齢者対策特別委員会": {
-    bg: "bg-pink-50",
-    text: "text-pink-500/20",
-  },
-  防災等安全対策特別委員会: { bg: "bg-red-50", text: "text-red-500/15" },
-
-  // 2026年5月に組み替えられた特別委員会。旧委員会の系統色を引き継ぐ
-  "築地まちづくり・環境対策特別委員会": {
-    bg: "bg-teal-50",
-    text: "text-teal-500/20",
-  },
-  "区制施行８０周年等にぎわいの向上・創出対策特別委員会": {
-    bg: "bg-amber-50",
-    text: "text-amber-500/30",
-  },
-  "子ども・教育環境整備対策特別委員会": {
-    bg: "bg-pink-50",
-    text: "text-pink-500/20",
-  },
-  "区民生活等安全・安心対策特別委員会": {
-    bg: "bg-red-50",
-    text: "text-red-500/15",
-  },
-
-  // 予算・決算（イエロー・ストーン系）
-  予算特別委員会: { bg: "bg-yellow-50", text: "text-yellow-600/30" },
-  決算特別委員会: { bg: "bg-stone-50", text: "text-stone-500/20" },
-
-  // デフォルト
-  デフォルト: { bg: "bg-gray-50", text: "text-gray-400/20" },
-};
-
 export function DynamicBillThumbnail({
   title,
   seedString,
@@ -1315,12 +1258,7 @@ export function DynamicBillThumbnail({
   const PatternComponent = Patterns[variant];
 
   // 会議体に紐づく色を取得
-  const definedTheme = meetingBodyColors[meetingBody || ""];
-  if (definedTheme === undefined && meetingBody) {
-    // 委員会は数年ごとに組み替えられる。黙ってグレーにすると気づけないので残す
-    console.warn(`[thumbnail] 色が未定義の会議体: ${meetingBody}`);
-  }
-  const colorTheme = definedTheme || meetingBodyColors.デフォルト;
+  const colorTheme = getMeetingBodyColor(meetingBody);
 
   // コンテナのCSS調整
   const containerSizeProps =

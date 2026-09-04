@@ -48,6 +48,17 @@ export const discussionTopicSchema = z.object({
   answer: z.string().min(10).max(600),
   /** 答弁した理事者（例: 左近士 子ども家庭支援センター所長） */
   answerers: z.array(z.string().min(1).max(40)),
+  /**
+   * この論点の最初の質問がどの発言だったか（議事録に振った通し番号）。
+   *
+   * モデルは論点をテーマごとにまとめるので、返ってくる順は議事録の順に
+   * ならない。並べ直すために、発言番号を必ず答えさせる。
+   */
+  firstUtteranceNumber: z
+    .number()
+    .int()
+    .min(1)
+    .describe("この論点で委員が最初に質問した発言の番号"),
 });
 
 export type DiscussionTopic = z.infer<typeof discussionTopicSchema>;

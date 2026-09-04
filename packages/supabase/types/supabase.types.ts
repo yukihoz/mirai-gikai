@@ -294,8 +294,10 @@ export type Database = {
           bill_id: string
           committee: string
           created_at: string
+          discussions_linked_at: string | null
           meeting_date: string
           meeting_url: string
+          minutes_url: string | null
           shiryo_image_height: number | null
           shiryo_image_url: string | null
           shiryo_image_width: number | null
@@ -307,8 +309,10 @@ export type Database = {
           bill_id: string
           committee: string
           created_at?: string
+          discussions_linked_at?: string | null
           meeting_date: string
           meeting_url: string
+          minutes_url?: string | null
           shiryo_image_height?: number | null
           shiryo_image_url?: string | null
           shiryo_image_width?: number | null
@@ -320,8 +324,10 @@ export type Database = {
           bill_id?: string
           committee?: string
           created_at?: string
+          discussions_linked_at?: string | null
           meeting_date?: string
           meeting_url?: string
+          minutes_url?: string | null
           shiryo_image_height?: number | null
           shiryo_image_url?: string | null
           shiryo_image_width?: number | null
@@ -334,6 +340,53 @@ export type Database = {
             foreignKeyName: "chuo_bill_sources_bill_id_fkey"
             columns: ["bill_id"]
             isOneToOne: true
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chuo_discussions: {
+        Row: {
+          answer: string
+          answerers: string[]
+          bill_id: string
+          created_at: string
+          display_order: number
+          id: string
+          question: string
+          questioners: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          answerers?: string[]
+          bill_id: string
+          created_at?: string
+          display_order: number
+          id?: string
+          question: string
+          questioners: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          answerers?: string[]
+          bill_id?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          question?: string
+          questioners?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chuo_discussions_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
             referencedRelation: "bills"
             referencedColumns: ["id"]
           },

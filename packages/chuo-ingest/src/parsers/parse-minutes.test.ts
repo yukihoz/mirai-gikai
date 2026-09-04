@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { parseMinutes } from "./parse-minutes";
+import { detectSections, parseMinutes } from "./parse-minutes";
 
 const html = readFileSync(
   join(import.meta.dirname, "__fixtures__/minutes-fukushi-20260210.html"),
@@ -128,5 +128,61 @@ describe("parseMinutes（企画総務委員会）", () => {
       (u) => u.speaker === "山﨑総務部長"
     );
     expect(reporter?.shiryoNumbers).toEqual([3, 4, 5, 6, 7, 8]);
+  });
+});
+
+describe("detectSections（進行の言い回しの違い）", () => {
+  const chair = (text: string) => ({
+    index: 0,
+    speaker: "委員長",
+    paragraphs: [text],
+    shiryoNumbers: [],
+  });
+
+  it("持ち時間の案内を質疑の始まりとみなす", () => {
+    // 特別委員会は「理事者報告に対する質疑に入ります」と言わず、
+    // 報告のあと持ち時間を読み上げてそのまま質疑に入る
+    const utterances = [
+      { ...chair("それでは、理事者報告を願います。"), index: 1 },
+      {
+        ...chair("発言の持ち時間制につきましては、既に御承知のとおりです。"),
+        index: 2,
+      },
+      {
+        index: 3,
+        speaker: "永井委員",
+        paragraphs: ["資料１について伺います。"],
+        shiryoNumbers: [1],
+      },
+    ];
+
+    const sections = detectSections(utterances);
+    const questions = sections.find((s) => s.kind === "report_questions");
+    expect(questions?.fromIndex).toBe(2);
+    expect(questions?.toIndex).toBe(3);
+  });
+
+  it("常任委員会では同じ発言に両方の合図が入っていても節が重複しない", () => {
+    // 「持ち時間…。それでは、理事者報告に対する質疑に入ります」が1発言に入る
+    const utterances = [
+      { ...chair("理事者報告に入ります。"), index: 1 },
+      {
+        ...chair(
+          "発言の持ち時間制につきましては…。それでは、理事者報告に対する質疑に入ります。"
+        ),
+        index: 2,
+      },
+      {
+        index: 3,
+        speaker: "高橋委員",
+        paragraphs: ["資料４について。"],
+        shiryoNumbers: [4],
+      },
+    ];
+
+    const sections = detectSections(utterances);
+    expect(sections.filter((s) => s.kind === "report_questions")).toHaveLength(
+      1
+    );
   });
 });

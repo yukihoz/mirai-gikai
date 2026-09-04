@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import type { DiscussionInput } from "../prompts/build-discussion-prompt";
 import type { MeetingDiscussions } from "../shared/schemas";
-import { dropUnknownShiryo, generateDiscussions } from "./generate-discussions";
+import {
+  dropUnknownShiryo,
+  generateDiscussions,
+  sortByUtterance,
+} from "./generate-discussions";
 import type { ObjectGenerator } from "./generate-explanation";
 
 const input: DiscussionInput = {
@@ -38,6 +42,7 @@ const valid: MeetingDiscussions = {
           questioners: ["高橋"],
           answer: "区の他の手続でも使っており、区民になじみがあるため。",
           answerers: ["左近士 子ども家庭支援センター所長"],
+          firstUtteranceNumber: 1,
         },
       ],
     },
@@ -145,5 +150,38 @@ describe("dropUnknownShiryo", () => {
 
   it("資料が1件も無い会議ではすべて落とす", () => {
     expect(dropUnknownShiryo(valid, [])).toEqual([]);
+  });
+});
+
+describe("sortByUtterance", () => {
+  function topic(title: string, firstUtteranceNumber: number) {
+    return {
+      title,
+      question: "この点はどうなっているか。",
+      questioners: ["高橋"],
+      answer: "現在の運用のとおり進める予定。",
+      answerers: ["左近士 子ども家庭支援センター所長"],
+      firstUtteranceNumber,
+    };
+  }
+
+  it("論点を議事録に出てきた順に並べ直す", () => {
+    const sorted = sortByUtterance({
+      shiryoNumber: 4,
+      // モデルはテーマごとにまとめるので、同じ委員の質問が離れて返る
+      topics: [topic("LoGoフォームを選んだ理由", 1), topic("紙の申請は残るか", 17), topic("システムの一本化", 5)],
+    });
+
+    expect(sorted.topics.map((t) => t.firstUtteranceNumber)).toEqual([1, 5, 17]);
+  });
+
+  it("元の配列を書き換えない", () => {
+    const original = {
+      shiryoNumber: 4,
+      topics: [topic("あと", 9), topic("さき", 2)],
+    };
+    sortByUtterance(original);
+
+    expect(original.topics.map((t) => t.firstUtteranceNumber)).toEqual([9, 2]);
   });
 });

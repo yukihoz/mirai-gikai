@@ -194,7 +194,7 @@ export function InterviewChatClient({
                 !isLoading &&
                 !showStreamingMessage;
 
-              // 最初のAIメッセージの法案名をリンクに変換
+              // 最初のAIメッセージの報告資料名をリンクに変換
               const content =
                 index === 0 && message.role === "assistant"
                   ? embedBillLink(message.content, billTitle, billDetailLink)
