@@ -144,8 +144,11 @@ const SECTION_PRECEDENCE: MinutesSectionKind[] = [
  *
  * 合図が見つからない会議もあるので、拾えた区切りだけを返す。取りこぼしても
  * 前後の節に含まれるだけで、誤った節に入れてしまうより害が小さい。
+ *
+ * 議事録HTMLからでも、みえる議会のJSONからでも、発言の並びさえあれば
+ * 同じ判定ができるよう公開している。
  */
-function detectSections(utterances: Utterance[]): MinutesSection[] {
+export function detectSections(utterances: Utterance[]): MinutesSection[] {
   if (utterances.length === 0) return [];
 
   type Marker = { kind: MinutesSectionKind; label: string | null; at: number };
@@ -173,6 +176,12 @@ function detectSections(utterances: Utterance[]): MinutesSection[] {
       put({ kind: "reports", label: null, at });
     }
     if (/理事者報告に対する質疑に入り/.test(text)) {
+      put({ kind: "report_questions", label: null, at });
+    }
+    // 特別委員会は「理事者報告に対する質疑に入ります」と言わない。
+    // 報告のあと、委員長が発言の持ち時間を読み上げてそのまま質疑に入る。
+    // 常任委員会でも同じ発言が質疑の直前に来るので、両方でこれを合図にできる。
+    if (/発言の持ち時間制/.test(text)) {
       put({ kind: "report_questions", label: null, at });
     }
     if (/理事者報告について(の|は)質疑(は|を)?終了/.test(text)) {

@@ -50,6 +50,10 @@ afterAll(async () => {
     .delete()
     .like("url", "https://www.kugikai.city.chuo.lg.jp/shiryo/test-%");
   await adminClient.from("chuo_ingestion_runs").delete().eq("mode", "test");
+  await adminClient
+    .from("chuo_ingestion_runs")
+    .delete()
+    .eq("mode", "test-lock");
 });
 
 describe("chuo_bill_sources", () => {
@@ -212,5 +216,76 @@ describe("chuo_ingestion_runs", () => {
 
     expect(error).toBeNull();
     expect(data?.stats).toEqual(stats);
+  });
+});
+
+describe("chuo_ingestion_runs の二重起動防止", () => {
+  /**
+   * 一度、前の実行が生きているのを見落として二重に起動し、同じ資料の記事を
+   * 2回生成してAIの費用を二重に払った。排他をDB側に置いたことを確かめる。
+   */
+  it("同じモードで running を2つ作れない", async () => {
+    const first = await adminClient
+      .from("chuo_ingestion_runs")
+      .insert({ mode: "test-lock", status: "running" })
+      .select("id")
+      .single();
+    expect(first.error).toBeNull();
+
+    const second = await adminClient
+      .from("chuo_ingestion_runs")
+      .insert({ mode: "test-lock", status: "running" });
+
+    // 23505 = unique_violation
+    expect(second.error?.code).toBe("23505");
+
+    await adminClient
+      .from("chuo_ingestion_runs")
+      .delete()
+      .eq("id", first.data?.id ?? "");
+  });
+
+  it("前の実行が終わっていれば次を始められる", async () => {
+    const first = await adminClient
+      .from("chuo_ingestion_runs")
+      .insert({ mode: "test-lock", status: "completed" })
+      .select("id")
+      .single();
+    expect(first.error).toBeNull();
+
+    const second = await adminClient
+      .from("chuo_ingestion_runs")
+      .insert({ mode: "test-lock", status: "running" })
+      .select("id")
+      .single();
+
+    expect(second.error).toBeNull();
+
+    await adminClient
+      .from("chuo_ingestion_runs")
+      .delete()
+      .in("id", [first.data?.id ?? "", second.data?.id ?? ""]);
+  });
+
+  it("別のモードは同時に走れる", async () => {
+    // 資料の取り込みと質疑の紐づけは互いに独立しているので止め合わない
+    const rows = await adminClient
+      .from("chuo_ingestion_runs")
+      .insert([
+        { mode: "test-lock", status: "running" },
+        { mode: "test", status: "running" },
+      ])
+      .select("id");
+
+    expect(rows.error).toBeNull();
+    expect(rows.data).toHaveLength(2);
+
+    await adminClient
+      .from("chuo_ingestion_runs")
+      .delete()
+      .in(
+        "id",
+        (rows.data ?? []).map((r) => r.id)
+      );
   });
 });

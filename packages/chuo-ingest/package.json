@@ -36,6 +36,10 @@
     "./ingest": {
       "types": "./src/ingest.ts",
       "default": "./src/ingest.ts"
+    },
+    "./ingest-discussions": {
+      "types": "./src/ingest-discussions.ts",
+      "default": "./src/ingest-discussions.ts"
     }
   },
   "devDependencies": {

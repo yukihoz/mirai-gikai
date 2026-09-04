@@ -114,7 +114,7 @@ describe("formatUtterances", () => {
       ],
       1000
     );
-    expect(text).toBe("高橋委員\n順次質問させていただきます。");
+    expect(text).toBe("［発言1］高橋委員\n順次質問させていただきます。");
   });
 
   it("資料への言及に印を付ける", () => {
