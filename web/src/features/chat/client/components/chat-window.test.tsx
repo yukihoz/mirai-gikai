@@ -181,9 +181,7 @@ describe("ChatWindow", () => {
       name: "モバイルAIチャット",
     });
     expect(dialog).toHaveStyle({ maxHeight: "640px" });
-    expect(screen.getAllByRole("button", { name: /何|報告資料/ })).toHaveLength(
-      3
-    );
+    expect(screen.getAllByRole("button", { name: /何|報告資料/ })).toHaveLength(3);
 
     await user.click(screen.getByRole("button", { name: /って何？/ }));
     expect(sendMessage).toHaveBeenCalledWith({

@@ -25,8 +25,7 @@ export async function generateMetadata({
     return { title: "インタビューレポート" };
   }
 
-  const billName =
-    data.bill.bill_content?.title || data.bill.name || "報告資料";
+  const billName = data.bill.bill_content?.title || data.bill.name || "報告資料";
   const stanceText =
     data.stance === "for"
       ? "期待"

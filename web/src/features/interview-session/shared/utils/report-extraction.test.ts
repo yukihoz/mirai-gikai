@@ -52,9 +52,7 @@ describe("extractReportFromMessage", () => {
       },
     };
     const result = extractReportFromMessage(JSON.stringify(withNewFields));
-    expect(result?.opinions[0].contextual_quote).toBe(
-      "（報告資料について）賛成だ"
-    );
+    expect(result?.opinions[0].contextual_quote).toBe("（報告資料について）賛成だ");
     expect(result?.opinions[0].bill_sentiment).toBe("期待");
   });
 
