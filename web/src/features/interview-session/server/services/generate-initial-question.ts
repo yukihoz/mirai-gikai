@@ -40,7 +40,7 @@ export async function generateInitialQuestion({
   deps,
 }: GenerateInitialQuestionParams): Promise<InterviewMessage | null> {
   try {
-    // インタビュー設定と法案情報を取得
+    // インタビュー設定と報告資料情報を取得
     // どちらもサーバーサイドでの生成処理のため、常にAdmin用（非公開制限なし）を使用する
     const [interviewConfig, bill, questions] = await Promise.all([
       getInterviewConfigAdmin(billId),

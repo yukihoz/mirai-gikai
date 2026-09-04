@@ -17,7 +17,7 @@ export const configGenerationStageSchema = z.enum([
 export type ConfigGenerationStage = z.infer<typeof configGenerationStageSchema>;
 
 /**
- * 初期テンプレート用: 法案ごとに Q1 / Q2 の quick_replies のみ LLM 生成する。
+ * 初期テンプレート用: 報告資料ごとに Q1 / Q2 の quick_replies のみ LLM 生成する。
  * 質問文・フォローアップ指針は固定のためここでは出力しない。
  *
  * フィールド名は意味ベース（topics/stance）にして LLM の混同を防ぐ。

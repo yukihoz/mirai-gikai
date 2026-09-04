@@ -24,7 +24,7 @@ interface PersonaSelectorListProps {
   billId: string;
   /** この config の ID */
   currentConfigId: string;
-  /** 法案配下の全完了レポート（config_id 付き） */
+  /** 報告資料配下の全完了レポート（config_id 付き） */
   completedReports: CompletedReportListItem[];
   completedReportsTruncated?: boolean;
   completedReportsLimit?: number;

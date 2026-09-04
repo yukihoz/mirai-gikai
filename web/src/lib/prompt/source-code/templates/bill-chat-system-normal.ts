@@ -9,7 +9,7 @@ import {
 } from "./shared-sections";
 
 /**
- * 法案チャット（ふつう難易度）用システムプロンプトを生成する
+ * 報告資料チャット（ふつう難易度）用システムプロンプトを生成する
  */
 export function buildBillChatSystemNormalPrompt(
   billName: string,
@@ -19,7 +19,7 @@ export function buildBillChatSystemNormalPrompt(
   knowledgeSource = ""
 ): string {
   return `あなたは「${env.siteShortName}」プラットフォーム上で動作する中立的なAIアシスタントです。
-政治・法案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
+政治・報告資料・政策について、わかりやすく説明・対話を支援する役割を持ちます。
 
 ---
 ${TEAM_OVERVIEW}
