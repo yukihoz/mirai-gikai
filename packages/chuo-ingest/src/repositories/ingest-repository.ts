@@ -187,6 +187,46 @@ export type UpsertBillParams = {
  * **必ず下書きで作る。** 生成した内容をそのまま公開しない。
  * 公開の判断は人がadminで行う。
  */
+/** 選べるカテゴリの一覧 */
+export async function findCategories(): Promise<
+  { id: string; label: string }[]
+> {
+  const { data, error } = await createAdminClient()
+    .from("tags")
+    .select("id, label")
+    .order("label");
+
+  if (error) throw new Error(`カテゴリを読めなかった: ${error.message}`);
+  return data ?? [];
+}
+
+/**
+ * 議案のカテゴリを入れ替える。
+ *
+ * 作り直したときに古い分類が残らないよう、消してから入れる。
+ */
+export async function replaceBillCategories(params: {
+  billId: string;
+  tagIds: string[];
+}): Promise<void> {
+  const client = createAdminClient();
+
+  const removed = await client
+    .from("bills_tags")
+    .delete()
+    .eq("bill_id", params.billId);
+  if (removed.error) {
+    throw new Error(`古いカテゴリを消せなかった: ${removed.error.message}`);
+  }
+
+  if (params.tagIds.length === 0) return;
+
+  const { error } = await client
+    .from("bills_tags")
+    .insert(params.tagIds.map((tagId) => ({ bill_id: params.billId, tag_id: tagId })));
+  if (error) throw new Error(`カテゴリを保存できなかった: ${error.message}`);
+}
+
 /**
  * 開催日を含む会期を引く。
  *

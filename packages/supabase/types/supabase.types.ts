@@ -1526,6 +1526,20 @@ export type Database = {
         Args: { p_version_id: string }
         Returns: undefined
       }
+      search_chuo_bills: {
+        Args: {
+          p_ascending: boolean
+          p_difficulty: string
+          p_limit: number
+          p_offset: number
+          p_query: string
+          p_tag_id: string
+        }
+        Returns: {
+          bill_id: string
+          total_count: number
+        }[]
+      }
       set_active_diet_session: {
         Args: { target_session_id: string }
         Returns: undefined

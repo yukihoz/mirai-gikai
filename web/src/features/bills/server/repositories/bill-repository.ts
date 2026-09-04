@@ -230,58 +230,86 @@ const BILL_LIST_SELECT = `
     `;
 
 /**
- * 公開中の議案を新しい順に取る。会期は問わない。
+ * 報告資料の検索。絞り込み・並び替え・ページングをDBで行う。
  *
- * 会期で区切ると年度替わりの直後に0件になるため、トップの
- * 「最近の報告資料」は会期をまたいで並べる。
+ * 全件をアプリに持ってきてから絞ると、件数が増えたときに
+ * 絞り込みのクリックごとに待ち時間が出る。1年ぶんで約350件、
+ * 数年ぶんなら1000件を超えるため、はじめからDBに寄せる。
  */
-export async function findRecentBills(
-  difficultyLevel: DifficultyLevelEnum,
-  limit: number
-) {
+export async function searchBills(params: {
+  difficultyLevel: DifficultyLevelEnum;
+  query: string;
+  tagId: string | null;
+  ascending: boolean;
+  offset: number;
+  limit: number;
+}) {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select(BILL_LIST_SELECT)
-    .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", difficultyLevel)
-    .order("submitted_date", { ascending: false, nullsFirst: false })
-    .limit(limit);
+
+  // 絞り込み・並び替え・ページングはDB関数に任せる。
+  // 「記事タイトル・要約・区の正式名称のどれか」という条件は、
+  // PostgREST の or が結合先の列を参照できないため書けない。
+  const { data, error } = await supabase.rpc("search_chuo_bills", {
+    p_difficulty: params.difficultyLevel,
+    p_query: params.query,
+    // 型定義では非nullだが、関数側は null を「すべて」として扱う
+    p_tag_id: params.tagId as string,
+    p_ascending: params.ascending,
+    p_offset: params.offset,
+    p_limit: params.limit,
+  });
 
   if (error) {
-    console.error("Failed to fetch recent bills:", error);
-    return [];
+    console.error("Failed to search bills:", error);
+    return { rows: [], total: 0 };
   }
 
-  return data ?? [];
+  const hits = data ?? [];
+  if (hits.length === 0) return { rows: [], total: 0 };
+
+  const { data: rows, error: rowsError } = await supabase
+    .from("bills")
+    .select(BILL_LIST_SELECT)
+    .in(
+      "id",
+      hits.map((h) => h.bill_id)
+    )
+    .eq("bill_contents.difficulty_level", params.difficultyLevel);
+
+  if (rowsError) {
+    console.error("Failed to fetch searched bills:", rowsError);
+    return { rows: [], total: 0 };
+  }
+
+  // in で引くと順序が崩れる。DB関数が返した並びに戻す
+  const byId = new Map((rows ?? []).map((row) => [row.id, row]));
+  const ordered = hits
+    .map((h) => byId.get(h.bill_id))
+    .filter((row): row is NonNullable<typeof row> => row !== undefined);
+
+  return { rows: ordered, total: Number(hits[0]?.total_count ?? 0) };
 }
 
-/**
- * 会議体ごとにまとめるための議案を、新しい順にまとめて取る。
- *
- * 会議体は8つ前後で、1年ぶんでも数百件に収まる。会議体ごとに
- * クエリを分けると本数が増えるので、まとめて引いてから振り分ける。
- */
-export async function findRecentBillsByMeetingBody(
-  difficultyLevel: DifficultyLevelEnum,
-  limit = 500
-) {
+/** カテゴリごとの公開件数。チップに出す数字に使う */
+export async function countPublishedBillsByTag(
+  difficultyLevel: DifficultyLevelEnum
+): Promise<Map<string, number>> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
-    .from("bills")
-    .select(BILL_LIST_SELECT)
-    .eq("publish_status", "published")
-    .not("meeting_body", "is", null)
-    .eq("bill_contents.difficulty_level", difficultyLevel)
-    .order("submitted_date", { ascending: false, nullsFirst: false })
-    .limit(limit);
+    .from("bills_tags")
+    .select("tag_id, bills!inner (publish_status)")
+    .eq("bills.publish_status", "published");
 
   if (error) {
-    console.error("Failed to fetch bills by meeting body:", error);
-    return [];
+    console.error("Failed to count bills by tag:", error);
+    return new Map();
   }
 
-  return data ?? [];
+  const counts = new Map<string, number>();
+  for (const row of data ?? []) {
+    counts.set(row.tag_id, (counts.get(row.tag_id) ?? 0) + 1);
+  }
+  return counts;
 }
 
 export async function findPreviousSessionBills(
@@ -351,6 +379,22 @@ export async function countPublishedBillsByDietSession(
 // ============================================================
 // Featured
 // ============================================================
+
+/** すべてのカテゴリ。featured_priority の有無を問わない */
+export async function findAllTags() {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("tags")
+    .select("id, label")
+    .order("label");
+
+  if (error) {
+    console.error("Failed to fetch tags:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
 
 /**
  * featured_priorityが設定されているタグを取得
