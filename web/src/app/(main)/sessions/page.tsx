@@ -6,6 +6,13 @@ import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 
+/**
+ * このページは会期一覧をDBから引く。静的にするとビルド時に取りに行くが、
+ * CIのビルドにはDBの接続情報を渡していない（ビルドにDBを要らなくするため）。
+ * 実行時に描画する。
+ */
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: `議会会期一覧 | ${env.siteTitle}`,
   description: `${env.assemblyName}の過去の会期一覧です。各会期で提出された議案をご覧いただけます。`,
