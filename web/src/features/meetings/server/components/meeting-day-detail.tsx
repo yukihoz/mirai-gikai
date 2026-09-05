@@ -55,7 +55,7 @@ export function MeetingDayDetail({ day, adjacent }: MeetingDayDetailProps) {
 
       <nav
         aria-label="前後の会議"
-        className="grid grid-cols-2 gap-3 border-t border-mirai-border pt-6"
+        className="grid grid-cols-1 gap-3 border-t border-mirai-border pt-6 sm:grid-cols-2"
       >
         <AdjacentLink day={adjacent.older} direction="older" />
         <AdjacentLink day={adjacent.newer} direction="newer" />
@@ -67,7 +67,9 @@ export function MeetingDayDetail({ day, adjacent }: MeetingDayDetailProps) {
 /**
  * 前後の会議への導線。
  *
- * 端の会議では行き先が無いので、空の枠だけを置いて左右の位置を保つ。
+ * 横に2つ並べると、狭い画面では日付が折り返して読みにくい。
+ * 画面が狭いあいだは縦に積み、広いときだけ左右に置く。次の会議は
+ * 前の会議が無くても右側に来るよう、列を指定しておく。
  */
 function AdjacentLink({
   day,
@@ -76,7 +78,7 @@ function AdjacentLink({
   day: MeetingDaySummary | null;
   direction: "older" | "newer";
 }) {
-  if (day === null) return <div />;
+  if (day === null) return null;
 
   const isOlder = direction === "older";
 
@@ -84,14 +86,16 @@ function AdjacentLink({
     <Link
       href={routes.meetingDay(day.date) as Route}
       className={`group flex flex-col gap-1 rounded-2xl border border-mirai-border bg-white px-4 py-3 transition-colors hover:border-primary-accent ${
-        isOlder ? "" : "col-start-2 text-right"
+        isOlder ? "" : "sm:col-start-2 sm:text-right"
       }`}
     >
-      <span className="flex items-center gap-1 text-xs text-mirai-text-muted">
+      <span
+        className={`flex items-center gap-1 text-xs text-mirai-text-muted ${
+          isOlder ? "" : "sm:justify-end"
+        }`}
+      >
         {isOlder && <ChevronLeft className="size-3.5" aria-hidden="true" />}
-        <span className={isOlder ? "" : "ml-auto"}>
-          {isOlder ? "前の会議" : "次の会議"}
-        </span>
+        {isOlder ? "前の会議" : "次の会議"}
         {!isOlder && <ChevronRight className="size-3.5" aria-hidden="true" />}
       </span>
       <span className="text-sm font-bold text-mirai-text">
