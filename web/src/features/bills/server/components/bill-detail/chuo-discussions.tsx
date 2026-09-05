@@ -76,23 +76,24 @@ export function ChuoDiscussions({ discussions, shiryo }: ChuoDiscussionsProps) {
         ))}
       </div>
 
-      <div className="mt-3 rounded-md bg-white px-4 py-4">
-        {shiryo.minutesUrl === null ? null : (
+      {/* 一次情報への導線。資料の全文へのカードと同じ作りにそろえる */}
+      {shiryo.minutesUrl !== null && (
+        <div className="mt-3 rounded-md border border-mirai-border-source bg-mirai-surface-source px-4 py-6">
+          <p className="text-sm leading-relaxed mb-4">
+            この委員会の議事録の全文は、中央区議会のウェブサイトで読めます。
+          </p>
+
           <a
             href={shiryo.minutesUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 mb-3 text-sm font-medium underline underline-offset-[3px] hover:opacity-70"
+            className="inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-[3px] hover:opacity-70"
           >
             この日の会議録（正式版）を読む
             <ExternalLink className="size-3.5 shrink-0" aria-hidden="true" />
           </a>
-        )}
-        <p className="text-xs leading-relaxed text-mirai-text-muted">
-          この要約は、中央区議会の会議録をもとにAIが作成したものです。委員や
-          理事者の発言そのものではありません。
-        </p>
-      </div>
+        </div>
+      )}
     </section>
   );
 }

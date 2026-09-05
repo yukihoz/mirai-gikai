@@ -4,6 +4,8 @@ import type { ChuoShiryo } from "../../loaders/get-chuo-shiryo";
 
 interface ChuoShiryoSourceProps {
   shiryo: ChuoShiryo;
+  /** 記事のタイトル。「資料3」だけでは何の資料か伝わらないため添える */
+  title: string;
 }
 
 /**
@@ -14,12 +16,9 @@ interface ChuoShiryoSourceProps {
  * 「解説を読んだ → もとの資料を見る → 委員会で何が議論されたかを見る」
  * という順で読めるようにする。
  */
-export function ChuoShiryoSource({ shiryo }: ChuoShiryoSourceProps) {
-  const label =
-    shiryo.shiryoNumber === null ? "この資料" : `資料${shiryo.shiryoNumber}`;
-
+export function ChuoShiryoSource({ shiryo, title }: ChuoShiryoSourceProps) {
   return (
-    <section className="rounded-md bg-white px-4 py-6">
+    <section className="rounded-md border border-mirai-border-source bg-mirai-surface-source px-4 py-6">
       <p className="text-sm leading-relaxed mb-4">
         この報告資料の全文は、中央区議会のウェブサイトで読めます。
       </p>
@@ -30,7 +29,7 @@ export function ChuoShiryoSource({ shiryo }: ChuoShiryoSourceProps) {
         rel="noopener noreferrer"
         className="inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-[3px] hover:opacity-70"
       >
-        {label}の全文を読む（PDF）
+        「{title}」の全文を読む（PDF）
         <ExternalLink className="size-3.5 shrink-0" aria-hidden="true" />
       </a>
 

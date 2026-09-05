@@ -95,7 +95,10 @@ export async function BillDetailLayout({
           {/* 資料の全文への導線。委員会での質疑よりは前に置く */}
           {chuoShiryo && (
             <div className="my-8">
-              <ChuoShiryoSource shiryo={chuoShiryo} />
+              <ChuoShiryoSource
+                shiryo={chuoShiryo}
+                title={bill.bill_content?.title || bill.name}
+              />
             </div>
           )}
 

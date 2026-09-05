@@ -34,7 +34,7 @@ export function BillsSearchForm({ params }: { params: BillsSearchParams }) {
     >
       <div className="relative flex-1">
         <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-mirai-text-muted"
+          className="pointer-events-none absolute left-3 inset-y-0 my-auto size-4 text-mirai-text-muted"
           aria-hidden="true"
         />
         <input
@@ -44,7 +44,7 @@ export function BillsSearchForm({ params }: { params: BillsSearchParams }) {
           onChange={(e) => setValue(e.target.value)}
           placeholder="キーワードで探す（例: 保育、防災）"
           aria-label="報告資料をキーワードで探す"
-          className="w-full rounded-full border border-mirai-border bg-white pl-9 pr-9 py-2.5 text-sm outline-none focus-visible:border-primary-accent"
+          className="h-11 w-full rounded-full border border-mirai-border bg-white pl-10 pr-10 text-sm outline-none focus-visible:border-primary-accent"
         />
         {value !== "" && (
           <button
@@ -54,13 +54,13 @@ export function BillsSearchForm({ params }: { params: BillsSearchParams }) {
               submit("");
             }}
             aria-label="検索語を消す"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-mirai-text-muted hover:opacity-70"
+            className="absolute right-3 inset-y-0 my-auto flex size-5 items-center justify-center text-mirai-text-muted hover:opacity-70"
           >
             <X className="size-4" aria-hidden="true" />
           </button>
         )}
       </div>
-      <Button type="submit" className="rounded-full px-5">
+      <Button type="submit" className="h-11 shrink-0 rounded-full px-6">
         検索
       </Button>
     </form>

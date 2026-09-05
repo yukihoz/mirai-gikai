@@ -291,9 +291,7 @@ export async function searchBills(params: {
 }
 
 /** カテゴリごとの公開件数。チップに出す数字に使う */
-export async function countPublishedBillsByTag(
-  difficultyLevel: DifficultyLevelEnum
-): Promise<Map<string, number>> {
+export async function countPublishedBillsByTag(): Promise<Map<string, number>> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("bills_tags")

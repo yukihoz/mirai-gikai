@@ -12,10 +12,19 @@ export function BillDisclaimer() {
         <h3 className="text-sm font-bold text-primary-accent">
           ほづみゆうきについて
         </h3>
-        <p className="text-[15px] leading-[28px] text-black">
-          東京都中央区議会議員。妻と娘2人の4人家族。
-          文部科学省、子育て系NPOのシステム&政策提言担当を経て現職へ。「データ分析に基づき子どもにも大人にもやさしい中央区」を目指して区議選に完全無所属で挑戦し当選。
-        </p>
+        <div className="flex items-start gap-4">
+          <Image
+            src="/img/hozumi-profile.png"
+            alt="ほづみゆうき"
+            width={96}
+            height={96}
+            className="size-20 shrink-0 rounded-full sm:size-24"
+          />
+          <p className="text-[15px] leading-[28px] text-black">
+            東京都中央区議会議員。妻と娘2人の4人家族。
+            文部科学省、子育て系NPOのシステム&政策提言担当を経て現職へ。「データ分析に基づき子どもにも大人にもやさしい中央区」を目指して区議選に完全無所属で挑戦し当選。
+          </p>
+        </div>
         <div className="flex flex-wrap gap-3 items-center">
           {Object.entries(HOZUMI_SOCIAL_LINKS).map(([key, sns]) => (
             <a

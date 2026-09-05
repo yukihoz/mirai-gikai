@@ -2,8 +2,8 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
-import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
 import { BillStatusBadge } from "./bill-status-badge";
+import { BillTag } from "./bill-tag";
 import { DynamicBillThumbnail } from "./dynamic-bill-thumbnail";
 
 interface CompactBillCardProps {
@@ -30,12 +30,6 @@ export function CompactBillCard({ bill, className }: CompactBillCardProps) {
         <div className="flex-1 p-4 flex flex-col gap-2">
           <h3 className="font-bold text-[15px] leading-[1.6] line-clamp-2">
             {displayTitle}
-            {bill.is_review_completed && (
-              <>
-                {" "}
-                <ReviewCompleteBadge size={14} top="1px" />
-              </>
-            )}
           </h3>
           <div className="flex items-center gap-3">
             <BillStatusBadge status={bill.status} className="w-fit" />
@@ -48,6 +42,15 @@ export function CompactBillCard({ bill, className }: CompactBillCardProps) {
               </span>
             )}
           </div>
+
+          {/* カテゴリ。何の話題かが件名だけでは分かりにくいので添える */}
+          {bill.tags !== undefined && bill.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {bill.tags.map((tag) => (
+                <BillTag key={tag.id} tag={tag} />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* サムネイル画像 */}

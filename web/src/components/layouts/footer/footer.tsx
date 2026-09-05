@@ -32,11 +32,7 @@ function FooterLogoSection() {
     <div className="flex flex-col items-center text-center mb-9">
       <Link href={routes.home()} aria-label={`${env.siteTitle} トップページ`}>
         {/* biome-ignore lint/performance/noImgElement: ロゴはCSSで高さを決めて横幅を自動にしている。next/image は寸法指定を要求し、Vercelの画像最適化にも乗るため、全ページに出るロゴでは割に合わない */}
-        <img
-          src="/img/logo.png"
-          alt={env.siteTitle}
-          className="h-16 w-auto opacity-70 transition-opacity hover:opacity-100"
-        />
+        <img src="/img/logo.png" alt={env.siteTitle} className="h-16 w-auto" />
       </Link>
     </div>
   );
