@@ -19,6 +19,10 @@ export const primaryLinks: FooterLink[] = [
     href: routes.home(),
   },
   {
+    label: "委員会の記録",
+    href: routes.meetings(),
+  },
+  {
     label: "みらい議会とは",
     href: EXTERNAL_LINKS.ABOUT_NOTE,
     external: true,

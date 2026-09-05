@@ -7,7 +7,7 @@ import {
 } from "../repositories/bill-repository";
 
 /** リポジトリが返す行。bill_contents は inner join で必ず1件付く */
-type BillRow = {
+export type BillRow = {
   id: string;
   bill_contents: unknown;
   [key: string]: unknown;

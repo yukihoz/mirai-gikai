@@ -3,6 +3,8 @@ import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/type
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
+import { MeetingDayLinkCard } from "@/features/meetings/server/components/meeting-day-link-card";
+import { getMeetingDaySummary } from "@/features/meetings/server/loaders/get-meeting-days";
 import { BillTopicsPreviewSection } from "@/features/user-topic-analysis/server/components/bill-topics-preview-section";
 import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/loaders/get-public-topic-analysis";
 import { BillDetailClient } from "../../../client/components/bill-detail/bill-detail-client";
@@ -42,6 +44,12 @@ export async function BillDetailLayout({
     getChuoShiryo(bill.id),
     getChuoDiscussions(bill.id),
   ]);
+
+  // 会議のまとめは資料の日付から引くので、資料が取れてからになる
+  const meetingDay =
+    chuoShiryo === null
+      ? null
+      : await getMeetingDaySummary(chuoShiryo.meetingDate);
 
   return (
     <div className="container mx-auto pb-8 max-w-4xl">
@@ -115,6 +123,13 @@ export async function BillDetailLayout({
       </BillDetailClient>
 
       <Container>
+        {/* 同じ日に何が報告されたかへの導線 */}
+        {meetingDay !== null && (
+          <div className="my-8">
+            <MeetingDayLinkCard day={meetingDay} />
+          </div>
+        )}
+
         {/* 法案のトピック一覧（AIインタビュー意見の整理） */}
         <div className="my-8">
           <BillTopicsPreviewSection
