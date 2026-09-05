@@ -16,7 +16,19 @@ import { findPublishedMeetingBillRows } from "../repositories/meeting-repository
  * 開催日そのものは持っていないので、資料の無い日はページを作らない。
  */
 export async function getMeetingDay(date: string): Promise<MeetingDay | null> {
-  const difficultyLevel = await getDifficultyLevel();
+  return getMeetingDayAt(date, await getDifficultyLevel());
+}
+
+/**
+ * 説明の詳しさを指定して引く。
+ *
+ * OGP画像のように、見る人のCookieに左右されてはいけないところで使う。
+ * 同じURLをSNSに貼ったのに人によって違う画像が出る、という状態を避ける。
+ */
+export async function getMeetingDayAt(
+  date: string,
+  difficultyLevel: DifficultyLevelEnum
+): Promise<MeetingDay | null> {
   return _getCachedMeetingDay(date, difficultyLevel);
 }
 
