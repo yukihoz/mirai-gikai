@@ -20,7 +20,7 @@ export function ChuoShiryoSource({ shiryo, title }: ChuoShiryoSourceProps) {
   return (
     <section className="rounded-md border border-mirai-border-source bg-mirai-surface-source px-4 py-6">
       <p className="text-sm leading-relaxed mb-4">
-        この報告資料の全文は、中央区議会のウェブサイトで読めます。
+        報告資料は中央区議会のWebサイトで読めます。
       </p>
 
       <a
@@ -30,7 +30,10 @@ export function ChuoShiryoSource({ shiryo, title }: ChuoShiryoSourceProps) {
         className="inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-[3px] hover:opacity-70"
       >
         「{title}」の全文を読む（PDF）
-        <ExternalLink className="size-3.5 shrink-0" aria-hidden="true" />
+        <ExternalLink
+          className="inline size-3.5 shrink-0 align-[-0.1em]"
+          aria-hidden="true"
+        />
       </a>
 
       <p className="mt-4 text-xs leading-relaxed text-mirai-text-muted">

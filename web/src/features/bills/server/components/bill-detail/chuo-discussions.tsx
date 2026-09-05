@@ -22,8 +22,6 @@ export function ChuoDiscussions({ discussions, shiryo }: ChuoDiscussionsProps) {
   if (discussions.length === 0) return null;
 
   const askers = new Set(discussions.flatMap((d) => d.questioners));
-  const shiryoLabel =
-    shiryo.shiryoNumber === null ? "この資料" : `資料${shiryo.shiryoNumber}`;
   const rail = getMeetingBodyColor(shiryo.committee).rail;
 
   return (
@@ -38,10 +36,9 @@ export function ChuoDiscussions({ discussions, shiryo }: ChuoDiscussionsProps) {
       </div>
 
       <p className="rounded-md bg-mirai-surface-warm px-4 py-3 mb-3 text-sm leading-relaxed">
-        この委員会では、複数の報告に対する質疑がまとめて行われました。ここでは
-        {shiryoLabel}に関する部分だけを抜き出しています。
+        この報告資料に対する委員会での質疑の概要は下記のとおりです
         （AIにより議事録から抜粋しています。誤りがある可能性がありますので
-        発言内容の詳細は正式な議事録をご確認ください。）
+        発言内容の詳細は正式な議事録をご確認ください）。
       </p>
 
       <div className="space-y-3">
@@ -80,7 +77,7 @@ export function ChuoDiscussions({ discussions, shiryo }: ChuoDiscussionsProps) {
       {shiryo.minutesUrl !== null && (
         <div className="mt-3 rounded-md border border-mirai-border-source bg-mirai-surface-source px-4 py-6">
           <p className="text-sm leading-relaxed mb-4">
-            この委員会の議事録の全文は、中央区議会のウェブサイトで読めます。
+            議事録は中央区議会のWebサイトで読めます。
           </p>
 
           <a

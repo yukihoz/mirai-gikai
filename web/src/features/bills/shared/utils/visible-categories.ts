@@ -1,10 +1,14 @@
 /**
  * 折りたたまずに見せるチップの数。
  *
- * 画面幅にもよるが、おおよそ5行に収まる数。カテゴリは今後増えるので、
- * 全部並べると検索結果が画面の下へ押し出される。
+ * 「すべて」を含めて5行に収める。カテゴリ名は6〜10文字あり、狭い画面では
+ * 1行に1〜2個しか並ばない。同じ数を出すと、スマホでは検索結果が
+ * 画面の下へ押し出されてしまう。
  */
 export const VISIBLE_CHIPS = 15;
+
+/** 狭い画面で折りたたまずに見せる数 */
+export const VISIBLE_CHIPS_NARROW = 7;
 
 type Category = { id: string; label: string; count: number };
 
@@ -17,11 +21,12 @@ type Category = { id: string; label: string; count: number };
 export function visibleCategories<T extends Category>(
   categories: T[],
   selectedId: string | null,
-  expanded: boolean
+  expanded: boolean,
+  limit: number = VISIBLE_CHIPS
 ): T[] {
-  if (expanded || categories.length <= VISIBLE_CHIPS) return categories;
+  if (expanded || categories.length <= limit) return categories;
 
-  const head = categories.slice(0, VISIBLE_CHIPS);
+  const head = categories.slice(0, limit);
   if (selectedId === null) return head;
   if (head.some((c) => c.id === selectedId)) return head;
 
