@@ -4,6 +4,7 @@ import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
 import { BillStatusBadge } from "./bill-status-badge";
 import { BillTag } from "./bill-tag";
+import { toShortMeetingBody } from "../../../shared/utils/short-meeting-body";
 import { DynamicBillThumbnail } from "./dynamic-bill-thumbnail";
 
 interface CompactBillCardProps {
@@ -17,7 +18,6 @@ interface CompactBillCardProps {
  */
 export function CompactBillCard({ bill, className }: CompactBillCardProps) {
   const displayTitle = bill.bill_content?.title || bill.name;
-  const statusLabel = bill.status === "enacted" ? "成立" : "提出";
   // 提出日が無い議案は公開日で代用する
   const billDate = bill.submitted_date ?? bill.published_at;
 
@@ -34,11 +34,11 @@ export function CompactBillCard({ bill, className }: CompactBillCardProps) {
           <div className="flex items-center gap-3">
             <BillStatusBadge status={bill.status} className="w-fit" />
             <span className="inline-flex items-center border border-gray-200 px-1.5 py-0.5 rounded-[4px] bg-gray-50 text-[10px] text-gray-600">
-              {bill.meeting_body}
+              {toShortMeetingBody(bill.meeting_body)}
             </span>
             {billDate !== null && (
               <span className="text-xs text-muted-foreground">
-                {formatDateWithDots(billDate)} {statusLabel}
+                {formatDateWithDots(billDate)}
               </span>
             )}
           </div>
