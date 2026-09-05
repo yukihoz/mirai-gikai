@@ -11,10 +11,13 @@ const notoSansJP = Noto_Sans_JP({
   weight: ["400", "500", "700"],
 });
 
+// 使っているのは既定の太さと font-semibold の2つだけ。semibold(600) は
+// もともと読み込んでおらず 700 で代替されている。500/800/900 はどこからも
+// 参照されていないので落とす
 const lexendGiga = Lexend_Giga({
   variable: "--font-lexend-giga",
   subsets: ["latin"],
-  weight: ["400", "500", "700", "800", "900"],
+  weight: ["400", "700"],
 });
 
 // トピックの代表意見など、引用文を明朝体で表示するために使用

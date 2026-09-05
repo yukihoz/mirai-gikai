@@ -2,8 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { DifficultySelector } from "@/features/bill-difficulty/client/components/difficulty-selector";
-import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import {
+  DEFAULT_DIFFICULTY,
+  type DifficultyLevelEnum,
+} from "@/features/bill-difficulty/shared/types";
+import { parseDifficultyFromCookieString } from "@/features/bill-difficulty/shared/utils/parse-difficulty-from-cookie-string";
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
 import { sendDifficultyStateEvent } from "@/lib/analytics/preference-state-events";
 import { useOnPageView } from "@/lib/analytics/use-on-page-view";
@@ -12,11 +17,8 @@ import { env } from "@/lib/env";
 import { RubyToggle } from "@/lib/rubyful";
 import { HamburgerMenu } from "./hamburger-menu";
 
-interface HeaderClientProps {
-  difficultyLevel: DifficultyLevelEnum;
-}
-
-export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
+export function HeaderClient() {
+  const difficultyLevel = useDifficultyFromCookie();
   const pathname = usePathname();
   const showDifficultySelector = isMainPage(pathname);
   const showInterviewActions = isInterviewPage(pathname);
@@ -25,7 +27,11 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
   // ここで難易度設定をページ表示のたびにGAへ送る
   // (DifficultySelectorはmarkdown埋め込み等で複数箇所に
   //  同時マウントされ得るため、送信元には適さない)
-  useOnPageView(() => sendDifficultyStateEvent(difficultyLevel));
+  // 送るときに Cookie を読み直す。state 経由だと、Cookie を読む effect より
+  // 先にこの effect が走るぶん、初回は必ず既定値が送られてしまう
+  useOnPageView(() =>
+    sendDifficultyStateEvent(parseDifficultyFromCookieString(document.cookie))
+  );
 
   return (
     <header className="px-3 fixed top-4 left-0 right-0 z-40 max-w-[1440px] mx-auto">
@@ -56,7 +62,12 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
             aria-label="補助ナビゲーション"
           >
             {showDifficultySelector && (
-              <DifficultySelector currentLevel={difficultyLevel} />
+              // Cookie を読むのはマウント後なので、初期値が変わったら
+              // スイッチを作り直して現在の設定に合わせる
+              <DifficultySelector
+                key={difficultyLevel}
+                currentLevel={difficultyLevel}
+              />
             )}
             {showInterviewActions && <InterviewHeaderActions />}
             <div className="hidden pc:block ml-2">
@@ -70,4 +81,21 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
       </div>
     </header>
   );
+}
+
+/**
+ * 現在の難易度設定をブラウザの Cookie から読む。
+ *
+ * サーバーでは Cookie を見ないので、最初の描画は既定値になる。
+ * 「難しい」を選んでいる人には、マウント後にスイッチが切り替わって見える。
+ * 本文の詳しさはページ側がサーバーで決めているため、表示内容はずれない。
+ */
+function useDifficultyFromCookie(): DifficultyLevelEnum {
+  const [level, setLevel] = useState<DifficultyLevelEnum>(DEFAULT_DIFFICULTY);
+
+  useEffect(() => {
+    setLevel(parseDifficultyFromCookieString(document.cookie));
+  }, []);
+
+  return level;
 }

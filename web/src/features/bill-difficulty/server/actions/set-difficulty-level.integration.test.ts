@@ -41,11 +41,12 @@ describe("setDifficultyLevel 統合テスト", () => {
     );
   });
 
-  it("Cookie設定オプションにhttpOnly・path・maxAgeが含まれる", async () => {
+  it("Cookie設定オプションにpath・maxAgeが含まれ、httpOnlyは付かない", async () => {
     await setDifficultyLevelCore("normal", deps);
 
     const options = mockSet.mock.calls[0][2];
-    expect(options.httpOnly).toBe(true);
+    // ヘッダーの切り替えスイッチがブラウザ側で初期値を読むため付けない
+    expect(options.httpOnly).toBe(false);
     expect(options.path).toBe("/");
     expect(options.maxAge).toBe(60 * 60 * 24 * 365);
     expect(options.sameSite).toBe("lax");

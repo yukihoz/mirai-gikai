@@ -1269,12 +1269,10 @@ export function DynamicBillThumbnail({
 
   const innerContent =
     size === "large" ? (
-      <div
-        className="z-10 bg-white/85 backdrop-blur-md px-8 py-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-white/60 max-w-[92%] flex flex-col gap-3 relative"
-        style={{
-          fontFamily: 'var(--font-line-seed), "LINE Seed JP", sans-serif',
-        }}
-      >
+      /* フォントは本文と同じものに任せる。ここだけのために外部CDNから
+         LINE Seed JP を読んでいたが、globals.css の @import は描画を
+         止めるため、全ページの初回描画がその往復ぶん遅れていた */
+      <div className="z-10 bg-white/85 backdrop-blur-md px-8 py-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-white/60 max-w-[92%] flex flex-col gap-3 relative">
         {meetingBody && (
           <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[15px] px-3.5 py-1 rounded-full font-bold whitespace-nowrap shadow-md">
             {meetingBody}
