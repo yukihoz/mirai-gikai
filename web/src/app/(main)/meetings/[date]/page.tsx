@@ -25,8 +25,8 @@ export async function generateMetadata({
   if (day === null) return {};
 
   const committees = formatMeetingCommittees(day.committees);
-  const title = `${formatMeetingDate(date)}の中央区議会 | ${env.siteTitle}`;
-  const description = `${committees}で報告された${day.billCount}件の資料をまとめています。`;
+  const title = `${formatMeetingDate(date)}の${committees} | ${env.siteTitle}`;
+  const description = `この日の委員会で報告された${day.billCount}件の資料をまとめています。`;
 
   return {
     title,

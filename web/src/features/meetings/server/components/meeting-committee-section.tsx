@@ -9,26 +9,40 @@ import type { MeetingCommittee } from "../../shared/types";
 
 interface MeetingCommitteeSectionProps {
   committee: MeetingCommittee;
+  /**
+   * 委員会名の見出しを出すか。
+   *
+   * 同じ日に複数の委員会が開かれたときだけ要る。1つしか無い日は
+   * ページの見出しが「2026年2月6日（金）の企画総務委員会」なので、
+   * 名前をもう一度出しても読む手がかりにならない。
+   */
+  showHeading: boolean;
 }
 
 /**
  * 会議まとめの、委員会1つぶん。
  *
- * 一次情報への導線は資料の一覧より先に置く。区議会のサイトで
- * その日の次第と会議録を見てから、個々の資料の解説に入れる並びにする。
+ * 一次情報への導線は資料の一覧のあとに置く。この日に何が報告されたかを
+ * 見てから、区議会のサイトで次第と議事録にあたる、という順で読める。
  */
 export function MeetingCommitteeSection({
   committee,
+  showHeading,
 }: MeetingCommitteeSectionProps) {
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
+      {showHeading && (
         <h2 className="text-xl font-bold text-mirai-text">
           {committee.committee}
         </h2>
-        <p className="text-sm text-mirai-text-muted">
-          報告資料{committee.bills.length}件
-        </p>
+      )}
+
+      <div className="flex flex-col gap-3">
+        {committee.bills.map((bill) => (
+          <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
+            <CompactBillCard bill={bill} showMeta={false} />
+          </Link>
+        ))}
       </div>
 
       <div className="rounded-md border border-mirai-border-source bg-mirai-surface-source px-4 py-5">
@@ -53,14 +67,6 @@ export function MeetingCommitteeSection({
             議事録は会議から数か月あとに公開されます。公開されしだい、ここからも読めるようになります。
           </p>
         )}
-      </div>
-
-      <div className="flex flex-col gap-3">
-        {committee.bills.map((bill) => (
-          <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-            <CompactBillCard bill={bill} showMeta={false} />
-          </Link>
-        ))}
       </div>
     </section>
   );

@@ -37,19 +37,16 @@ export function MeetingDayDetail({ day, adjacent }: MeetingDayDetailProps) {
         </Link>
 
         <h1 className="text-2xl font-bold leading-snug text-mirai-text">
-          {formatMeetingDate(day.date)}の中央区議会
+          {formatMeetingDate(day.date)}の{committeeNames}
         </h1>
-
-        <p className="text-sm leading-relaxed text-mirai-text-secondary">
-          この日は{committeeNames}が開かれ、報告資料が{day.billCount}
-          件出されました。
-        </p>
       </header>
 
       {day.committees.map((committee) => (
         <MeetingCommitteeSection
           key={committee.committee}
           committee={committee}
+          /* 委員会が1つなら見出しに名前が出ているので、繰り返さない */
+          showHeading={day.committees.length > 1}
         />
       ))}
 
