@@ -9,6 +9,13 @@ import { DynamicBillThumbnail } from "./dynamic-bill-thumbnail";
 
 interface CompactBillCardProps {
   bill: BillWithContent;
+  /**
+   * 委員会名・日付・ステータスを出すか。
+   *
+   * 同じ会議の資料だけを並べる画面では、どの行にも同じ委員会名と日付が
+   * 並んで意味を持たないので隠す。
+   */
+  showMeta?: boolean;
   className?: string;
 }
 
@@ -16,7 +23,11 @@ interface CompactBillCardProps {
  * コンパクトな水平レイアウトの法案カード
  * 過去区議会セクションや過去区議会議案一覧ページで使用
  */
-export function CompactBillCard({ bill, className }: CompactBillCardProps) {
+export function CompactBillCard({
+  bill,
+  showMeta = true,
+  className,
+}: CompactBillCardProps) {
   const displayTitle = bill.bill_content?.title || bill.name;
   // 提出日が無い議案は公開日で代用する
   const billDate = bill.submitted_date ?? bill.published_at;
@@ -31,17 +42,19 @@ export function CompactBillCard({ bill, className }: CompactBillCardProps) {
           <h3 className="font-bold text-[15px] leading-[1.6] line-clamp-2">
             {displayTitle}
           </h3>
-          <div className="flex items-center gap-3">
-            <BillStatusBadge status={bill.status} className="w-fit" />
-            <span className="inline-flex items-center border border-gray-200 px-1.5 py-0.5 rounded-[4px] bg-gray-50 text-[10px] text-gray-600">
-              {toShortMeetingBody(bill.meeting_body)}
-            </span>
-            {billDate !== null && (
-              <span className="text-xs text-muted-foreground">
-                {formatDateWithDots(billDate)}
+          {showMeta && (
+            <div className="flex items-center gap-3">
+              <BillStatusBadge status={bill.status} className="w-fit" />
+              <span className="inline-flex items-center border border-gray-200 px-1.5 py-0.5 rounded-[4px] bg-gray-50 text-[10px] text-gray-600">
+                {toShortMeetingBody(bill.meeting_body)}
               </span>
-            )}
-          </div>
+              {billDate !== null && (
+                <span className="text-xs text-muted-foreground">
+                  {formatDateWithDots(billDate)}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* カテゴリ。何の話題かが件名だけでは分かりにくいので添える */}
           {bill.tags !== undefined && bill.tags.length > 0 && (
