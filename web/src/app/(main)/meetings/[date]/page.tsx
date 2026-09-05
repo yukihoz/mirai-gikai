@@ -10,6 +10,7 @@ import {
   parseMeetingDateParam,
 } from "@/features/meetings/shared/utils/meeting-date";
 import { env } from "@/lib/env";
+import { routes } from "@/lib/routes";
 
 type MeetingDayPageProps = {
   params: Promise<{ date: string }>;
@@ -27,12 +28,31 @@ export async function generateMetadata({
   const committees = formatMeetingCommittees(day.committees);
   const title = `${formatMeetingDate(date)}の${committees} | ${env.siteTitle}`;
   const description = `この日の委員会で報告された${day.billCount}件の資料をまとめています。`;
+  const shareImageUrl = new URL(
+    `/api/og/meeting?date=${date}`,
+    env.webUrl
+  ).toString();
 
   return {
     title,
     description,
-    openGraph: { title, description },
-    twitter: { title, description },
+    alternates: {
+      canonical: routes.meetingDay(date),
+    },
+    // openGraph と twitter は親の指定を引き継がず丸ごと置き換わる。
+    // 画像を書かないと共有時に画像の無い小さなカードになる
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      images: [{ url: shareImageUrl, alt: `${title} のOGPイメージ` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [shareImageUrl],
+    },
   };
 }
 
