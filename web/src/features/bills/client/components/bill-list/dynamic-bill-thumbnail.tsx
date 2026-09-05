@@ -1,4 +1,3 @@
-import React from "react";
 import { getMeetingBodyColor } from "@/features/bills/shared/utils/meeting-body-colors";
 
 // 簡単な文字列表現からシード（数値）を生成するハッシュ関数

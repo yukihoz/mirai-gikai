@@ -19,7 +19,7 @@ export function FeaturedBillSection({ bills }: FeaturedBillSectionProps) {
       {/* セクションヘッダー */}
       <div className="flex flex-col gap-1.5">
         <h2 className="text-[22px] font-bold text-mirai-text leading-[1.48]">
-          注目の報告資料🔥
+          注目の報告資料
         </h2>
         <p className="text-xs font-medium text-mirai-text-secondary leading-[1.67]">
           {env.assemblyName}に提出された注目報告資料

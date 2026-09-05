@@ -2,9 +2,13 @@ import { MessageCircleQuestion } from "lucide-react";
 import Image from "next/image";
 import { ManualRuby } from "@/lib/rubyful/manual-ruby";
 
+/**
+ * 本文の囲みが `[&_section]:bg-white` を当てており、子孫セレクタのほうが
+ * 詳細度で勝つ。この枠を section にすると背景が白へ戻されるので div にする。
+ */
 export function LongPressSection() {
   return (
-    <section className="relative bg-white rounded-2xl !px-3 !py-10 overflow-hidden">
+    <div className="relative border border-mirai-border bg-mirai-surface-gray rounded-2xl !px-3 !py-10 overflow-hidden">
       {/* コンテンツエリア */}
       <div className="relative h-full flex items-center justify-between px-3 gap-6">
         {/* 左側：テキストコンテンツ */}
@@ -47,6 +51,6 @@ export function LongPressSection() {
           />
         </div>
       </div>
-    </section>
+    </div>
   );
 }
