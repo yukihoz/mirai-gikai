@@ -73,15 +73,15 @@ const _getCachedBillsSearch = unstable_cache(
  * 絞り込みが壊れているように見える。
  */
 export async function getCategoryOptions(): Promise<CategoryOption[]> {
-  const difficultyLevel = await getDifficultyLevel();
-  return _getCachedCategoryOptions(difficultyLevel);
+  // 件数は記事の公開状態だけで決まる。難易度に左右されない
+  return _getCachedCategoryOptions();
 }
 
 const _getCachedCategoryOptions = unstable_cache(
-  async (difficultyLevel: DifficultyLevelEnum): Promise<CategoryOption[]> => {
+  async (): Promise<CategoryOption[]> => {
     const [tags, counts] = await Promise.all([
       findAllTags(),
-      countPublishedBillsByTag(difficultyLevel),
+      countPublishedBillsByTag(),
     ]);
 
     return tags

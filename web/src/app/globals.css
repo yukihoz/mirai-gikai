@@ -75,6 +75,10 @@
   --color-mirai-surface-muted: #e5e5ea;
   --color-mirai-surface-tag: #e8e8e8;
   --color-mirai-surface-warm: #eae6dd;
+  /* 一次情報への導線に使う淡い黄色。primary(#f6db5e)を薄くしたもの */
+  --color-mirai-surface-source: #fdf8e4;
+  /* 上の面に載せる枠線。primary-accent(#dcae3a)寄りの落ち着いた濃さ */
+  --color-mirai-border-source: #d8b95c;
   --color-mirai-surface-gray: #f6f6f6;
 
   /* Border */
