@@ -4,7 +4,8 @@ import { InterviewLandingSection } from "@/features/interview-config/client/comp
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
 import { MeetingDayLinkCard } from "@/features/meetings/server/components/meeting-day-link-card";
-import { getMeetingDaySummary } from "@/features/meetings/server/loaders/get-meeting-days";
+import { getMeetingDays } from "@/features/meetings/server/loaders/get-meeting-days";
+import { findMeetingDay } from "@/features/meetings/shared/utils/find-meeting-day";
 import { BillTopicsPreviewSection } from "@/features/user-topic-analysis/server/components/bill-topics-preview-section";
 import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/loaders/get-public-topic-analysis";
 import { BillDetailClient } from "../../../client/components/bill-detail/bill-detail-client";
@@ -31,25 +32,29 @@ export async function BillDetailLayout({
   currentDifficulty,
 }: BillDetailLayoutProps) {
   const showMiraiStance = bill.status === "preparing" || bill.mirai_stance;
+  // 会議の一覧は記事に依らないので、資料の取得を待たずに一緒に走らせる。
+  // 資料の無い記事（AIインタビュー等）でも引くことになるが、10分キャッシュに
+  // 載るので実質の追加コストは無い
   const [
     interviewConfig,
     publicReportsResult,
     topicAnalysis,
     chuoShiryo,
     chuoDiscussions,
+    meetingDays,
   ] = await Promise.all([
     getInterviewConfig(bill.id),
     getPublicReportsByBillId(bill.id),
     getPublicTopicAnalysis(bill.id),
     getChuoShiryo(bill.id),
     getChuoDiscussions(bill.id),
+    getMeetingDays(),
   ]);
 
-  // 会議のまとめは資料の日付から引くので、資料が取れてからになる
   const meetingDay =
     chuoShiryo === null
       ? null
-      : await getMeetingDaySummary(chuoShiryo.meetingDate);
+      : findMeetingDay(meetingDays, chuoShiryo.meetingDate);
 
   return (
     <div className="container mx-auto pb-8 max-w-4xl">

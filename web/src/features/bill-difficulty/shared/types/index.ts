@@ -27,8 +27,14 @@ export const VALID_DIFFICULTY_LEVELS: DifficultyLevelEnum[] = [
 ];
 
 // Cookie設定オプション
+/**
+ * 難易度Cookie専用の設定。ほかのCookieに流用しないこと。
+ * `httpOnly` を外しているのは、この値が表示の好みでしかないため。
+ */
 export const DIFFICULTY_COOKIE_OPTIONS = {
-  httpOnly: true,
+  // ヘッダーの切り替えスイッチがブラウザ側で初期値を読む。
+  // 中身は「ふつう / 難しい」の表示の好みだけで、秘匿する情報ではない
+  httpOnly: false,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,
   maxAge: 60 * 60 * 24 * 365, // 1年間
