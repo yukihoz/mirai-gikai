@@ -4,7 +4,9 @@ import {
   getPublicTopicAnalysis as fetchPublicTopicAnalysis,
   type PublicTopicAnalysis,
 } from "@mirai-gikai/topic-analysis-core/public-server";
+import { unstable_cache } from "next/cache";
 import { cache } from "react";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 
 /**
  * 議案の公開中トピック分析を、§8 の表示時フィルタ適用後の表示用データで取得する。
@@ -17,5 +19,19 @@ import { cache } from "react";
  */
 export const getPublicTopicAnalysis = cache(
   (billId: string): Promise<PublicTopicAnalysis | null> =>
-    fetchPublicTopicAnalysis(billId)
+    _getCachedPublicTopicAnalysis(billId)
+);
+
+/**
+ * リクエストをまたいだキャッシュ。
+ *
+ * React の cache() は同じリクエストの中でしか効かないので、記事を開くたびに
+ * DBへ問い合わせが飛んでいた。記事ページのほかの取得（議案・資料・質疑）は
+ * どれも10分キャッシュを持っているので、ここも揃える。
+ */
+const _getCachedPublicTopicAnalysis = unstable_cache(
+  (billId: string): Promise<PublicTopicAnalysis | null> =>
+    fetchPublicTopicAnalysis(billId),
+  ["public-topic-analysis-v1"],
+  { revalidate: 600, tags: [CACHE_TAGS.BILLS] }
 );

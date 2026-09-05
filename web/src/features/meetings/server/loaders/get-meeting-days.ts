@@ -8,10 +8,7 @@ import type {
   AdjacentMeetingDays,
   MeetingDaySummary,
 } from "../../shared/types";
-import {
-  findAdjacentMeetingDays,
-  findMeetingDay,
-} from "../../shared/utils/find-meeting-day";
+import { findAdjacentMeetingDays } from "../../shared/utils/find-meeting-day";
 import {
   groupByMonth,
   type MeetingMonth,
@@ -34,13 +31,6 @@ const _getCachedMeetingDays = unstable_cache(
 /** 一覧の表示用に、月で束ねたもの */
 export async function getMeetingMonths(): Promise<MeetingMonth[]> {
   return groupByMonth(await getMeetingDays());
-}
-
-/** その日の会議1件ぶんの概要。記事から会議まとめへ誘導するのに使う */
-export async function getMeetingDaySummary(
-  date: string
-): Promise<MeetingDaySummary | null> {
-  return findMeetingDay(await getMeetingDays(), date);
 }
 
 /** 前後の会議へのナビに使う、隣り合う日 */

@@ -1,5 +1,8 @@
 "use server";
 
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache-tags";
+
 import { verifySessionOwnership } from "@/features/interview-session/server/utils/verify-session-ownership";
 import {
   findReportBySessionId,
@@ -31,6 +34,9 @@ export async function updatePublicSetting(
   try {
     const report = await findReportBySessionId(sessionId);
     await updateReportPublicSetting(report.id, isPublic, isDataReuseConsented);
+    // 記事ページの公開レポート一覧はキャッシュしているので、
+    // 公開をやめた直後に載り続けないよう取り消す
+    revalidateTag(CACHE_TAGS.BILLS);
     return { success: true };
   } catch {
     return { success: false, error: "公開設定の更新に失敗しました" };
