@@ -180,8 +180,14 @@ export async function runIngest(options: IngestOptions): Promise<IngestResult> {
 }
 
 /** 資料1件を取り込む */
-async function ingestOneShiryo(params: {
-  client: ChuoSiteClient;
+/**
+ * 資料1件を取り込む。
+ *
+ * client は PDF を取れれば足りるので、クラスそのものではなく必要な形だけ
+ * 受ける。ChuoSiteClient は private を持つためテストで差し替えられない。
+ */
+export async function ingestOneShiryo(params: {
+  client: Pick<ChuoSiteClient, "fetchPdfText">;
   generate: ObjectGenerator;
   shiryoUrl: string;
   meetingUrl: string;
@@ -201,15 +207,15 @@ async function ingestOneShiryo(params: {
     force: params.force,
   });
 
-  await saveSource({
-    source: "shiryo_pdf",
-    url: params.shiryoUrl,
-    contentHash: pdf.contentHash,
-    etag: pdf.etag,
-    lastModified: pdf.lastModified,
-  });
-
   if (!decision.regenerate) {
+    // 中身が変わっていないので、取得の記録だけ新しくしておく
+    await saveSource({
+      source: "shiryo_pdf",
+      url: params.shiryoUrl,
+      contentHash: pdf.contentHash,
+      etag: pdf.etag,
+      lastModified: pdf.lastModified,
+    });
     console.log(
       `  スキップ 資料${params.report.number}: ${params.report.title}`
     );
@@ -284,6 +290,16 @@ async function ingestOneShiryo(params: {
   } catch (error) {
     console.warn(`  資料画像を作れなかった: ${String(error)}`);
   }
+
+  // 記事ができてから取得を記録する。先に記録すると、生成が落ちた資料が
+  // 「取得済み・中身は同じ」と見なされ、次の実行で永久にスキップされる
+  await saveSource({
+    source: "shiryo_pdf",
+    url: params.shiryoUrl,
+    contentHash: pdf.contentHash,
+    etag: pdf.etag,
+    lastModified: pdf.lastModified,
+  });
 
   console.log(
     `  ${created ? "作成" : "更新"} 資料${params.report.number}: ${normal.title}`
