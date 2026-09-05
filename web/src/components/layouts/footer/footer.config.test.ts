@@ -3,6 +3,12 @@ import { routes } from "@/lib/routes";
 import { policyLinks, primaryLinks } from "./footer.config";
 
 describe("footer.config", () => {
+  it("primaryLinks に委員会の記録への内部リンクが含まれる", () => {
+    const hrefs = primaryLinks.map((link) => link.href);
+
+    expect(hrefs).toContain(routes.meetings());
+  });
+
   it("policyLinks に規約ページと開発者向けページへの内部リンクが含まれる", () => {
     const hrefs = policyLinks.map((link) => link.href);
 
@@ -14,6 +20,7 @@ describe("footer.config", () => {
   it("内部リンクには external フラグが付かない", () => {
     const internalHrefs = new Set<string>([
       routes.home(),
+      routes.meetings(),
       routes.faq(),
       routes.terms(),
       routes.privacy(),

@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ExternalTextLink } from "@/components/ui/external-text-link";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { ChuoShiryo } from "../../loaders/get-chuo-shiryo";
 
@@ -23,18 +23,9 @@ export function ChuoShiryoSource({ shiryo, title }: ChuoShiryoSourceProps) {
         報告資料は中央区議会のWebサイトで読めます。
       </p>
 
-      <a
-        href={shiryo.shiryoUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-[3px] hover:opacity-70"
-      >
+      <ExternalTextLink href={shiryo.shiryoUrl}>
         「{title}」の全文を読む（PDF）
-        <ExternalLink
-          className="inline size-3.5 shrink-0 align-[-0.1em]"
-          aria-hidden="true"
-        />
-      </a>
+      </ExternalTextLink>
 
       <p className="mt-4 text-xs leading-relaxed text-mirai-text-muted">
         {shiryo.committee}（{formatDateWithDots(shiryo.meetingDate)}）に

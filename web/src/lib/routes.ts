@@ -47,6 +47,10 @@ export const routes = {
   legacyReportChatLog: (reportId: string) =>
     `/report/${reportId}/chat-log` as const,
 
+  // ── 委員会の記録 ──────────────────────────────────
+  meetings: () => "/meetings" as const,
+  meetingDay: (date: string) => `/meetings/${date}` as const,
+
   // ── 区議会セッション ────────────────────────────────
   sessions: () => "/sessions" as const,
   kokkaiSessionBills: (slug: string) => `/kokkai/${slug}/bills` as const,
