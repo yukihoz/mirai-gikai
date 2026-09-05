@@ -15,6 +15,7 @@ import {
 } from "../../../shared/utils/category-appearance";
 import {
   VISIBLE_CHIPS,
+  VISIBLE_CHIPS_NARROW,
   visibleCategories,
 } from "../../../shared/utils/visible-categories";
 
@@ -36,8 +37,19 @@ export function CategoryChips({
 
   if (categories.length === 0) return null;
 
-  const collapsible = categories.length > VISIBLE_CHIPS;
+  const collapsible = categories.length > VISIBLE_CHIPS_NARROW;
+  // 狭い画面は1行に1〜2個しか並ばない。同じ数を出すと検索結果が
+  // 画面の下へ押し出されるので、はみ出す分をCSSで隠す
   const shown = visibleCategories(categories, params.tagId, expanded);
+  const narrow = visibleCategories(
+    categories,
+    params.tagId,
+    expanded,
+    VISIBLE_CHIPS_NARROW
+  );
+  const hiddenOnNarrow = new Set(
+    shown.filter((c) => !narrow.includes(c)).map((c) => c.id)
+  );
 
   return (
     <div className="flex flex-col gap-2">
@@ -54,6 +66,8 @@ export function CategoryChips({
             active={params.tagId === category.id}
             label={category.label}
             count={category.count}
+            // 折りたたみ中は、狭い画面でだけ隠す
+            hiddenOnNarrow={!expanded && hiddenOnNarrow.has(category.id)}
           />
         ))}
       </div>
@@ -72,7 +86,7 @@ export function CategoryChips({
             </>
           ) : (
             <>
-              カテゴリをもっと見る（残り{categories.length - VISIBLE_CHIPS}件）
+              カテゴリをもっと見る
               <ChevronDown className="size-4" aria-hidden="true" />
             </>
           )}
@@ -87,11 +101,14 @@ function Chip({
   active,
   label,
   count,
+  hiddenOnNarrow = false,
 }: {
   href: Route;
   active: boolean;
   label: string;
   count?: number;
+  /** 狭い画面でだけ隠す */
+  hiddenOnNarrow?: boolean;
 }) {
   // 「すべて」はカテゴリではないのでアイコンを付けない
   const appearance = count === undefined ? null : getCategoryAppearance(label);
@@ -107,7 +124,7 @@ function Chip({
       }
       // 押している／いないを表すので aria-current ではなく aria-pressed
       aria-pressed={active}
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors ${
+      className={`${hiddenOnNarrow ? "hidden sm:inline-flex" : "inline-flex"} items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors ${
         active
           ? "border-primary-accent bg-primary-accent/15 font-bold text-mirai-text"
           : "border-mirai-border bg-white text-mirai-text-secondary hover:bg-muted/50"
