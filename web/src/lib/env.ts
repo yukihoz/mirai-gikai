@@ -3,6 +3,7 @@
  * アプリケーション全体で使用する環境変数を一元管理
  */
 
+import { normalizeSecret } from "@mirai-gikai/shared/env/normalize-secret";
 import { requirePublicEnv } from "@mirai-gikai/shared/env/require-public-env";
 
 const vercelEnv = process.env.VERCEL_ENV;
@@ -83,7 +84,7 @@ export const env = {
   adminUrl: process.env.ADMIN_URL || "http://localhost:3001",
   supabaseUrl,
   supabasePublishableKey,
-  revalidateSecret: process.env.REVALIDATE_SECRET,
+  revalidateSecret: normalizeSecret(process.env.REVALIDATE_SECRET),
   siteTitle: process.env.NEXT_PUBLIC_SITE_TITLE || "みらい議会@中央区",
   siteShortName: process.env.NEXT_PUBLIC_SITE_SHORT_NAME || "みらい議会@中央区",
   assemblyName: process.env.NEXT_PUBLIC_ASSEMBLY_NAME || "区議会",

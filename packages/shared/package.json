@@ -123,6 +123,10 @@
     "./env/require-public-env": {
       "types": "./src/env/require-public-env.ts",
       "default": "./src/env/require-public-env.ts"
+    },
+    "./env/normalize-secret": {
+      "types": "./src/env/normalize-secret.ts",
+      "default": "./src/env/normalize-secret.ts"
     }
   },
   "dependencies": {

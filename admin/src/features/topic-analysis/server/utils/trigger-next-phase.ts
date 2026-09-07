@@ -14,7 +14,9 @@ export async function triggerNextPhase(
   billId: string
 ): Promise<void> {
   const baseUrl = env.adminUrl;
-  const secret = process.env.REVALIDATE_SECRET;
+  // env 経由で読む。process.env を直に読むと、貼り付けで入った改行が
+  // ここだけ落ちずに Bearer token が食い違う
+  const secret = env.revalidateSecret;
 
   if (!secret) {
     throw new Error(
@@ -47,7 +49,7 @@ export async function triggerNextPhase(
  * 内部フェーズAPI routeの認証を検証する
  */
 export function verifyInternalAuth(request: Request): void {
-  const secret = process.env.REVALIDATE_SECRET;
+  const secret = env.revalidateSecret;
   if (!secret) {
     throw new Error("REVALIDATE_SECRET is not configured");
   }
