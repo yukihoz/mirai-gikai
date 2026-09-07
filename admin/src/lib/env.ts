@@ -3,6 +3,7 @@
  * アプリケーション全体で使用する環境変数を一元管理
  */
 
+import { normalizeSecret } from "@mirai-gikai/shared/env/normalize-secret";
 import { requirePublicEnv } from "@mirai-gikai/shared/env/require-public-env";
 
 const vercelEnv = process.env.VERCEL_ENV;
@@ -28,7 +29,7 @@ export const env = {
   webUrl: process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3000",
   supabaseUrl,
   supabasePublishableKey,
-  revalidateSecret: process.env.REVALIDATE_SECRET,
+  revalidateSecret: normalizeSecret(process.env.REVALIDATE_SECRET),
   // トピック分析・バックフィルを実行する Cloud Run Job のトリガ設定
   gcp: {
     projectId: process.env.GCP_PROJECT_ID,
