@@ -30,7 +30,7 @@ jobs:
       # db push で数時間ハングした）
       - name: Supabase db push
         run: |
-          supabase db push --include-all --yes
+          supabase db push --include-all --yes --remote
           supabase config push --yes
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
