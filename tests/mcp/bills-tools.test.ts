@@ -211,6 +211,7 @@ describe("MCP bills tools", () => {
 
     it("article_kind を省略すると standard、指定すると ai_generated で作成される", async () => {
       const base = {
+        meeting_body: "定例会",
         status: "introduced",
         status_note: null,
         is_featured: false,

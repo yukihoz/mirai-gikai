@@ -46,6 +46,7 @@ describe("RLS default deny（全テーブル共通）", () => {
     it("bills: INSERT が拒否される", async () => {
       const { error } = await anon.from("bills").insert({
         name: "不正な挿入テスト",
+        meeting_body: "定例会",
         status: "introduced",
         publish_status: "draft",
       });
