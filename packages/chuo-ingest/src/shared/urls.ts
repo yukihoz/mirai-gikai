@@ -9,9 +9,12 @@
 
 export const CHUO_KUGIKAI_ORIGIN = "https://www.kugikai.city.chuo.lg.jp";
 
+/** 議会カレンダー本体のパス。月の指定だけがクエリで変わる */
+const CALENDAR_INDEX_PATH = "/calendar/index.html";
+
 /** 議会カレンダー（月別）のURL */
 export function buildCalendarUrl(year: number, month: number): string {
-  const url = new URL("/calendar/index.html", CHUO_KUGIKAI_ORIGIN);
+  const url = new URL(CALENDAR_INDEX_PATH, CHUO_KUGIKAI_ORIGIN);
   url.searchParams.set("year", String(year));
   url.searchParams.set("month", String(month));
   // サイト側のフォームが送る空パラメータ。付けない場合と結果は同じだが、
@@ -23,6 +26,25 @@ export function buildCalendarUrl(year: number, month: number): string {
 /** カレンダーページから見た相対URL（例: r08/fukushi_20260210.html）を絶対URLにする */
 export function buildCommitteePageUrl(href: string): string {
   return new URL(href, `${CHUO_KUGIKAI_ORIGIN}/calendar/`).href;
+}
+
+/**
+ * 委員会の開会日程ページとして取り込めるURLかを判定する。
+ *
+ * URL指定の取り込みで、資料PDFやカレンダーそのものを貼り間違えたことに
+ * 取得しにいく前に気づくために使う。
+ *
+ * **会議名や日付の付き方までは見ない。** `kodomokyoiku_20260907.html` という
+ * 形はサイト側の都合で変わりうるので、ここで縛ると区が付け直しただけで
+ * 取り込めなくなる。そのページが本当に開会日程かは、読んでみて
+ * `parseCommitteePage` が決める。
+ */
+export function isCommitteePageUrl(url: string): boolean {
+  if (!isCrawlableUrl(url)) return false;
+
+  const { pathname } = new URL(url);
+  if (!pathname.startsWith("/calendar/")) return false;
+  return pathname !== CALENDAR_INDEX_PATH;
 }
 
 /**
@@ -74,5 +96,5 @@ export function isCrawlableUrl(url: string): boolean {
  * 1ページに1リクエストで、生成されるURLも月数ぶんしかない。
  */
 function isCalendarPath(pathname: string): boolean {
-  return pathname === "/calendar/index.html";
+  return pathname === CALENDAR_INDEX_PATH;
 }

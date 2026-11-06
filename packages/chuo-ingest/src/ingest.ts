@@ -35,6 +35,7 @@ import {
 import {
   buildCalendarUrl,
   buildCommitteePageUrl,
+  isCommitteePageUrl,
   resolveUrl,
 } from "./shared/urls";
 
@@ -51,15 +52,37 @@ const EXCLUDED_COMMITTEES = new Set([
   "決算特別委員会",
 ]);
 
+/** 何を取り込むかの決め方。カレンダーから探すか、ページを名指しするか */
+export type IngestTarget =
+  | {
+      kind: "calendar";
+      /** 対象の年 */
+      year: number;
+      /** 対象の月 */
+      month: number;
+      /** この日以降の会議だけ（YYYY-MM-DD） */
+      from?: string;
+      /** この日までの会議だけ（YYYY-MM-DD） */
+      to?: string;
+    }
+  | {
+      kind: "url";
+      /**
+       * 委員会の開会日程ページのURL。
+       *
+       * カレンダーを見ず、このページだけを取り込む。会議のあとに資料が
+       * 足されたときに、その分だけを足す使い方を想定している。中身が
+       * 変わっていない資料は元から作り直さないので、増えるのは差分だけ。
+       *
+       * 人が名指しした対象なので、カレンダー経由では外す会議体
+       * （`EXCLUDED_COMMITTEES`）でもそのまま取り込む。
+       */
+      url: string;
+    };
+
 export type IngestOptions = {
-  /** 対象の年 */
-  year: number;
-  /** 対象の月 */
-  month: number;
-  /** この日以降の会議だけ（YYYY-MM-DD） */
-  from?: string;
-  /** この日までの会議だけ（YYYY-MM-DD） */
-  to?: string;
+  /** 取り込む対象 */
+  target: IngestTarget;
   /** 内容が変わっていなくても作り直す */
   force?: boolean;
   /** 取り込む資料の上限。試すときに使う */
@@ -90,9 +113,9 @@ export async function runIngest(options: IngestOptions): Promise<IngestResult> {
   const generate = options.generate ?? gateway?.generate;
   if (generate === undefined) throw new Error("生成器がない");
 
-  const meetings = await collectMeetings(client, options);
+  const meetings = await collectMeetings(client, options.target);
   console.log(`対象の委員会: ${meetings.length}件`);
-  for (const m of meetings) console.log(`  ${m.date} ${m.committee}`);
+  for (const m of meetings) console.log(`  ${m.label}`);
 
   if (options.dryRun === true) {
     return { stats: emptyStats(), costUsd: 0 };
@@ -107,12 +130,16 @@ export async function runIngest(options: IngestOptions): Promise<IngestResult> {
   try {
     let remaining = options.limit ?? Number.POSITIVE_INFINITY;
 
-    for (const meeting of meetings) {
+    for (const { pageUrl, explicit } of meetings) {
       if (remaining <= 0) break;
-      const pageUrl = buildCommitteePageUrl(meeting.href);
       const page = await client.fetchHtml(pageUrl);
       const parsed = parseCommitteePage(page.text);
       if (parsed === null) {
+        // URLの打ち間違いや、消えたページを指したとき。名指しの対象で
+        // これをスキップすると、何も起きないまま成功したように終わる
+        if (explicit) {
+          throw new Error(`委員会の開会日程ページとして読めなかった: ${pageUrl}`);
+        }
         console.warn(`委員会ページを読めなかった: ${pageUrl}`);
         continue;
       }
@@ -307,12 +334,57 @@ export async function ingestOneShiryo(params: {
   return decision.reason;
 }
 
-/** カレンダーから対象の委員会を集める */
+/** 取り込む委員会ページ */
+type TargetMeeting = {
+  pageUrl: string;
+  /** 実行ログに出す見出し */
+  label: string;
+  /**
+   * 人がURLで名指しした対象か。
+   *
+   * カレンダーから拾った会議は、1つ読めなくても残りを進めたい。名指しの
+   * 対象が読めないのは指定が間違っているということなので、黙って飛ばさず
+   * 失敗させる。
+   */
+  explicit: boolean;
+};
+
+/**
+ * 対象の委員会ページを決める。
+ *
+ * URLを渡されたときはそれをそのまま使い、カレンダーは見ない。会議が済んだ
+ * あとに資料が足されることがあり、そのたびに月全体を舐め直す必要はない。
+ */
 async function collectMeetings(
   client: ChuoSiteClient,
-  options: IngestOptions
-): Promise<{ date: string; committee: string; href: string }[]> {
-  const calendarUrl = buildCalendarUrl(options.year, options.month);
+  target: IngestTarget
+): Promise<TargetMeeting[]> {
+  if (target.kind === "url") return [toTargetFromUrl(target.url)];
+  return await collectMeetingsFromCalendar(client, target);
+}
+
+/**
+ * URL指定の対象を作る。
+ *
+ * 資料PDFやカレンダーを貼り間違えたときは、取得しにいく前に止める。
+ * ページの中身が開会日程かどうかは、読んだうえで判断する。
+ */
+function toTargetFromUrl(url: string): TargetMeeting {
+  if (!isCommitteePageUrl(url)) {
+    throw new Error(
+      `委員会の開会日程ページのURLではない: ${url}\n` +
+        "例: https://www.kugikai.city.chuo.lg.jp/calendar/r08/kodomokyoiku_20260907.html"
+    );
+  }
+  return { pageUrl: url, label: url, explicit: true };
+}
+
+/** カレンダーから対象の委員会を集める */
+async function collectMeetingsFromCalendar(
+  client: ChuoSiteClient,
+  target: Extract<IngestTarget, { kind: "calendar" }>
+): Promise<TargetMeeting[]> {
+  const calendarUrl = buildCalendarUrl(target.year, target.month);
   const calendar = await client.fetchHtml(calendarUrl);
   await saveSource({
     source: "calendar",
@@ -322,10 +394,16 @@ async function collectMeetings(
     lastModified: calendar.lastModified,
   });
 
-  return parseCalendar(calendar.text).filter((meeting) => {
-    if (EXCLUDED_COMMITTEES.has(meeting.committee)) return false;
-    if (options.from !== undefined && meeting.date < options.from) return false;
-    if (options.to !== undefined && meeting.date > options.to) return false;
-    return true;
-  });
+  return parseCalendar(calendar.text)
+    .filter((meeting) => {
+      if (EXCLUDED_COMMITTEES.has(meeting.committee)) return false;
+      if (target.from !== undefined && meeting.date < target.from) return false;
+      if (target.to !== undefined && meeting.date > target.to) return false;
+      return true;
+    })
+    .map((meeting) => ({
+      pageUrl: buildCommitteePageUrl(meeting.href),
+      label: `${meeting.date} ${meeting.committee}`,
+      explicit: false,
+    }));
 }

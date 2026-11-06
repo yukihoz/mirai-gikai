@@ -17,6 +17,7 @@ const makeBill = (
   is_featured: false,
   meeting_body: "定例会",
   is_review_completed: true,
+  article_kind: "standard",
   shugiin_url: null,
   slug: null,
   diet_session_id: null,

@@ -3,6 +3,8 @@ import { RubySafeLineClamp } from "@/components/ruby-safe-line-clamp";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
+import { getArticleReviewState } from "../../../shared/utils/article-review-state";
+import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
 import { BillStatusBadge } from "./bill-status-badge";
 import { BillTag } from "./bill-tag";
 import { DynamicBillThumbnail } from "./dynamic-bill-thumbnail";
@@ -57,6 +59,12 @@ export function BillCard({ bill }: BillCardProps) {
             <div className="flex flex-col gap-3">
               <CardTitle className="text-2xl/8 tracking-normal">
                 {displayTitle}
+                {getArticleReviewState(bill) === "reviewed" && (
+                  <>
+                    {" "}
+                    <ReviewCompleteBadge />
+                  </>
+                )}
               </CardTitle>
               <div className="flex flex-row gap-4">
                 <BillStatusBadge status={bill.status} className="w-fit" />

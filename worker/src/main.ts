@@ -24,6 +24,8 @@ import { runIngestDiscussions } from "@mirai-gikai/chuo-ingest/ingest-discussion
  *   tsx src/main.ts --mode=tag-backfill                          # タグ未抽出の意見を全議案で処理
  *   tsx src/main.ts --mode=tag-backfill --bill-id=<uuid>         # 指定議案のタグ未抽出のみ
  *   tsx src/main.ts --mode=tag-backfill --bill-id=<uuid> --scope=all # 指定議案のタグを全件やり直し
+ *   tsx src/main.ts --mode=chuo-ingest --year=2026 --month=9         # その月の委員会をカレンダーから探す
+ *   tsx src/main.ts --mode=chuo-ingest --url=<委員会ページURL>        # そのページだけ（資料が後から出たとき）
  *
  * 必須env: SUPABASE_URL, SUPABASE_SECRET_KEY, AI_GATEWAY_API_KEY
  */
@@ -126,19 +128,29 @@ async function main(): Promise<void> {
   // 中央区議会の委員会資料から議案の下書きを作る。
   // 生成した内容は draft のままにし、公開はadminで人が判断する。
   if (mode === "chuo-ingest") {
-    const year = Number(args.year);
-    const month = Number(args.month);
-    if (!Number.isInteger(year) || !Number.isInteger(month)) {
-      throw new Error("chuo-ingest mode requires --year=<YYYY> --month=<M>");
-    }
-    await runIngest({
-      year,
-      month,
-      from: args.from,
-      to: args.to,
+    const common = {
       force: args.force === "true",
       limit: args.limit === undefined ? undefined : Number(args.limit),
       dryRun: args["dry-run"] === "true",
+    };
+
+    // --url は委員会ページを名指しして取り込む。会議のあとに資料が足された
+    // ときの追加用で、カレンダーを見ないぶん速く、余計な会議に触らない。
+    if (args.url !== undefined) {
+      await runIngest({ target: { kind: "url", url: args.url }, ...common });
+      return;
+    }
+
+    const year = Number(args.year);
+    const month = Number(args.month);
+    if (!Number.isInteger(year) || !Number.isInteger(month)) {
+      throw new Error(
+        "chuo-ingest mode requires --year=<YYYY> --month=<M>, or --url=<委員会ページURL>"
+      );
+    }
+    await runIngest({
+      target: { kind: "calendar", year, month, from: args.from, to: args.to },
+      ...common,
     });
     return;
   }

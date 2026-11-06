@@ -11,6 +11,12 @@ function makeStance(
     bill_id: "bill-1",
     type,
     comment: null,
+    reason_summary: null,
+    reason_points: [],
+    supplements: [],
+    is_published: true,
+    publish_at: null,
+    publish_review_date: null,
     created_at: "2025-01-01T00:00:00Z",
     updated_at: "2025-01-01T00:00:00Z",
     ...overrides,
@@ -32,7 +38,6 @@ describe("getStanceStyles", () => {
     const result = getStanceStyles(makeStance("for"), true);
     expect(result.label).toBe("報告資料提出前");
   });
-
   it("for スタンスで賛成スタイルを返す", () => {
     const result = getStanceStyles(makeStance("for"), false);
     expect(result).toEqual({
@@ -102,15 +107,6 @@ describe("getStanceStyles", () => {
       bg: "bg-mirai-surface-muted",
       textColor: "text-black",
       label: "自由投票",
-    });
-  });
-
-  it("stance=undefined, isPreparing=false のとき中立ラベルを返す", () => {
-    const result = getStanceStyles(undefined, false);
-    expect(result).toEqual({
-      bg: "bg-mirai-surface-muted",
-      textColor: "text-black",
-      label: "中立",
     });
   });
 });

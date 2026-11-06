@@ -8,6 +8,14 @@
     "test:watch": "vitest"
   },
   "exports": {
+    "./youtube": {
+      "types": "./src/youtube/youtube.ts",
+      "default": "./src/youtube/youtube.ts"
+    },
+    "./bill-videos/kinds": {
+      "types": "./src/bill-videos/kinds.ts",
+      "default": "./src/bill-videos/kinds.ts"
+    },
     "./ai/models": {
       "types": "./src/ai/models.ts",
       "default": "./src/ai/models.ts"
@@ -55,6 +63,14 @@
     "./interview-prompts/types": {
       "types": "./src/interview-prompts/types.ts",
       "default": "./src/interview-prompts/types.ts"
+    },
+    "./interview-prompts/sections": {
+      "types": "./src/interview-prompts/sections.ts",
+      "default": "./src/interview-prompts/sections.ts"
+    },
+    "./interview-prompts/default-sections": {
+      "types": "./src/interview-prompts/default-sections.ts",
+      "default": "./src/interview-prompts/default-sections.ts"
     },
     "./interview-prompts/stage-transition-guidance": {
       "types": "./src/interview-prompts/stage-transition-guidance.ts",
@@ -123,6 +139,30 @@
     "./env/require-public-env": {
       "types": "./src/env/require-public-env.ts",
       "default": "./src/env/require-public-env.ts"
+    },
+    "./env/normalize-secret": {
+      "types": "./src/env/normalize-secret.ts",
+      "default": "./src/env/normalize-secret.ts"
+    },
+    "./mirai-stance/publish-schedule": {
+      "types": "./src/mirai-stance/publish-schedule.ts",
+      "default": "./src/mirai-stance/publish-schedule.ts"
+    },
+    "./mirai-stance/reason-format": {
+      "types": "./src/mirai-stance/reason-format.ts",
+      "default": "./src/mirai-stance/reason-format.ts"
+    },
+    "./article-report/categories": {
+      "types": "./src/article-report/categories.ts",
+      "default": "./src/article-report/categories.ts"
+    },
+    "./og/assets": {
+      "types": "./src/og/og-assets.ts",
+      "default": "./src/og/og-assets.ts"
+    },
+    "./db/fetch-all-pages": {
+      "types": "./src/db/fetch-all-pages.ts",
+      "default": "./src/db/fetch-all-pages.ts"
     }
   },
   "dependencies": {

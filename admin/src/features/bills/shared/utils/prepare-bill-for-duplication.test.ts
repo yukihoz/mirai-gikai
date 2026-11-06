@@ -15,6 +15,7 @@ const baseBill: Bill = {
   is_featured: true,
   meeting_body: "定例会",
   is_review_completed: true,
+  article_kind: "standard",
   publish_status: "published",
   published_at: null,
   submitted_date: null,

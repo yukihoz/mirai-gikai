@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildCalendarUrl,
   buildCommitteePageUrl,
+  isCommitteePageUrl,
   isCrawlableUrl,
   resolveUrl,
 } from "./urls";
@@ -27,6 +28,47 @@ describe("buildCommitteePageUrl", () => {
     expect(buildCommitteePageUrl("r08/fukushi_20260210.html")).toBe(
       COMMITTEE_PAGE
     );
+  });
+});
+
+describe("isCommitteePageUrl", () => {
+  it("委員会の開会日程ページを受け入れる", () => {
+    expect(isCommitteePageUrl(COMMITTEE_PAGE)).toBe(true);
+    expect(
+      isCommitteePageUrl(buildCommitteePageUrl("r08/kodomokyoiku_20260907.html"))
+    ).toBe(true);
+  });
+
+  it("会議名や日付の付き方は問わない", () => {
+    // 区が付け直しただけで取り込めなくなるのを避ける。開会日程かどうかは
+    // 読んでから parseCommitteePage が決める
+    expect(
+      isCommitteePageUrl(buildCommitteePageUrl("r09/fukushi.html"))
+    ).toBe(true);
+  });
+
+  it("カレンダーそのものは受け入れない", () => {
+    expect(isCommitteePageUrl(buildCalendarUrl(2026, 9))).toBe(false);
+  });
+
+  it("資料PDFは受け入れない", () => {
+    expect(
+      isCommitteePageUrl(
+        "https://www.kugikai.city.chuo.lg.jp/shiryo/r8/x/(%E8%B3%87%E6%96%991)y.pdf"
+      )
+    ).toBe(false);
+  });
+
+  it("他のドメインは受け入れない", () => {
+    expect(
+      isCommitteePageUrl(
+        "https://example.com/calendar/r08/fukushi_20260210.html"
+      )
+    ).toBe(false);
+  });
+
+  it("URLとして壊れていれば受け入れない", () => {
+    expect(isCommitteePageUrl("not a url")).toBe(false);
   });
 });
 

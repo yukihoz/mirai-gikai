@@ -21,10 +21,18 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import type { BillStatus, MeetingBody } from "@/features/bills/shared/types";
+import {
+  ARTICLE_KIND_LABELS,
+  type BillArticleKind,
+  type BillStatus,
+  HOUSE_LABELS,
+  type MeetingBody,
+  type OriginatingHouse,
+} from "@/features/bills/shared/types";
 import type { DietSession } from "@/features/diet-sessions/shared/types";
 import type { BillCreateInput } from "../../shared/types";
 import { shouldAutoCloseInterviewOnBillStatus } from "../../shared/utils/should-auto-close-interview";
+import { ShareImageGenerator } from "./share-image-generator";
 import { ThumbnailUpload } from "./thumbnail-upload";
 
 const BILL_STATUS_OPTIONS: Array<{ value: BillStatus; label: string }> = [
@@ -77,16 +85,25 @@ const MEETING_BODY_OPTIONS: Array<{ value: MeetingBody; label: string }> = [
   },
 ];
 
+const ARTICLE_KIND_OPTIONS = Object.entries(ARTICLE_KIND_LABELS).map(
+  ([value, label]) => ({
+    value: value as BillArticleKind,
+    label,
+  })
+);
+
 interface BillFormFieldsProps {
   control: Control<BillCreateInput>;
   billId?: string;
   dietSessions: DietSession[];
+  shareImageDefaultTitle?: string;
 }
 
 export function BillFormFields({
   control,
   billId,
   dietSessions,
+  shareImageDefaultTitle,
 }: BillFormFieldsProps) {
   return (
     <>
@@ -250,6 +267,13 @@ export function BillFormFields({
               Twitter等のSNSでシェアされた際に表示される画像を設定してください（任意）。設定しない場合はサムネイル画像が使用されます。
             </FormDescription>
             <FormMessage />
+            {billId && shareImageDefaultTitle !== undefined && (
+              <ShareImageGenerator
+                billId={billId}
+                defaultTitle={shareImageDefaultTitle}
+                onGenerated={field.onChange}
+              />
+            )}
           </FormItem>
         )}
       />
@@ -365,6 +389,34 @@ export function BillFormFields({
                 未完了の場合、記事にレビュー中バナーが表示されます
               </FormDescription>
             </div>
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="article_kind"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>記事の種別</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="記事の種別を選択" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {ARTICLE_KIND_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormDescription>
+              AI自動生成版は、人のレビューを経ていない記事として表示されます。レビュー後に通常版へ戻す場合は「記事レビュー完了」もオンにしてください
+            </FormDescription>
+            <FormMessage />
           </FormItem>
         )}
       />
