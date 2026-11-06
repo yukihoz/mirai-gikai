@@ -212,7 +212,6 @@ describe("MCP bills tools", () => {
     it("article_kind を省略すると standard、指定すると ai_generated で作成される", async () => {
       const base = {
         status: "introduced",
-        originating_house: "HR",
         status_note: null,
         is_featured: false,
         is_review_completed: false,

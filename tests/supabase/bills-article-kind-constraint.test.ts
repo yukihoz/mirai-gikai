@@ -20,7 +20,6 @@ describe("bills の article_kind と is_review_completed の整合性制約", ()
       .from("bills")
       .insert({
         name: `article_kind 制約テスト ${Date.now()}`,
-        originating_house: "HR",
         status: "introduced",
         publish_status: "draft",
         article_kind: articleKind,
