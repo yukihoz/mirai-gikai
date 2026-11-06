@@ -13,6 +13,7 @@ import { BillDisclaimer } from "../../../client/components/bill-detail/bill-disc
 import { BillStatusProgress } from "../../../client/components/bill-detail/bill-status-progress";
 import { MiraiStanceCard } from "../../../client/components/bill-detail/mirai-stance-card";
 import type { BillWithContent } from "../../../shared/types";
+import { getBillVideos } from "../../loaders/get-bill-videos";
 import { BillShareButtons } from "../share/bill-share-buttons";
 import { getChuoDiscussions } from "../../loaders/get-chuo-discussions";
 import { getChuoShiryo } from "../../loaders/get-chuo-shiryo";
@@ -21,6 +22,7 @@ import { BillDetailHeader } from "./bill-detail-header";
 import { ChuoShiryoImage } from "../../../client/components/bill-detail/chuo-shiryo-image";
 import { ChuoDiscussions } from "./chuo-discussions";
 import { ChuoShiryoSource } from "./chuo-shiryo-source";
+import { BillVideosSection } from "./bill-videos-section";
 
 interface BillDetailLayoutProps {
   bill: BillWithContent;
@@ -31,14 +33,11 @@ export async function BillDetailLayout({
   bill,
   currentDifficulty,
 }: BillDetailLayoutProps) {
-  const showMiraiStance = bill.status === "preparing" || bill.mirai_stance;
-  // 会議の一覧は記事に依らないので、資料の取得を待たずに一緒に走らせる。
-  // 資料の無い記事（AIインタビュー等）でも引くことになるが、10分キャッシュに
-  // 載るので実質の追加コストは無い
   const [
     interviewConfig,
     publicReportsResult,
     topicAnalysis,
+    videos,
     chuoShiryo,
     chuoDiscussions,
     meetingDays,
@@ -46,6 +45,7 @@ export async function BillDetailLayout({
     getInterviewConfig(bill.id),
     getPublicReportsByBillId(bill.id),
     getPublicTopicAnalysis(bill.id),
+    getBillVideos(bill.id),
     getChuoShiryo(bill.id),
     getChuoDiscussions(bill.id),
     getMeetingDays(),
@@ -149,12 +149,22 @@ export async function BillDetailLayout({
             <InterviewLandingSection billId={bill.id} />
           </div>
         )}
-        {showMiraiStance && (
+        {/*
+          賛否が未設定・非公開（公開日時前を含む）なら出さない。法案提出前でも、
+          賛否を登録していない段階で「法案提出前」のカードだけを出すことはしない。
+        */}
+        {bill.mirai_stance && (
           <div className="my-8">
+            {/*
+              動画は賛否の判断に関する議論なので、賛否カードの中に置く。
+              賛否が公開されていない間は動画も出さない。
+            */}
             <MiraiStanceCard
               stance={bill.mirai_stance}
               billStatus={bill.status}
-            />
+            >
+              {videos.length > 0 && <BillVideosSection videos={videos} />}
+            </MiraiStanceCard>
           </div>
         )}
         {/* シェアボタン */}

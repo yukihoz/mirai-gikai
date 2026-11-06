@@ -1,7 +1,18 @@
+import { join } from "node:path";
+import {
+  buildOgFontOptions,
+  loadNotoSansJp,
+  loadOgpLogoDataUrl,
+} from "@mirai-gikai/shared/og/assets";
 import { ImageResponse } from "next/og";
 import { getReportOgData } from "@/features/interview-report/server/loaders/get-report-og-data";
 import { truncateText } from "@/features/interview-report/shared/utils/truncate-text";
-import { loadOgFont, loadPublicImageDataUrl } from "@/lib/og/og-assets";
+
+// next.config の outputFileTracingIncludes と同じパスを指す
+const OGP_LOGO_PATH = join(
+  process.cwd(),
+  "../packages/shared/src/og/ogp-logo.png"
+);
 
 /**
  * OGP画像のテキスト制限
@@ -36,22 +47,10 @@ export async function GET(request: Request) {
   );
 
   const [fontData, logoDataUrl] = await Promise.all([
-    loadOgFont(800),
-    loadPublicImageDataUrl("img/ogp-logo.png"),
+    loadNotoSansJp(800),
+    loadOgpLogoDataUrl(OGP_LOGO_PATH),
   ]);
-  // フォント取得失敗時はプロパティ自体を省略し、デフォルトフォントにフォールバック
-  const fontOptions = fontData
-    ? {
-        fonts: [
-          {
-            name: "Noto Sans JP",
-            data: fontData,
-            style: "normal" as const,
-            weight: 800 as const,
-          },
-        ],
-      }
-    : {};
+  const fontOptions = buildOgFontOptions(fontData, 800);
 
   return new ImageResponse(
     <div

@@ -85,6 +85,7 @@ export const env = {
   supabaseUrl,
   supabasePublishableKey,
   revalidateSecret: normalizeSecret(process.env.REVALIDATE_SECRET),
+  articleReportSlackWebhookUrl: process.env.ARTICLE_REPORT_SLACK_WEBHOOK_URL,
   siteTitle: process.env.NEXT_PUBLIC_SITE_TITLE || "みらい議会@中央区",
   siteShortName: process.env.NEXT_PUBLIC_SITE_SHORT_NAME || "みらい議会@中央区",
   assemblyName: process.env.NEXT_PUBLIC_ASSEMBLY_NAME || "区議会",

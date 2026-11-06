@@ -4,9 +4,9 @@ import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/type
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillsByTag } from "../../shared/types";
 import {
+  findBillIdsWithPublicInterview,
   findFeaturedTags,
   findPublishedBillsByTag,
-  findBillIdsWithPublicInterview,
 } from "../repositories/bill-repository";
 
 /**
@@ -18,8 +18,16 @@ export async function getBillsByFeaturedTags(): Promise<BillsByTag[]> {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
 
-  // 会期に関わらずすべてのタグ付き議案を表示するため、dietSessionIdにnullを渡す
-  return _getCachedBillsByFeaturedTags(difficultyLevel, null);
+  try {
+    // 会期に関わらずすべてのタグ付き議案を表示するため、dietSessionIdにnullを渡す
+    return await _getCachedBillsByFeaturedTags(difficultyLevel, null);
+  } catch (error) {
+    // 取得失敗はキャッシュ関数の外で受ける。中で空配列に変換すると、失敗が
+    // 正常な結果として10分キャッシュされてしまう。トップは他のセクションが
+    // 出れば成立するので、ここで空に縮退させる。
+    console.error("Failed to fetch bills by featured tags:", error);
+    return [];
+  }
 }
 
 const _getCachedBillsByFeaturedTags = unstable_cache(
@@ -28,6 +36,12 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
     dietSessionId: string | null
   ): Promise<BillsByTag[]> => {
     const featuredTags = await findFeaturedTags();
+
+    // 取得失敗はキャッシュに載せない。空配列を返すと0件と区別できず、一時的な
+    // DBエラー1回でタグ別セクションが10分消えたままになる。
+    if (featuredTags === null) {
+      throw new Error("Failed to fetch featured tags");
+    }
 
     if (featuredTags.length === 0) {
       return [];

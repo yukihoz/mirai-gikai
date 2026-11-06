@@ -57,6 +57,9 @@ export function BillDisclaimer() {
           掲載されている議案等の情報は、{env.assemblyName}
           に提出された議案などの公開情報を基に、ほづみゆうきがAIを活用しながら背景情報を整理したものです。
         </p>
+        <p className="text-xs leading-relaxed text-mirai-text-note">
+          「AI自動生成版」の記事は、AIが作成した解説を人によるレビューを経ずに掲載しています。「チームみらいの賛否」は党が作成しており、AI生成の対象ではありません。
+        </p>
       </div>
 
       {/* 掲載コンテンツについての免責事項 */}

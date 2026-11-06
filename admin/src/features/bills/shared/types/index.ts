@@ -11,6 +11,8 @@ export type BillPublishStatus =
 // アプリが値の集合を持たない（数年ごとに組み替えられる）。
 export type MeetingBody =
   Database["public"]["Tables"]["bills"]["Row"]["meeting_body"];
+export type OriginatingHouse = Database["public"]["Enums"]["house_enum"];
+export type BillArticleKind = Database["public"]["Enums"]["bill_article_kind"];
 
 export type BillWithContent = Bill & {
   bill_content?: Database["public"]["Tables"]["bill_contents"]["Row"];
@@ -55,6 +57,18 @@ export const BILL_STATUS_ORDER: Record<BillStatus, number> = {
   reported: 7,
 };
 
+// House display mapping
+export const HOUSE_LABELS: Record<OriginatingHouse, string> = {
+  HR: "衆議院",
+  HC: "参議院",
+};
+
+export const ARTICLE_KIND_LABELS: Record<BillArticleKind, string> = {
+  standard: "通常版",
+  ai_generated: "AI自動生成版",
+};
+
+// ステータスを日本語ラベルに変換する関数
 export function getBillStatusLabel(
   status: BillStatus,
   meetingBody?: MeetingBody | null
