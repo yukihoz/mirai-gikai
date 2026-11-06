@@ -26,6 +26,11 @@ export type MeetingBody =
 export type BillStatusEnum = Database["public"]["Enums"]["bill_status_enum"];
 export type BillArticleKind = Database["public"]["Enums"]["bill_article_kind"];
 export type StanceTypeEnum = Database["public"]["Enums"]["stance_type_enum"];
+export type HouseEnum = "HR" | "HC";
+export const HOUSE_LABELS: Record<HouseEnum, string> = {
+  HR: "衆議院",
+  HC: "参議院",
+};
 
 // 公開ステータス型（議案の公開/非公開を管理）
 export type BillPublishStatus = "draft" | "published" | "coming_soon";

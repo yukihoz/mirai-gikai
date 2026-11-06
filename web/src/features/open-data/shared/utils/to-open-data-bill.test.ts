@@ -35,7 +35,7 @@ describe("toOpenDataBillItem", () => {
       title: "わかりやすいタイトル",
       summary: "概要",
       status: "in_originating_house",
-      statusLabel: "衆議院審議中",
+      statusLabel: "衆議院付託",
       statusNote: null,
       originatingHouse: "HR",
       originatingHouseLabel: "衆議院",

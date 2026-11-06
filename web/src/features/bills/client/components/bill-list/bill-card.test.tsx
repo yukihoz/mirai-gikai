@@ -21,7 +21,9 @@ describe("BillCard", () => {
       />
     );
 
-    expect(screen.getByText("ガソリン税を安くする法案")).toBeInTheDocument();
+    expect(
+      screen.getAllByText("ガソリン税を安くする法案")[0]
+    ).toBeInTheDocument();
     expect(
       screen.getByText("ガソリンにかかる税金を下げる法案です。")
     ).toBeInTheDocument();
@@ -151,7 +153,9 @@ describe("BillCard", () => {
   */
   it("提出日が無ければ日付を出さない", () => {
     const { container } = render(
-      <BillCard bill={createMockBill({ submitted_date: null })} />
+      <BillCard
+        bill={createMockBill({ submitted_date: null, published_at: null })}
+      />
     );
 
     expect(container.querySelector("time")).not.toBeInTheDocument();

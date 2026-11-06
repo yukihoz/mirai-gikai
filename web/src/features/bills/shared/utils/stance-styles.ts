@@ -12,10 +12,10 @@ export type StanceStyles = {
  * スタンスタイプに応じたスタイル（背景色・ボーダー色・テキスト色・ラベル）を返す
  */
 export function getStanceStyles(
-  stance: MiraiStance,
+  stance: MiraiStance | null | undefined,
   isPreparing: boolean
 ): StanceStyles {
-  if (isPreparing) {
+  if (isPreparing || !stance) {
     return {
       bg: "bg-white",
       border: "border-mirai-text-muted",

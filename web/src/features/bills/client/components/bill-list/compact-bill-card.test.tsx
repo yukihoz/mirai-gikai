@@ -94,7 +94,11 @@ describe("CompactBillCard", () => {
   it("日付が無ければ日付の行を出さない", () => {
     render(
       <CompactBillCard
-        bill={createMockBill({ status: "enacted", submitted_date: null })}
+        bill={createMockBill({
+          status: "enacted",
+          submitted_date: null,
+          published_at: null,
+        })}
       />
     );
 

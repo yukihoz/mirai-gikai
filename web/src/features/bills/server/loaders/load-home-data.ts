@@ -3,7 +3,10 @@ import { getComingSoonBills } from "./get-coming-soon-bills";
 import { getFeaturedBills } from "./get-featured-bills";
 import { getInterviewOpenBills } from "./get-interview-open-bills";
 import { getPastSessionsWithBillCount } from "./get-past-sessions-with-bill-count";
-import type { BillsSearchParams } from "../../shared/utils/parse-bills-search-params";
+import {
+  type BillsSearchParams,
+  parseBillsSearchParams,
+} from "../../shared/utils/parse-bills-search-params";
 import { getBillsSearch, getCategoryOptions } from "./get-bills-search";
 
 /**
@@ -25,7 +28,7 @@ export async function loadHomeData(searchParams?: BillsSearchParams) {
     getInterviewOpenBills(),
     getComingSoonBills(),
     getPastSessionsWithBillCount(),
-    searchParams ? getBillsSearch(searchParams) : Promise.resolve(null),
+    getBillsSearch(searchParams ?? parseBillsSearchParams({})),
     getCategoryOptions(),
   ]);
 

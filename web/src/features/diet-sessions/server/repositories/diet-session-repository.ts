@@ -9,16 +9,17 @@ export type DietSessionRow =
  * 現在アクティブな会期を取得（指定日が会期期間内）
  */
 export async function findActiveDietSession(
-  currentDate: string
+  currentDate?: string
 ): Promise<DietSession | null> {
   const supabase = createAdminClient();
+  const dateStr = currentDate ?? new Date().toISOString().split("T")[0];
 
   const { data, error } = await supabase
     .from("diet_sessions")
     .select("*")
     .eq("is_active", true)
-    .lte("start_date", currentDate)
-    .gte("end_date", currentDate)
+    .lte("start_date", dateStr)
+    .gte("end_date", dateStr)
     .maybeSingle();
 
   if (error) {
@@ -28,6 +29,8 @@ export async function findActiveDietSession(
 
   return data;
 }
+
+export const findCurrentDietSession = findActiveDietSession;
 
 /**
  * 会期IDで会期を取得

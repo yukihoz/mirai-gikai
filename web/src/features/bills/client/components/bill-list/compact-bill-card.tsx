@@ -58,7 +58,8 @@ export function CompactBillCard({
               </span>
               {billDate !== null && (
                 <span className="text-xs text-muted-foreground">
-                  {formatDateWithDots(billDate)}
+                  {formatDateWithDots(billDate)}{" "}
+                  {bill.status === "enacted" ? "成立" : "提出"}
                 </span>
               )}
             </div>

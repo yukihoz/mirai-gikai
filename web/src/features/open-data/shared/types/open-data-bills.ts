@@ -30,9 +30,9 @@ export type OpenDataBillItem = {
   /** 審議状況の日本語ラベル（衆議院審議中 / 成立 など） */
   statusLabel: string;
   statusNote: string | null;
-  originatingHouse: HouseEnum;
+  originatingHouse: HouseEnum | null;
   /** 提出元議院の日本語ラベル（衆議院 / 参議院） */
-  originatingHouseLabel: string;
+  originatingHouseLabel: string | null;
   submittedDate: string | null;
   publishedAt: string | null;
   tags: OpenDataBillTag[];

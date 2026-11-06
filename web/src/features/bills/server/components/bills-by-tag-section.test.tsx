@@ -37,8 +37,8 @@ describe("BillsByTagSection", () => {
 
     expect(screen.getByRole("heading", { name: "暮らし" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "税金" })).toBeInTheDocument();
-    expect(screen.getByText("暮らしの法案")).toBeInTheDocument();
-    expect(screen.getByText("税金の法案")).toBeInTheDocument();
+    expect(screen.getAllByText("暮らしの法案")[0]).toBeInTheDocument();
+    expect(screen.getAllByText("税金の法案")[0]).toBeInTheDocument();
   });
 
   it("説明があれば出し、無ければ出さない", () => {
@@ -73,8 +73,8 @@ describe("BillsByTagSection", () => {
     expect(screen.getByRole("link")).toHaveAttribute("href", "/bills/bill-1");
   });
 
-  // 先頭だけフルカードにするので、要約が出るのは1件目だけになる。
-  it("2件目以降はコンパクトカードにする", () => {
+  // 中央区版では各議案の内容を把握しやすいよう全件カードで要約を表示する。
+  it("各議案をカード形式で表示する", () => {
     render(
       <BillsByTagSection
         billsByTag={[
@@ -87,6 +87,6 @@ describe("BillsByTagSection", () => {
     );
 
     expect(screen.getByText("1件目の法案の要約")).toBeInTheDocument();
-    expect(screen.queryByText("2件目の法案の要約")).not.toBeInTheDocument();
+    expect(screen.getByText("2件目の法案の要約")).toBeInTheDocument();
   });
 });

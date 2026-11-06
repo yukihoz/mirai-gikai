@@ -11,7 +11,7 @@ export type BillPublishStatus =
 // アプリが値の集合を持たない（数年ごとに組み替えられる）。
 export type MeetingBody =
   Database["public"]["Tables"]["bills"]["Row"]["meeting_body"];
-export type OriginatingHouse = Database["public"]["Enums"]["house_enum"];
+export type OriginatingHouse = "HR" | "HC";
 export type BillArticleKind = Database["public"]["Enums"]["bill_article_kind"];
 
 export type BillWithContent = Bill & {

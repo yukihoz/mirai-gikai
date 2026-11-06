@@ -92,7 +92,6 @@ const openDataBillSelect = <C extends string>(contentColumns: C) =>
   name,
   status,
   status_note,
-  originating_house,
   submitted_date,
   published_at,
   created_at,

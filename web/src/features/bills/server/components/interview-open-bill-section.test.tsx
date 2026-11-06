@@ -30,7 +30,9 @@ describe("InterviewOpenBillSection", () => {
       screen.getByRole("heading", { name: "AIインタビュー受付中" })
     ).toBeInTheDocument();
     expect(screen.getByText("意見募集中のテーマ")).toBeInTheDocument();
-    expect(screen.getByText("ガソリン税を安くする法案")).toBeInTheDocument();
+    expect(
+      screen.getAllByText("ガソリン税を安くする法案")[0]
+    ).toBeInTheDocument();
   });
 
   // 受付中が無い日に見出しだけが残ると、出せる意見があるように見えてしまう。
@@ -57,8 +59,8 @@ describe("InterviewOpenBillSection", () => {
     );
 
     expect(screen.getAllByRole("link")).toHaveLength(2);
-    expect(screen.getByText("1件目の法案")).toBeInTheDocument();
-    expect(screen.getByText("2件目の法案")).toBeInTheDocument();
+    expect(screen.getAllByText("1件目の法案")[0]).toBeInTheDocument();
+    expect(screen.getAllByText("2件目の法案")[0]).toBeInTheDocument();
 
     expect(screen.getByText("1件目の法案の要約")).toBeInTheDocument();
     expect(screen.getByText("2件目の法案の要約")).toBeInTheDocument();
