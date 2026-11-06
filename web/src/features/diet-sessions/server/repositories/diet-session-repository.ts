@@ -1,25 +1,17 @@
+import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
-import type { Database } from "@mirai-gikai/supabase";
 import type { DietSession, SluggedDietSession } from "../../shared/types";
 
-export type DietSessionRow =
-  Database["public"]["Tables"]["diet_sessions"]["Row"];
-
 /**
- * 現在アクティブな会期を取得（指定日が会期期間内）
+ * アクティブな会期を取得
  */
-export async function findActiveDietSession(
-  currentDate?: string
-): Promise<DietSession | null> {
+export async function findActiveDietSession(): Promise<DietSession | null> {
   const supabase = createAdminClient();
-  const dateStr = currentDate ?? new Date().toISOString().split("T")[0];
 
   const { data, error } = await supabase
     .from("diet_sessions")
     .select("*")
     .eq("is_active", true)
-    .lte("start_date", dateStr)
-    .gte("end_date", dateStr)
     .maybeSingle();
 
   if (error) {
@@ -30,7 +22,30 @@ export async function findActiveDietSession(
   return data;
 }
 
-export const findCurrentDietSession = findActiveDietSession;
+/**
+ * 指定日時点で開催中の会期を取得
+ */
+export async function findCurrentDietSession(
+  targetDate: string
+): Promise<DietSession | null> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("diet_sessions")
+    .select("*")
+    .lte("start_date", targetDate)
+    .gte("end_date", targetDate)
+    .order("start_date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Failed to fetch current diet session:", error);
+    return null;
+  }
+
+  return data;
+}
 
 /**
  * 会期IDで会期を取得
@@ -55,7 +70,7 @@ export async function findDietSessionById(
 }
 
 /**
- * スラッグで会期を取得
+ * slugで会期を取得
  */
 export async function findDietSessionBySlug(
   slug: string
@@ -77,7 +92,7 @@ export async function findDietSessionBySlug(
 }
 
 /**
- * 指定日より前の直近の区議会会期を取得
+ * 指定日より前の直近の会期を取得
  */
 export async function findPreviousDietSession(
   beforeStartDate: string
