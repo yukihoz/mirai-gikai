@@ -2,6 +2,8 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
+import { getArticleReviewState } from "../../../shared/utils/article-review-state";
+import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
 import { BillStatusBadge } from "./bill-status-badge";
 import { BillTag } from "./bill-tag";
 import { toShortMeetingBody } from "../../../shared/utils/short-meeting-body";
@@ -41,6 +43,12 @@ export function CompactBillCard({
         <div className="flex-1 p-4 flex flex-col gap-2">
           <h3 className="font-bold text-[15px] leading-[1.6] line-clamp-2">
             {displayTitle}
+            {getArticleReviewState(bill) === "reviewed" && (
+              <>
+                {" "}
+                <ReviewCompleteBadge size={14} top="1px" />
+              </>
+            )}
           </h3>
           {showMeta && (
             <div className="flex items-center gap-3">
@@ -50,7 +58,8 @@ export function CompactBillCard({
               </span>
               {billDate !== null && (
                 <span className="text-xs text-muted-foreground">
-                  {formatDateWithDots(billDate)}
+                  {formatDateWithDots(billDate)}{" "}
+                  {bill.status === "enacted" ? "成立" : "提出"}
                 </span>
               )}
             </div>

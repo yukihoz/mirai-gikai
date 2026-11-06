@@ -6,39 +6,73 @@ import { TeamMirai } from "@/components/top/team-mirai";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { BillDisclaimer } from "@/features/bills/client/components/bill-detail/bill-disclaimer";
 import { BillsByTagSection } from "@/features/bills/server/components/bills-by-tag-section";
-import { FeaturedBillSection } from "@/features/bills/server/components/featured-bill-section";
 import { BillsSearchSection } from "@/features/bills/server/components/bills-search-section";
+import { FeaturedBillSection } from "@/features/bills/server/components/featured-bill-section";
+import { InterviewOpenBillSection } from "@/features/bills/server/components/interview-open-bill-section";
+import { PastSessionList } from "@/features/bills/server/components/past-session-list";
+import { getFeaturedTags } from "@/features/bills/server/loaders/get-featured-tags";
+import { getSuggestableBills } from "@/features/bills/server/loaders/get-suggestable-bills";
 import { loadHomeData } from "@/features/bills/server/loaders/load-home-data";
 import {
   parseBillsSearchParams,
   type RawSearchParams,
 } from "@/features/bills/shared/utils/parse-bills-search-params";
 import type { BillWithContent } from "@/features/bills/shared/types";
+import { chatBillName } from "@/features/bills/shared/utils/chat-bill-name";
+import { pickHomeSections } from "@/features/bills/shared/utils/pick-home-sections";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
+import { CurrentDietSession } from "@/features/diet-sessions/client/components/current-diet-session";
+import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
+import { getLatestClosedDietSession } from "@/features/diet-sessions/server/loaders/get-latest-closed-diet-session";
+import { getJapanTime } from "@/lib/utils/date";
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: Promise<RawSearchParams>;
 }) {
+  const japanTime = getJapanTime();
   const searchState = parseBillsSearchParams(await searchParams);
-  const {
+
+  const [
+    {
+      billsByTag,
+      featuredBills,
+      interviewOpenBills,
+      comingSoonBills,
+      pastSessions,
+      searchResult,
+      categories,
+    },
+    currentSession,
+    latestClosedSession,
+    currentDifficulty,
+    suggestableBills,
+    featuredTags,
+  ] = await Promise.all([
+    loadHomeData(searchState),
+    getCurrentDietSession(japanTime),
+    getLatestClosedDietSession(japanTime),
+    getDifficultyLevel(),
+    getSuggestableBills(),
+    getFeaturedTags(),
+  ]);
+
+  const inSession = currentSession !== null;
+
+  const { tagGroups, shownBills, featuredBillIds } = pickHomeSections({
     billsByTag,
     featuredBills,
-    comingSoonBills,
-    searchResult,
-    categories,
-  } = await loadHomeData(searchState);
-
-  // ゆくゆくタグ機能がマージされたらBFFに統合する
-  const [currentDifficulty] = await Promise.all([getDifficultyLevel()]);
+    interviewOpenBills,
+    inSession,
+  });
 
   const toBillChatContext = (bill: BillWithContent) => {
     return {
-      name: `${bill.bill_content?.title}（${bill.name}）`,
+      name: chatBillName(bill),
       summary: bill.bill_content?.summary,
       tags: bill.tags?.map((tag) => tag.label) || [],
-      isFeatured: featuredBills.some((b) => b.id === bill.id),
+      isFeatured: featuredBillIds.has(bill.id),
     };
   };
 
@@ -46,21 +80,12 @@ export default async function Home({
     <>
       <Hero />
 
-      {/* 議案一覧セクション */}
-      <Container className="">
-        <div className="py-10">
-          <main className="flex flex-col gap-16">
-            {/* 注目の法案セクション */}
-            <FeaturedBillSection bills={featuredBills} />
-
-            {/* タグ別議案一覧セクション */}
-            <BillsByTagSection billsByTag={billsByTag} />
-
-            {/* Coming soonセクション */}
-            <ComingSoonSection bills={comingSoonBills} />
-          </main>
-        </div>
-      </Container>
+      {/* 議会の状況カード */}
+      <CurrentDietSession
+        session={currentSession}
+        closedSession={latestClosedSession}
+        now={japanTime}
+      />
 
       {/* 報告資料を探す */}
       <div className="bg-mirai-surface-muted py-10">
@@ -72,6 +97,41 @@ export default async function Home({
           />
         </Container>
       </div>
+
+      {/* 議案一覧セクション */}
+      <Container className="">
+        <div className="py-10">
+          <main className="flex flex-col gap-16">
+            {/*
+              AIインタビュー受付中セクション。意見を出せる報告資料を最初に見せる。
+              会期では絞らない（閉会中でも受付中なら案内する）。
+            */}
+            {interviewOpenBills.length > 0 && (
+              <InterviewOpenBillSection bills={interviewOpenBills} />
+            )}
+
+            {/* 注目の報告資料 */}
+            <FeaturedBillSection bills={featuredBills} />
+
+            {/* タグ別報告資料一覧セクション */}
+            <BillsByTagSection billsByTag={tagGroups} />
+
+            {/* Coming soonセクション */}
+            <ComingSoonSection bills={comingSoonBills} />
+          </main>
+        </div>
+      </Container>
+
+      {/* 過去の会期セクション（Archive） */}
+      {pastSessions.length > 0 && (
+        <div className="bg-mirai-surface-muted py-10">
+          <Container>
+            <div className="flex flex-col gap-10">
+              <PastSessionList sessions={pastSessions} />
+            </div>
+          </Container>
+        </div>
+      )}
 
       <Container className="pt-12 pb-6">
         <div className="grid grid-cols-1 md:grid-cols-[1fr,320px] gap-12 lg:gap-20">
@@ -87,18 +147,15 @@ export default async function Home({
           </div>
 
           <div className="hidden md:block">
-            {/* デスクトップ用チャットエリア（空のプレースホルダ。HomeChatClientが絶対配置や固定配置でない場合に有効） */}
+            {/* デスクトップ用チャットエリアのプレースホルダ */}
           </div>
         </div>
       </Container>
 
-      {/* チャット機能（実際には固定配置やフロートなどの可能性があるため、場所は変えずコンテキストのみ統合） */}
+      {/* チャット機能 */}
       <HomeChatClient
         currentDifficulty={currentDifficulty}
-        bills={billsByTag
-          .flatMap((x) => x.bills)
-          .concat(featuredBills)
-          .map(toBillChatContext)}
+        bills={shownBills.map(toBillChatContext)}
       />
     </>
   );

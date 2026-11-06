@@ -3,15 +3,18 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { DEFAULT_DIFFICULTY } from "@/features/bill-difficulty/shared/types";
 import { getInterviewLPLink } from "@/features/interview-config/shared/utils/interview-links";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import { BillDetailShareButton } from "../../../client/components/bill-detail/bill-detail-share-button";
-import { ReviewInProgressBanner } from "../../../client/components/bill-detail/review-status-banner";
+import { ReviewStateBanner } from "../../../client/components/bill-detail/review-state-banner";
+import { ReviewCompleteBadge } from "../../../client/components/bill-detail/review-status-banner";
 import { BillStatusBadge } from "../../../client/components/bill-list/bill-status-badge";
 import { BillTag } from "../../../client/components/bill-list/bill-tag";
 import { getBillShareData } from "../../../client/utils/share";
 import type { BillWithContent } from "../../../shared/types";
+import { getArticleReviewState } from "../../../shared/utils/article-review-state";
 
 import { DynamicBillThumbnail } from "../../../client/components/bill-list/dynamic-bill-thumbnail";
 
@@ -31,6 +34,7 @@ export async function BillDetailHeader({
   topicCount,
 }: BillDetailHeaderProps) {
   const displayTitle = bill.bill_content?.title;
+  const reviewState = getArticleReviewState(bill);
   const displaySummary = bill.bill_content?.summary;
 
   const { shareUrl, shareMessage, thumbnailUrl } = await getBillShareData(bill);
@@ -59,7 +63,15 @@ export async function BillDetailHeader({
 
       <div className="px-4 pt-8 mb-3">
         {displayTitle && (
-          <h1 className="text-2xl font-bold mb-3">{displayTitle}</h1>
+          <h1 className="text-2xl font-bold mb-3">
+            {displayTitle}
+            {reviewState === "reviewed" && (
+              <>
+                {" "}
+                <ReviewCompleteBadge showTooltip />
+              </>
+            )}
+          </h1>
         )}
         <div className="flex flex-row gap-4">
           <BillStatusBadge status={bill.status} className="w-fit" />
@@ -88,9 +100,15 @@ export async function BillDetailHeader({
         <p className="text-sm text-muted-foreground font-medium mb-4">
           {bill.name}
         </p>
-        {!bill.is_review_completed && (
+        {reviewState !== "reviewed" && (
           <div className="mb-4">
-            <ReviewInProgressBanner />
+            <ReviewStateBanner
+              state={reviewState}
+              billId={bill.id}
+              difficultyLevel={
+                bill.bill_content?.difficulty_level ?? DEFAULT_DIFFICULTY
+              }
+            />
           </div>
         )}
 

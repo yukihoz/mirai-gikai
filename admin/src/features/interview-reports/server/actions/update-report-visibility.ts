@@ -54,9 +54,12 @@ export async function updateReportVisibilityAction(
     // Revalidate bill interview pages (reports are under interview config)
     revalidatePath(`/bills/${billId}`, "layout");
     revalidateTag("public-interview-reports");
-    // 記事ページの公開レポート一覧は web 側でもキャッシュしているので、
-    // そちらにも取り消しを伝える
-    await invalidateWebCache([WEB_CACHE_TAGS.BILLS]);
+    // admin の revalidateTag は admin 内のキャッシュにしか効かない。
+    // web の記事ページ・回答数キャッシュは HTTP 経由で無効化する。
+    await invalidateWebCache([
+      WEB_CACHE_TAGS.BILLS,
+      WEB_CACHE_TAGS.PUBLIC_INTERVIEW_REPORTS,
+    ]);
 
     return { success: true };
   } catch (error) {

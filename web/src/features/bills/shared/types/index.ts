@@ -13,13 +13,24 @@ export type BillContentUpdate =
 
 export type MiraiStance = Database["public"]["Tables"]["mirai_stances"]["Row"];
 
+export type BillVideo = Pick<
+  Database["public"]["Tables"]["bill_videos"]["Row"],
+  "id" | "kind" | "youtube_video_id" | "title"
+>;
+
 // Enums
 // bills.meeting_body は text。委員会名は区が決めるもので、
 // アプリが値の集合を持たない（数年ごとに組み替えられる）。
 export type MeetingBody =
   Database["public"]["Tables"]["bills"]["Row"]["meeting_body"];
 export type BillStatusEnum = Database["public"]["Enums"]["bill_status_enum"];
+export type BillArticleKind = Database["public"]["Enums"]["bill_article_kind"];
 export type StanceTypeEnum = Database["public"]["Enums"]["stance_type_enum"];
+export type HouseEnum = "HR" | "HC";
+export const HOUSE_LABELS: Record<HouseEnum, string> = {
+  HR: "衆議院",
+  HC: "参議院",
+};
 
 // 公開ステータス型（議案の公開/非公開を管理）
 export type BillPublishStatus = "draft" | "published" | "coming_soon";
@@ -55,6 +66,8 @@ export type BillWithContent = Bill & {
   tags: BillTag[];
   featured_tag?: FeaturedTag;
   hasPublicInterview?: boolean;
+  /** 公開レポート件数。一覧の回答数バッジと「声が集まっている順」に使う。 */
+  publicReportCount?: number;
 };
 
 // タグごとにグループ化された議案
