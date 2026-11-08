@@ -1,6 +1,7 @@
 import { ArrowDown } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { SerifFontStylesheet } from "@/components/serif-font-stylesheet";
 import { getInterviewMessageLink } from "@/features/interview-config/shared/utils/interview-links";
 import type { ParsedOpinion } from "../utils/format-utils";
 
@@ -18,6 +19,7 @@ export function ReportMainOpinions({
 
   return (
     <section className="flex flex-col gap-3">
+      <SerifFontStylesheet />
       <h2 className="text-[22px] font-bold leading-9 text-mirai-text">
         💬主な意見
       </h2>

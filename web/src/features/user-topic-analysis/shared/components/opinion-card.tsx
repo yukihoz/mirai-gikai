@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { SerifFontStylesheet } from "@/components/serif-font-stylesheet";
 import { getInterviewMessageLink } from "@/features/interview-config/shared/utils/interview-links";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
@@ -68,6 +69,7 @@ function CategoryChip({
 function Quote({ quote }: { quote: string }) {
   return (
     <div className="ml-2 border-l-2 border-mirai-border pl-4">
+      <SerifFontStylesheet />
       <p className="font-mirai-serif text-[14px] font-medium leading-[22px] text-mirai-text">
         <span className="mr-1 align-[-0.1em] text-[18px] text-primary-accent">
           “
