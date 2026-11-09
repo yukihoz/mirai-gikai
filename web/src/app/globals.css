@@ -131,8 +131,10 @@
   --color-topic-expert: #0f8472;
   --color-topic-citizen: #909090;
 
-  /* 引用文の明朝体（Noto Serif JP） */
-  --font-mirai-serif: var(--font-noto-serif-jp);
+  /* 引用文の明朝体（Noto Serif JP）。Google Fonts から読み込むので、
+     font-mirai-serif を使う部品では SerifFontStylesheet も描画すること */
+  --font-mirai-serif:
+    "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
 
 :root {

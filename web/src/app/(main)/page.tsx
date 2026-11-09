@@ -21,9 +21,7 @@ import type { BillWithContent } from "@/features/bills/shared/types";
 import { chatBillName } from "@/features/bills/shared/utils/chat-bill-name";
 import { pickHomeSections } from "@/features/bills/shared/utils/pick-home-sections";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
-import { CurrentDietSession } from "@/features/diet-sessions/client/components/current-diet-session";
 import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
-import { getLatestClosedDietSession } from "@/features/diet-sessions/server/loaders/get-latest-closed-diet-session";
 import { getJapanTime } from "@/lib/utils/date";
 
 export default async function Home({
@@ -45,14 +43,12 @@ export default async function Home({
       categories,
     },
     currentSession,
-    latestClosedSession,
     currentDifficulty,
     suggestableBills,
     featuredTags,
   ] = await Promise.all([
     loadHomeData(searchState),
     getCurrentDietSession(japanTime),
-    getLatestClosedDietSession(japanTime),
     getDifficultyLevel(),
     getSuggestableBills(),
     getFeaturedTags(),
@@ -79,13 +75,6 @@ export default async function Home({
   return (
     <>
       <Hero />
-
-      {/* 議会の状況カード */}
-      <CurrentDietSession
-        session={currentSession}
-        closedSession={latestClosedSession}
-        now={japanTime}
-      />
 
       {/* 報告資料を探す */}
       <div className="bg-mirai-surface-muted py-10">

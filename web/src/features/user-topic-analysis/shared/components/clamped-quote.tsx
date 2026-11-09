@@ -1,3 +1,4 @@
+import { SerifFontStylesheet } from "@/components/serif-font-stylesheet";
 import { type ClampedQuoteResult, clampQuote } from "../utils/clamp-quote";
 
 /**
@@ -57,6 +58,7 @@ export function ClampedQuote({ quote, attribution }: ClampedQuoteProps) {
       key={JSON.stringify([quote, attribution])}
       className="block font-mirai-serif text-[14px] font-semibold leading-[22px] text-mirai-text"
     >
+      <SerifFontStylesheet />
       <span className="mr-1 align-[-0.1em] text-[18px] text-primary-accent">
         “
       </span>
