@@ -3,7 +3,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { CACHE_TAGS } from "@/lib/cache-tags";
+import { CACHE_TAGS, LIST_CACHE_REVALIDATE_SECONDS } from "@/lib/cache-tags";
 import type { BillWithContent } from "../../shared/types";
 import {
   BILLS_PER_PAGE,
@@ -34,13 +34,19 @@ export async function getBillsSearch(
   params: BillsSearchParams
 ): Promise<BillsSearchResult> {
   const difficultyLevel = await getDifficultyLevel();
-  return _getCachedBillsSearch(
-    difficultyLevel,
-    params.query,
-    params.tagId,
-    params.sort === "old",
-    params.page
-  );
+  // 失敗はキャッシュの外で0件にする（理由は LIST_CACHE_REVALIDATE_SECONDS を参照）
+  try {
+    return await _getCachedBillsSearch(
+      difficultyLevel,
+      params.query,
+      params.tagId,
+      params.sort === "old",
+      params.page
+    );
+  } catch (error) {
+    console.error("Failed to search bills:", error);
+    return { bills: [], total: 0 };
+  }
 }
 
 const _getCachedBillsSearch = unstable_cache(
@@ -63,7 +69,7 @@ const _getCachedBillsSearch = unstable_cache(
     return { bills: await toBillsWithContent(rows), total };
   },
   ["bills-search-v1"],
-  { revalidate: 600, tags: [CACHE_TAGS.BILLS] }
+  { revalidate: LIST_CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.BILLS] }
 );
 
 /**
@@ -74,7 +80,13 @@ const _getCachedBillsSearch = unstable_cache(
  */
 export async function getCategoryOptions(): Promise<CategoryOption[]> {
   // 件数は記事の公開状態だけで決まる。難易度に左右されない
-  return _getCachedCategoryOptions();
+  try {
+    return await _getCachedCategoryOptions();
+  } catch (error) {
+    // チップが出なくても一覧は読める
+    console.error("Failed to fetch category options:", error);
+    return [];
+  }
 }
 
 const _getCachedCategoryOptions = unstable_cache(
@@ -94,5 +106,5 @@ const _getCachedCategoryOptions = unstable_cache(
       .sort((a, b) => b.count - a.count);
   },
   ["category-options-v1"],
-  { revalidate: 600, tags: [CACHE_TAGS.BILLS] }
+  { revalidate: LIST_CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.BILLS] }
 );

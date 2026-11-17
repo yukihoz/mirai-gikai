@@ -3,7 +3,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { CACHE_TAGS } from "@/lib/cache-tags";
+import { CACHE_TAGS, LIST_CACHE_REVALIDATE_SECONDS } from "@/lib/cache-tags";
 import type { BillWithContent } from "../../shared/types";
 import { findBillsWithPublicInterview } from "../repositories/bill-repository";
 
@@ -21,7 +21,7 @@ export async function getInterviewOpenBills(): Promise<BillWithContent[]> {
     return await _getCachedInterviewOpenBills(difficultyLevel);
   } catch (error) {
     // 取得失敗はキャッシュ関数の外で受ける。中で空配列に変換すると、失敗が
-    // 正常な結果として10分キャッシュされてしまう。トップは他のセクションが
+    // 正常な結果としてキャッシュ期間ずっと残ってしまう。トップは他のセクションが
     // 出れば成立するので、ここで空に縮退させる。
     console.error("Failed to fetch interview open bills:", error);
     return [];
@@ -57,7 +57,7 @@ const _getCachedInterviewOpenBills = unstable_cache(
   },
   ["interview-open-bills-list"],
   {
-    revalidate: 600, // 10分（600秒）
+    revalidate: LIST_CACHE_REVALIDATE_SECONDS,
     tags: [CACHE_TAGS.BILLS, CACHE_TAGS.INTERVIEW_CONFIGS],
   }
 );

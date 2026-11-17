@@ -23,7 +23,7 @@ const PAGE_SIZE = 1000;
  * 開いたら404、ということも起こる。
  *
  * 集計はアプリ側でやる。行は日付と委員会名だけで、まとめた結果は
- * 10分キャッシュするため、DB関数を足すほどではない。
+ * 1時間キャッシュするため、DB関数を足すほどではない。
  */
 export async function findPublishedMeetingDayRows(
   difficultyLevel: DifficultyLevelEnum
