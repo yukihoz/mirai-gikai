@@ -3,7 +3,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { CACHE_TAGS } from "@/lib/cache-tags";
+import { CACHE_TAGS, LIST_CACHE_REVALIDATE_SECONDS } from "@/lib/cache-tags";
 import type {
   AdjacentMeetingDays,
   MeetingDaySummary,
@@ -25,7 +25,7 @@ const _getCachedMeetingDays = unstable_cache(
   async (difficultyLevel: DifficultyLevelEnum): Promise<MeetingDaySummary[]> =>
     toMeetingDays(await findPublishedMeetingDayRows(difficultyLevel)),
   ["meeting-days-v1"],
-  { revalidate: 600, tags: [CACHE_TAGS.BILLS] }
+  { revalidate: LIST_CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.BILLS] }
 );
 
 /** 一覧の表示用に、月で束ねたもの */

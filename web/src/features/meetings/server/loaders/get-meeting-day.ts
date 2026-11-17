@@ -4,7 +4,7 @@ import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { toBillsWithContent } from "@/features/bills/server/utils/to-bills-with-content";
-import { CACHE_TAGS } from "@/lib/cache-tags";
+import { CACHE_TAGS, LIST_CACHE_REVALIDATE_SECONDS } from "@/lib/cache-tags";
 import type { MeetingDay } from "../../shared/types";
 import { toMeetingCommittees } from "../../shared/utils/to-meeting-committees";
 import { findPublishedMeetingBillRows } from "../repositories/meeting-repository";
@@ -53,5 +53,5 @@ const _getCachedMeetingDay = unstable_cache(
     return { date, committees, billCount: bills.length };
   },
   ["meeting-day-v1"],
-  { revalidate: 600, tags: [CACHE_TAGS.BILLS] }
+  { revalidate: LIST_CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.BILLS] }
 );

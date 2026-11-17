@@ -329,8 +329,7 @@ export async function searchBills(params: {
   });
 
   if (error) {
-    console.error("Failed to search bills:", error);
-    return { rows: [], total: 0 };
+    throw new Error(`Failed to search bills: ${error.message}`);
   }
 
   const hits = data ?? [];
@@ -346,8 +345,7 @@ export async function searchBills(params: {
     .eq("bill_contents.difficulty_level", params.difficultyLevel);
 
   if (rowsError) {
-    console.error("Failed to fetch searched bills:", rowsError);
-    return { rows: [], total: 0 };
+    throw new Error(`Failed to fetch searched bills: ${rowsError.message}`);
   }
 
   // in で引くと順序が崩れる。DB関数が返した並びに戻す
@@ -368,8 +366,7 @@ export async function countPublishedBillsByTag(): Promise<Map<string, number>> {
     .eq("bills.publish_status", "published");
 
   if (error) {
-    console.error("Failed to count bills by tag:", error);
-    return new Map();
+    throw new Error(`Failed to count bills by tag: ${error.message}`);
   }
 
   const counts = new Map<string, number>();
@@ -458,8 +455,7 @@ export async function findAllTags() {
     .order("label");
 
   if (error) {
-    console.error("Failed to fetch tags:", error);
-    return [];
+    throw new Error(`Failed to fetch tags: ${error.message}`);
   }
 
   return data ?? [];
@@ -589,8 +585,7 @@ export async function findFeaturedBillsWithContents(
   const { data, error } = await query;
 
   if (error) {
-    console.error("Failed to fetch featured bills:", error);
-    return [];
+    throw new Error(`Failed to fetch featured bills: ${error.message}`);
   }
 
   return data ?? [];
@@ -755,8 +750,7 @@ export async function findBillIdsWithPublicInterview(
     .eq("status", "public");
 
   if (error) {
-    console.error("Failed to fetch interview configs:", error);
-    return new Set();
+    throw new Error(`Failed to fetch interview configs: ${error.message}`);
   }
 
   return new Set(data.map((row) => row.bill_id));
